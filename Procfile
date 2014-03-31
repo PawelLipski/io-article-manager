@@ -1,2 +1,2 @@
-web: target/universal/stage/bin/playmodule -Dhttp.port=$PORT
+web: target/universal/stage/bin/ioarticlemanager -Dhttp.port=$PORT
 
