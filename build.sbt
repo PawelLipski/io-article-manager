@@ -1,6 +1,6 @@
 import play.Project._
 
-name := "PlayModule"
+name := "IOArticleManager"
 
 version := "1.0"
 
