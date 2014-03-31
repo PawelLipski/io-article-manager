@@ -10,7 +10,7 @@ import java.io.ByteArrayOutputStream;
 /**
  * @author Piotr Góralczyk
  */
-public class PdfGenerator {
+public class PdfGenerationDemo {
 
     public static byte[] generate(String text) throws DocumentException {
         Document document = new Document();

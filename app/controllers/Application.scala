@@ -2,7 +2,7 @@ package controllers
 
 import play.api._
 import play.api.mvc._
-import utils.PdfGenerator
+import utils.PdfGenerationDemo
 import java.util.Date
 
 object Application extends Controller {
@@ -12,7 +12,7 @@ object Application extends Controller {
   }
 
   def pdfGenerationDemo = Action {
-    Ok(PdfGenerator.generate("Hello PDF!\n" + new Date().toString)).as("application/pdf")
+    Ok(PdfGenerationDemo.generate("Hello PDF!\n" + new Date().toString)).as("application/pdf")
   }
 
 }
