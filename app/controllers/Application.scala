@@ -33,10 +33,21 @@ object Application extends Controller {
 
     val passwd = System.getenv("INTERNAL_DB_PASSWD")
     val user = "zlamwfnyrreuew"
-    val conn_str = "jdbc:postgresql://ec2-54-246-101-204.eu-west-1.compute.amazonaws.com:5432/d9ml8v51vhnu5u?ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory"
+
+    // for non-Heroku deployment, the following config is necessary
+    // don't use in production!
+    // https://devcenter.heroku.com/articles/connecting-to-relational-databases-on-heroku-with-java#connecting-to-a-database-remotely
+    val opt_ssl_suffix =
+      if (Play.isDev(Play.current))
+       "?ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory"
+      else
+        ""
+    val url = "jdbc:postgresql://ec2-54-246-101-204.eu-west-1.compute.amazonaws.com:5432/d9ml8v51vhnu5u"
+    val conn_str = url + opt_ssl_suffix
+
     var contents = ""
 
-    println(classOf[org.postgresql.Driver])
+    classOf[org.postgresql.Driver]
 
     val conn = DriverManager.getConnection(conn_str, user, passwd)
     try {
