@@ -1,0 +1,11 @@
+@(copyrightData: models.CopyrightData, copyrightForm: Form[CopyrightData])
+
+@import helper._
+
+@main("Consent to Publish") {
+    <p>@copyrightData.getAsFormattedString()</p>
+
+    @form(action = routes.CopyrightTransfer.generateDoc) {
+        <input type="submit" value="Generate PDF">
+    }
+}
