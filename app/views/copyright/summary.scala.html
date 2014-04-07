@@ -1,9 +1,9 @@
-@(copyrightData: models.CopyrightData, copyrightForm: Form[CopyrightData])
+@(copyrightData: models.copyright.Copyright, copyrightForm: Form[models.copyright.Copyright])
 
 @import helper._
 
 @main("Consent to Publish") {
-    <p>@copyrightData.getAsFormattedString()</p>
+    <p>@Html(copyrightData.getAsFormattedString())</p>
 
     @form(action = routes.CopyrightTransfer.generateDoc) {
         <input type="submit" value="Generate PDF">
