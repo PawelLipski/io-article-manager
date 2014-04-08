@@ -14,3 +14,10 @@ GET         /consent_to_publish               controllers.CopyrightTransfer.inde
 POST        /consent_to_publish               controllers.CopyrightTransfer.submit
 POST        /consent_to_publish/doc           controllers.CopyrightTransfer.generateDoc
 
+#authors
+GET         /authors                     controllers.Authors.list
+GET         /authors/add                 controllers.Authors.add
+POST        /authors                     controllers.Authors.save
+GET         /authors/:id/edit            controllers.Authors.edit(id: Int)
+POST        /authors/:id                 controllers.Authors.update(id: Int)
+POST        /authors/:id/delete          controllers.Authors.delete(id: Int)

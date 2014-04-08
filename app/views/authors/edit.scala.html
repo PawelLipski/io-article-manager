@@ -1,0 +1,18 @@
+@(userForm: Form[Author])
+
+@import helper._
+@import models.Author
+
+@main("Edit Author") {
+    <h1>Edit User</h1>
+    @form(routes.Authors.update(userForm.get.id)) {
+        @inputText(userForm("papertitle"))
+        @inputText(userForm("username"))
+        @inputText(userForm("lastname"))
+        @inputText(userForm("affiliation"))
+        @inputText(userForm("email"))
+        @inputText(userForm("date_filled"))
+        @inputText(userForm("place"))
+        <button type="submit">Update</button>
+    }
+}

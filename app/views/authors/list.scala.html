@@ -1,0 +1,209 @@
+@(authors: Iterable[models.Author])
+
+@main("All Authors") {
+    <h1>Journal manager</h1>
+
+    <style type="text/css">
+        #table-filter {
+            background : #ccc ;
+        }
+        #table-filter fieldset {
+            border : none ;
+            display : inline ;
+        }
+
+        #data-table {
+            width : 100%;
+            border-spacing: 0px;
+            border-collapse: collapse;
+        }
+
+        #data-table th {
+            font-weight: 500;
+            border: 1px solid #000;
+        }
+
+        #data-table td {
+            border: 1px solid #000;
+            padding: 0px;
+        }
+
+        #data-table td:first-child, #data-table th:first-child {
+            text-align: center;
+
+        }
+
+        .pagination {
+            margin-top: 10px;
+        }
+        .pagination .page-number {
+            margin: 5px 10px;
+        }
+
+        .pagination .page-number:after {
+            content: ',';
+        }
+
+        .pagination .page-number:last-child:after {
+            content: '';
+        }
+
+        #input-filter {
+            position: relative;
+            top: 3px;
+        }
+
+        .filter-table .quick { margin-left: 0.5em; font-size: 0.8em; text-decoration: none; }
+        .fitler-table .quick:hover { text-decoration: underline; }
+        td.alt { background-color: #ffc; background-color: rgba(255, 255, 0, 0.2); }
+    </style>
+
+    <div>
+        <div>
+            <form id="table-filter">
+                <fieldset>
+                    <span>Journal</span>
+                    <select>
+                        <option>Computer science</option>
+                        <option>New scientist</option>
+                        <option>Biologist</option>
+                    </select>
+                </fieldset>
+                <fieldset>
+                    <span>Year</span>
+                    <select>
+                        <option>2014</option>
+                        <option>2013</option>
+                        <option>2012</option>
+                    </select>
+                </fieldset>
+                <fieldset>
+                    <span>Volume</span>
+                    <select>
+                        <option>Vol 13, No 4</option>
+                        <option>Vol 13, No 3</option>
+                        <option>Vol 13, No 2</option>
+                        <option>Vol 13, No 1</option>
+                    </select>
+                </fieldset>
+                <fieldset>
+                    <div class="input-filter-container"><input type="search" placeholder="Find..." size="15" id="input-filter"></div>
+                </fieldset>
+            </form>
+        </div>
+
+        <table id="data-table">
+            <thead>
+                <tr>
+                    <th><input type="checkbox"></th>
+                    <th>Paper title</th>
+                    <th>Corresp. author</th>
+                    <th>Affiliation</th>
+                    <th>E-mail addres</th>
+                    <th>Date filled</th>
+                    <th>Place</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><input type="checkbox" name="people[]"></td>
+                    <td>Artificial Intelligence</td>
+                    <td>John, Towards Lorem Ipsum</td>
+                    <td>UC Berkeley</td>
+                    <td>john.doe&#64;berkeley.edu</td>
+                    <td>10-10-2014</td>
+                    <td>Berkeley, USA</td>
+                    <td>
+                        <a href="#">Details</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" name="people[]"></td>
+                    <td>IEEE Transactions on Computers</td>
+                    <td>John, Towards Lorem Ipsum</td>
+                    <td>UC Berkeley</td>
+                    <td>john.doe&#64;berkeley.edu</td>
+                    <td>10-10-2014</td>
+                    <td>Berkeley, USA</td>
+                    <td>
+                        <a href="#">Details</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" name="people[]"></td>
+                    <td>Chemical Engineering Science</td>
+                    <td>John, Towards Lorem Ipsum</td>
+                    <td>UC Berkeley</td>
+                    <td>john.doe&#64;berkeley.edu</td>
+                    <td>10-10-2014</td>
+                    <td>Berkeley, USA</td>
+                    <td>
+                        <a href="#">Details</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" name="people[]"></td>
+                    <td>NASA Tech Briefs</td>
+                    <td>John, Towards Lorem Ipsum</td>
+                    <td>UC Berkeley</td>
+                    <td>john.doe&#64;berkeley.edu</td>
+                    <td>10-10-2014</td>
+                    <td>Berkeley, USA</td>
+                    <td>
+                        <a href="#">Details</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" name="people[]"></td>
+                    <td>Annals of Mathematics</td>
+                    <td>John, Towards Lorem Ipsum</td>
+                    <td>UC Berkeley</td>
+                    <td>john.doe&#64;berkeley.edu</td>
+                    <td>10-10-2014</td>
+                    <td>Berkeley, USA</td>
+                    <td>
+                        <a href="#">Details</a>
+                    </td>
+                </tr>
+
+                @for(author <- authors) {
+                    <tr>
+                        <td><input type="checkbox" name="people[]"></td>
+                        <td>@author.papertitle</td>
+                        <td>@author.lastname, @author.username</td>
+                        <td>@author.affiliation</td>
+                        <td>@author.email</td>
+                        <td>@author.date_filled</td>
+                        <td>@author.place</td>
+                        <td>
+                            <a href="#">Details</a>
+                            @*
+                            <a href=" @routes.Authors.edit(author.id)">E</a>
+                            @helper.form(routes.Authors.delete(author.id)) {
+                                <button type="submit">Delete</button>
+                            } *@
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <script src="@routes.Assets.at("javascripts/jquery.table-filter.js")" type="text/javascript"></script>
+        <script type="text/javascript">
+
+        $("#data-table").addTableFilter({ inputid: 'input-filter' });
+
+        </script>
+    </div>
+
+    <div id="bottomrow" style="padding: 10px 0px; position: relative">
+        <button style="position: absolute; right: 10px; top: 20px">
+            Generate report
+        </button>
+    </div>
+
+    <br><br><br><br>
+
+    <a href="@routes.Authors.add">Add new</a>
+}
