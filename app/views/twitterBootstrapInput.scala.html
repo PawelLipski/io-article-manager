@@ -1,4 +1,5 @@
 @(elements: helper.FieldElements)
+
 <div class="form-group @if(elements.hasErrors) {error}">
     <label class="control-label col-lg-2" for="@elements.id">@elements.label</label>
     <div class="@elements.args.toMap.get('inputDivClass).getOrElse("col-lg-4")">

@@ -57,26 +57,30 @@
             @inputText(
                 transferForm("title"),
                 '_label -> "",
-                'size -> 80
+                'size -> 80,
+                'class -> "form-control"
             )
             <h4>Corresponding author</h4><br>
 
             @inputText(
                 transferForm("correspondingAuthor.name"),
                 '_label -> "Name: ",
-                'size -> 30
+                'size -> 30,
+                'class -> "form-control"
             )
 
             @inputText(
                 transferForm("correspondingAuthor.affiliation"),
                 '_label -> "Affiliation: ",
-                'size -> 30
+                'size -> 30,
+                'class -> "form-control"
             )
 
             @inputText(
                 transferForm("correspondingAuthor.email"),
                 '_label -> "E-mail: ",
-                'size -> 30
+                'size -> 30,
+                'class -> "form-control"
             )
 
 
@@ -88,57 +92,66 @@
             @inputText(
                 transferForm("contribution[0].authorName"),
                 '_label -> "Author name: ",
-                'size -> 30
+                'size -> 30  ,
+                'class ->"form-control"
             )
 
             @inputText(
                 transferForm("contribution[0].affiliation"),
                 '_label -> "Affiliation: ",
-                'size -> 30
+                'size -> 30,
+                'class ->"form-control"
             )
 
             @textarea(
                 transferForm("contribution[0].contribution"),
                 '_label -> "Contribution: ",
-                'size -> 30
+                'size -> 30  ,
+                'class ->"form-control"
             )
 
             @inputText(
                 transferForm("contribution[0].percent"),
                 '_label -> "Percent: ",
-                'size -> 30
+                'size -> 30,
+                'class ->"form-control"
             )
 
             <h4>   Author 2:</h4>
             @inputText(
                 transferForm("contribution[1].authorName"),
                 '_label -> "Author name: ",
-                'size -> 30
+                'size -> 30,
+                'class ->"form-control"
             )
 
             @inputText(
                 transferForm("contribution[1].affiliation"),
                 '_label -> "Affiliation: ",
-                'size -> 30
+                'size -> 30 ,
+                'class ->"form-control"
             )
 
             @textarea(
                 transferForm("contribution[1].contribution"),
                 '_label -> "Contribution: ",
-                'size -> 30
+                'size -> 30,
+                'class ->"form-control"
             )
 
             @inputText(
                 transferForm("contribution[1].percent"),
                 '_label -> "Percent: ",
-                'size -> 30
+                'size -> 30,
+                'class ->"form-control"
             )
 
             <br><legend>Financial disclosure</legend><br>
 
         @textarea(
             transferForm("financial"),
-            '_label -> ""
+            '_label -> "",
+            'class ->"form-control"
         )
 
         </fieldset>
