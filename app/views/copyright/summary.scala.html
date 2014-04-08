@@ -1,9 +1,11 @@
-@(copyrightData: models.copyright.Copyright, copyrightForm: Form[models.copyright.Copyright])
+@(copyrightData: models.copyright.Copyright, dateFilled: org.joda.time.DateTime, ipAddress: String, copyrightForm: Form[models.copyright.Copyright])
 
 @import helper._
 
 @main("Consent to Publish") {
     <p>@Html(copyrightData.getAsFormattedString())</p>
+    <p>@Html(dateFilled.toString("yyyy-MM-dd HH:mm:ss SSSZZ"))</p>
+    <p>@Html(ipAddress)</p>
 
     @form(action = routes.CopyrightTransfer.generateDoc) {
         <input type="submit" value="Generate PDF">

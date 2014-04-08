@@ -2,13 +2,12 @@ package utils;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Element;
 import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
-import models.AuthorContribution;
-import models.CopyrightTransferForm;
+import models.copyright.Contribution;
+import models.copyright.Copyright;
+import org.joda.time.DateTime;
 import scala.collection.Iterator;
 import scala.collection.immutable.List;
 
@@ -19,43 +18,43 @@ import java.io.ByteArrayOutputStream;
  */
 public class PdfGenerator {
 
-    public static byte[] generate(CopyrightTransferForm form) throws DocumentException {
+    public static byte[] generate(Copyright copyright, DateTime dateFilled, String ipAddress) throws DocumentException {
         Document document = new Document();
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PdfWriter.getInstance(document, outputStream);
         document.open();
-        document.add(createParagraph("Article ID", form.copyrightData().id()));
-        document.add(createParagraph("Article title", form.copyrightData().title()));
-        document.add(createParagraph("Corresponding author", form.copyrightData().correspondingAuthor()));
-        document.add(createParagraph("Contribution of authors", ""));
-        document.add(createContributionTable(form.copyrightData().contribution()));
-        document.add(createParagraph("Financial disclosure", form.copyrightData().financialDisclosure()));
-        document.add(createParagraph("Date filled", form.date()));
-        document.add(createParagraph("IP address", form.ipAddress()));
+        document.add(new Paragraph("Copyright transfer form\n\n"));
+        document.add(createParagraph("Date filled", dateFilled));
+        document.add(createParagraph("IP address", ipAddress));
+        document.add(createParagraph("\nArticle ID", "1"));
+        document.add(createParagraph("Article title", copyright.title()));
+        document.add(createParagraph("\nCorresponding author", "Name: " + copyright.correspondingAuthor().name() + "\n\t\t\t\tAffiliation: " + copyright.correspondingAuthor().affiliation() + "\n\t\t\t\tE-mail: " + copyright.correspondingAuthor().email()));
+        document.add(createParagraph("\nContribution of authors", ""));
+        document.add(createContributionTable(copyright.contribution()));
+        document.add(createParagraph("\nFinancial disclosure", copyright.financialDisclosure()));
         document.close();
         return outputStream.toByteArray();
     }
 
-    private static PdfPTable createContributionTable(List<AuthorContribution> contribution) {
-        PdfPTable table = new PdfPTable(5);
-        table.addCell("Name");
-        table.addCell("Surname");
+    private static PdfPTable createContributionTable(List<Contribution> contributionList) {
+        PdfPTable table = new PdfPTable(4);
+        table.setWidthPercentage(100);
+        table.addCell("Author name");
         table.addCell("Affiliation");
         table.addCell("Contribution to the paper");
         table.addCell("Estimated % of the total contribution");
-        for (Iterator<AuthorContribution> contributionIter = contribution.iterator(); contributionIter.hasNext(); ) {
-            AuthorContribution authorContribution = contributionIter.next();
-            table.addCell(authorContribution.author().name());
-            table.addCell(authorContribution.author().surname());
-            table.addCell(authorContribution.author().affiliation());
-            table.addCell(authorContribution.contribution());
-            table.addCell(Integer.toString(authorContribution.contributionPercent()));
+        for (Iterator<Contribution> contributionIter = contributionList.iterator(); contributionIter.hasNext(); ) {
+            Contribution contribution = contributionIter.next();
+            table.addCell(contribution.authorName());
+            table.addCell(contribution.affiliation());
+            table.addCell(contribution.contribution());
+            table.addCell(Integer.toString(contribution.percent()));
         }
         return table;
     }
 
     private static Paragraph createParagraph(String propertyName, Object property) {
-        return new Paragraph(propertyName + ": " + property.toString());
+        return new Paragraph(propertyName + ":\n\t\t\t\t" + property.toString());
     }
 
 }

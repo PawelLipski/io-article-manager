@@ -1,5 +1,7 @@
 package models.copyright
 
+import org.joda.time.DateTime
+
 /**
  * Created by Zeuko on 05.04.14.
  */
@@ -14,7 +16,7 @@ case class Copyright(
     return "Paper title: "+ title +
       "\n\rCorresponding author: \n\r"+  correspondingAuthor.toString +
       "\n\rContribution to paper: \n\r"+  getContribution() +
-      "\n\rFinancial disclosure: \n\r"+  financialDisclosure;
+      "\n\rFinancial disclosure: \n\r"+  financialDisclosure
   }
 
   private def getContribution(): String = {
