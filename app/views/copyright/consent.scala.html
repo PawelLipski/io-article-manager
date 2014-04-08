@@ -1,9 +1,11 @@
 @(transferForm: Form[models.copyright.Copyright])
 
 @import helper._
-
+    @implicitFieldConstructor = @{
+        FieldConstructor(twitterBootstrapInput.render)
+    }
 @main("Consent to Publish") {
-    <h2>Consent to publish</h2><br>
+    <h2>Consent to publish</h2> <br>
     <ol>
         <li>Computer Science Journal publishes papers that have not been published before and have not been submitted
             before or in parallel elsewhere. Authors submitting to the Computer Science Journal take the obligation of
@@ -47,7 +49,7 @@
             and state, that the information provided there (regarding financial disclosure and co-authors contributions) is true.</li>
     </ol>
 
-    @helper.form(action = routes.CopyrightTransfer.submit()) {
+    @helper.form(action = routes.CopyrightTransfer.submit(), 'class -> "form-horizontal") {
         <fieldset>
             <legend>General information</legend>
 
@@ -82,7 +84,7 @@
 
         <fieldset>
             <legend>Contribution to paper</legend>
-<h4>Author 1:</h4>
+            <h4>Author 1:</h4>
             @inputText(
                 transferForm("contribution[0].authorName"),
                 '_label -> "Author name: ",
@@ -107,7 +109,7 @@
                 'size -> 30
             )
 
-<h4>   Author 2:</h4>
+            <h4>   Author 2:</h4>
             @inputText(
                 transferForm("contribution[1].authorName"),
                 '_label -> "Author name: ",
@@ -134,10 +136,10 @@
 
             <br><legend>Financial disclosure</legend><br>
 
-            @textarea(
-                transferForm("financial"),
-                '_label -> ""
-            )
+        @textarea(
+            transferForm("financial"),
+            '_label -> ""
+        )
 
         </fieldset>
         <input type="submit" class="btn primary" value="Send">
