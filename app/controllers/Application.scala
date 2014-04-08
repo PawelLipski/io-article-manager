@@ -3,6 +3,7 @@ package controllers
 import play.api._
 import play.api.mvc._
 import java.sql.{Connection, DriverManager, ResultSet}
+import utils.MailDemo
 import utils.PdfGenerationDemo
 import java.util.Date
 
@@ -76,6 +77,8 @@ object Application extends Controller {
 
     contents += "PgSQL: "
     contents += pgsql_test
+
+    contents += "Mail: " + MailDemo.test
 
     Ok(views.html.index(contents))
   }
