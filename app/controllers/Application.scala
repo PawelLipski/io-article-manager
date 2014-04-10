@@ -2,29 +2,27 @@ package controllers
 
 import play.api._
 import play.api.mvc._
-import java.sql.{Connection, DriverManager, ResultSet}
+import java.sql.{DriverManager, ResultSet}
 import utils.MailDemo
 import utils.PdfGenerationDemo
 import java.util.Date
 
 object Application extends Controller {
 
-  private def mysql_test = {
+  private def testMySQL = {
     val passwd = System.getenv("OJS_DB_PASSWD")
-    val conn_str = "jdbc:mysql://sql.udl.pl:3306/slonka_ojs238?user=slonka_ojs&password=" + passwd
+    val connStr = "jdbc:mysql://sql.udl.pl:3306/slonka_ojs238?user=slonka_ojs&password=" + passwd
     var contents = ""
 
-    classOf[com.mysql.jdbc.Driver]
+    val loadDriver = classOf[com.mysql.jdbc.Driver]
 
-    val conn = DriverManager.getConnection(conn_str)
+    val conn = DriverManager.getConnection(connStr)
     try {
       val statement = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)
 
       val rs = statement.executeQuery("SELECT * FROM journals")
-
-      while (rs.next) {
-        contents += rs.getString("path") + " "
-      }
+      while (rs.next)
+        contents += rs.getString("path") + " "      
 
     } finally {
       conn.close()
@@ -32,36 +30,32 @@ object Application extends Controller {
     contents
   }
 
-  def pgsql_test = {
+  def testPostgreSQL = {
 
     val passwd = System.getenv("INTERNAL_DB_PASSWD")
     val user = "zlamwfnyrreuew"
 
-    // for non-Heroku deployment, the following config is necessary
-    // don't use in production!
     // https://devcenter.heroku.com/articles/connecting-to-relational-databases-on-heroku-with-java#connecting-to-a-database-remotely
-    val opt_ssl_suffix =
+    val optionalSslSuffix =
       if (Play.isDev(Play.current))
        "?ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory"
       else
         ""
     val url = "jdbc:postgresql://ec2-54-246-101-204.eu-west-1.compute.amazonaws.com:5432/d9ml8v51vhnu5u"
-    val conn_str = url + opt_ssl_suffix
+    val connStr = url + optionalSslSuffix
 
     var contents = ""
 
-    classOf[org.postgresql.Driver]
+    val loadDriver = classOf[org.postgresql.Driver]
 
-    val conn = DriverManager.getConnection(conn_str, user, passwd)
+    val conn = DriverManager.getConnection(connStr, user, passwd)
     try {
-
       val statement = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)
 
       val rs = statement.executeQuery("SELECT * FROM authors")
-
-      while (rs.next) {
+      while (rs.next)
         contents += rs.getString("email") + " "
-      }
+
     } finally {
       conn.close()
     }
@@ -73,12 +67,13 @@ object Application extends Controller {
     var contents = "Your new application is ready. So let's start coding, John Doe! "
 
     contents += "MySQL: "
-    contents += mysql_test
+    contents += testMySQL
 
     contents += "PgSQL: "
-    contents += pgsql_test
+    contents += testPostgreSQL
 
-    contents += "Mail: " + MailDemo.test
+    contents += "Mail: "
+    contents += MailDemo.test
 
     Ok(views.html.index(contents))
   }
