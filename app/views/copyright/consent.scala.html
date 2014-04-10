@@ -1,9 +1,11 @@
 @(transferForm: Form[models.copyright.Copyright])
 
 @import helper._
-
+    @implicitFieldConstructor = @{
+        FieldConstructor(twitterBootstrapInput.render)
+    }
 @main("Consent to Publish") {
-    <h2>Consent to publish</h2><br>
+    <h2>Consent to publish</h2> <br>
     <ol>
         <li>Computer Science Journal publishes papers that have not been published before and have not been submitted
             before or in parallel elsewhere. Authors submitting to the Computer Science Journal take the obligation of
@@ -47,41 +49,7 @@
             and state, that the information provided there (regarding financial disclosure and co-authors contributions) is true.</li>
     </ol>
 
-    <style type="text/css">
-        #author-template {
-            display: none;
-        }
-    </style>
-
-    @* this is hidden *@
-    <div id="author-template">
-        <h4>Author <span class="author-nr">1</span>:</h4>
-        @inputText(
-            transferForm("authorName"),
-            '_label -> "Author name: ",
-            'size -> 30
-        )
-
-        @inputText(
-            transferForm("affiliation"),
-            '_label -> "Affiliation: ",
-            'size -> 30
-        )
-
-        @textarea(
-            transferForm("contribution"),
-            '_label -> "Contribution: ",
-            'size -> 30
-        )
-
-        @inputText(
-            transferForm("percent"),
-            '_label -> "Percent: ",
-            'size -> 30
-        )
-    </div>
-
-    @helper.form(action = routes.CopyrightTransfer.submit(), 'id -> "consent-form") {
+    @helper.form(action = routes.CopyrightTransfer.submit(), 'class -> "form-horizontal") {
         <fieldset>
             <legend>General information</legend>
 
@@ -89,73 +57,105 @@
             @inputText(
                 transferForm("title"),
                 '_label -> "",
-                'size -> 80
+                'size -> 80,
+                'class -> "form-control"
             )
             <h4>Corresponding author</h4><br>
 
             @inputText(
                 transferForm("correspondingAuthor.name"),
                 '_label -> "Name: ",
-                'size -> 30
+                'size -> 30,
+                'class -> "form-control"
             )
 
             @inputText(
                 transferForm("correspondingAuthor.affiliation"),
                 '_label -> "Affiliation: ",
-                'size -> 30
+                'size -> 30,
+                'class -> "form-control"
             )
 
             @inputText(
                 transferForm("correspondingAuthor.email"),
                 '_label -> "E-mail: ",
-                'size -> 30
+                'size -> 30,
+                'class -> "form-control"
             )
+
+
         </fieldset>
 
         <fieldset>
             <legend>Contribution to paper</legend>
+            <h4>Author 1:</h4>
+            @inputText(
+                transferForm("contribution[0].authorName"),
+                '_label -> "Author name: ",
+                'size -> 30  ,
+                'class ->"form-control"
+            )
 
-            <button type="button" class="btn btn-default" id="add-new-author">
-                Add new author
-            </button>
+            @inputText(
+                transferForm("contribution[0].affiliation"),
+                '_label -> "Affiliation: ",
+                'size -> 30,
+                'class ->"form-control"
+            )
 
-            <script type="text/javascript">
-                var author_nr = 0;
-                $(document ).ready(function() {
-                    $('#add-new-author').click(function() {
-                        // clone the template and remove id
-                        var $newAuthor = $('#author-template').clone().removeAttr('id');
+            @textarea(
+                transferForm("contribution[0].contribution"),
+                '_label -> "Contribution: ",
+                'size -> 30  ,
+                'class ->"form-control"
+            )
 
-                        // loop over every element and add name attribute
-                        $newAuthor.find("input, textarea" ).each(function() {
-                            $(this).attr('name', 'contribution['+author_nr+'].'+$(this).attr('name'));
-                        });
+            @inputText(
+                transferForm("contribution[0].percent"),
+                '_label -> "Percent: ",
+                'size -> 30,
+                'class ->"form-control"
+            )
 
-                        // unhide it
-                        $newAuthor.attr('display', 'block');
+            <h4>   Author 2:</h4>
+            @inputText(
+                transferForm("contribution[1].authorName"),
+                '_label -> "Author name: ",
+                'size -> 30,
+                'class ->"form-control"
+            )
 
-                        // set author number
-                        $newAuthor.find('.author-nr').html(author_nr + 1);
+            @inputText(
+                transferForm("contribution[1].affiliation"),
+                '_label -> "Affiliation: ",
+                'size -> 30 ,
+                'class ->"form-control"
+            )
 
-                        // insert where it should be
-                        $newAuthor.insertBefore("#add-new-author");
-                        author_nr++;
-                    });
+            @textarea(
+                transferForm("contribution[1].contribution"),
+                '_label -> "Contribution: ",
+                'size -> 30,
+                'class ->"form-control"
+            )
 
-                    // add default contributor
-                    $('#add-new-author').trigger('click');
-                });
-            </script>
+            @inputText(
+                transferForm("contribution[1].percent"),
+                '_label -> "Percent: ",
+                'size -> 30,
+                'class ->"form-control"
+            )
 
-        </fieldset>
-
-        <br><legend>Financial disclosure</legend><br>
+            <br><legend>Financial disclosure</legend><br>
 
         @textarea(
             transferForm("financial"),
-            '_label -> ""
+            '_label -> "",
+            'class ->"form-control"
         )
 
-        <input id="consent-form-send" type="submit" class="btn primary" value="Send">
+        </fieldset>
+        <input type="submit" class="btn primary" value="Send">
     }
+
 }
