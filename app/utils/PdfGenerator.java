@@ -11,16 +11,26 @@ import org.joda.time.DateTime;
 import scala.collection.Iterator;
 import scala.collection.immutable.List;
 
-import java.io.ByteArrayOutputStream;
+import java.io.*;
 
 /**
  * @author Piotr Góralczyk
  */
 public class PdfGenerator {
 
-    public static byte[] generate(Copyright copyright, DateTime dateFilled, String ipAddress) throws DocumentException {
-        Document document = new Document();
+    public static void generate(Copyright copyright, DateTime dateFilled, String ipAddress, File file) throws DocumentException, IOException {
+        FileOutputStream outputStream = new FileOutputStream(file);
+        generate(copyright, dateFilled, ipAddress, outputStream);
+    }
+
+    public static byte[] generate(Copyright copyright, DateTime dateFilled, String ipAddress) throws DocumentException, IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        generate(copyright, dateFilled, ipAddress, outputStream);
+        return outputStream.toByteArray();
+    }
+
+    private static void generate(Copyright copyright, DateTime dateFilled, String ipAddress, OutputStream outputStream) throws DocumentException, IOException {
+        Document document = new Document();
         PdfWriter.getInstance(document, outputStream);
         document.open();
         document.add(new Paragraph("Copyright transfer form\n\n"));
@@ -33,7 +43,7 @@ public class PdfGenerator {
         document.add(createContributionTable(copyright.contribution()));
         document.add(createParagraph("\nFinancial disclosure", copyright.financialDisclosure()));
         document.close();
-        return outputStream.toByteArray();
+        outputStream.close();
     }
 
     private static PdfPTable createContributionTable(List<Contribution> contributionList) {
