@@ -3,9 +3,6 @@ package controllers
 import play.api._
 import play.api.mvc._
 import java.sql.{DriverManager, ResultSet}
-import utils.MailDemo
-import utils.PdfGenerationDemo
-import java.util.Date
 
 object Application extends Controller {
 
@@ -72,14 +69,7 @@ object Application extends Controller {
     contents += "PgSQL: "
     contents += testPostgreSQL
 
-    contents += "Mail: "
-    contents += MailDemo.test
-
     Ok(views.html.index(contents))
-  }
-
-  def pdfGenerationDemo = Action {
-    Ok(PdfGenerationDemo.generate("Hello PDF!\n" + new Date().toString)).as("application/pdf")
   }
 
 }
