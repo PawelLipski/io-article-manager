@@ -7,7 +7,8 @@
     <p>@Html(dateFilled.toString("yyyy-MM-dd HH:mm:ss SSSZZ"))</p>
     <p>@Html(ipAddress)</p>
 
-    @form(action = routes.CopyrightTransfer.generateDoc) {
-        <input type="submit" value="Generate PDF">
+    @form(action = routes.CopyrightTransfer.confirm) {
+        <input type="submit" value="Confirm">
     }
+
 }

@@ -3,11 +3,12 @@ package controllers
 import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
-import utils.{PdfGenerator, PdfGenerationDemo}
+import utils.{MailSender, PdfGenerator}
 
 import views._
 import models.copyright.{Copyright, Contribution, CorrespondingAuthor}
 import org.joda.time.DateTime
+import utils.MailSender.{Mail, send}
 
 /**
  * Created by Zeuko on 05.04.14.
@@ -41,21 +42,35 @@ object CopyrightTransfer extends Controller {
     Ok(html.copyright.consent(form))
   }
 
-  def submit = Action { implicit request =>
-    form.bindFromRequest.fold(
-      errors => BadRequest("Unspecified error occurred, nobody knows what happened yet. Try again."),
-      cd =>  {
-        copyrightData = cd
-        dateFilled = DateTime.now()
-        ipAddress = request.remoteAddress
-        Ok(html.copyright.summary(cd, dateFilled, ipAddress, form.fill(cd)))
-      }
+  def submit = Action {
+    implicit request =>
+      form.bindFromRequest.fold(
+        errors => BadRequest("Unspecified error occurred, nobody knows what happened yet. Try again."),
+        cd => {
+          copyrightData = cd
+          dateFilled = DateTime.now()
+          ipAddress = request.remoteAddress
+          Ok(html.copyright.summary(cd, dateFilled, ipAddress, form.fill(cd)))
+        }
+      )
+  }
+
+  def confirm = Action {
+    val pdfFile = java.io.File.createTempFile("CopyrightTransferForm", ".pdf")
+    PdfGenerator.generate(copyrightData, dateFilled, ipAddress, pdfFile)
+    send a new Mail(
+      from = ("test@slonka.udl.pl", "Journal Manager"),
+      to = List(copyrightData.correspondingAuthor.email),
+      subject = "[Journal Manager] Please confirm the copyright transfer",
+      message = "This is the Journal Manager system.\n" +
+        "Your e-mail address was used to fill a copyright transfer form. Details of the transfer can be found in the attached PDF file.\n" +
+        "Please confirm the copyright transfer by clicking the link below:\n" +
+        "(LINK)\n" +
+        "If you didn't fill the copyright transfer form, please ignore this message.\n",
+      attachment = Option(pdfFile)
     )
+    pdfFile.delete()
+    Ok("A confirmation e-mail has been sent to " + copyrightData.correspondingAuthor.email + ". Please check your mailbox.")
   }
-
-  def generateDoc = Action {
-    Ok(PdfGenerator.generate(copyrightData, dateFilled, ipAddress)).as("application/pdf")
-  }
-
 
 }
