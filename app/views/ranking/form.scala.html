@@ -1,0 +1,27 @@
+@(reportForm: Form[models.reports.Report])
+
+@import helper._
+    @implicitFieldConstructor = @{
+        FieldConstructor(twitterBootstrapInput.render)
+    }
+@import views.html.helper.inputText
+
+@helper.form(action = routes.ReportGenerator.submit(), 'class -> "form-horizontal", 'id -> "consent-form") {
+    @select(
+        reportForm("journal.id"),
+        options = (models.RankingDataExtractorOjsDao.getListOJournals().map(j => new Tuple2(j.id.toString, j.title)).seq),
+        '_label -> "Journal",
+        'class -> "form-control",
+        'inputDivClass -> "col-lg-8"
+    )
+    @inputText(
+        reportForm("year"),
+        '_label -> "Year",
+        'class -> "form-control",
+        'type -> "number",
+        'min -> "2013",
+        'max -> "2048"
+    )
+    <input type="submit" class="btn primary" value="Generate">
+}
+

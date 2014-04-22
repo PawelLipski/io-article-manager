@@ -10,9 +10,6 @@ import models.copyright.{Copyright, Contribution, CorrespondingAuthor}
 import org.joda.time.DateTime
 import utils.MailSender.{Mail, send}
 
-/**
- * Created by Zeuko on 05.04.14.
- */
 object CopyrightTransfer extends Controller {
 
   var copyrightData: Copyright = null
