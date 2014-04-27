@@ -3,11 +3,10 @@ package controllers
 import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
-import utils.{MailSender, PdfGenerator}
-
-import views._
-import models.copyright.{Copyright, Contribution, CorrespondingAuthor}
+import models.copyright.{CorrespondingAuthor, Contribution, Copyright}
 import org.joda.time.DateTime
+import views.html
+import utils.{TokenGenerator, PdfGenerator}
 import utils.MailSender.{Mail, send}
 import java.io.File
 
@@ -67,7 +66,7 @@ object CopyrightTransfer extends Controller {
       message = "This is the Journal Manager system.\n" +
         "Your e-mail address was used to fill a copyright transfer form. Details of the transfer can be found in the attached PDF file.\n" +
         "Please confirm the copyright transfer by clicking the link below:\n" +
-        "(LINK)\n" +
+        "http://localhost:9000/confirm/" + TokenGenerator.generateAndSave(copyrightData.correspondingAuthor.email) + "\n" +
         "If you didn't fill the copyright transfer form, please ignore this message.\n",
       attachment = Option(pdfFile)
     )

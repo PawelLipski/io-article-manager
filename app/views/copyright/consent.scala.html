@@ -113,7 +113,7 @@
                 if (author_nr != 1) { // we need to always have one author
                     var $button = $('#remove-author').clone().removeAttr('id');
                     $button.attr('display', 'block');
-                    $button.appendTo(fieldset.children('div')[author_nr-1]);
+                    $button.appendTo($fieldset.children('div')[author_nr-1]);
                 }
             }
 
