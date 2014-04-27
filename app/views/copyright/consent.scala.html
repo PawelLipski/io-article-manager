@@ -1,59 +1,29 @@
-@(transferForm: Form[models.copyright.Copyright])
+@(transferForm: Form[models.copyright.Copyright], consentText: List[String])
 
 @import helper._
     @implicitFieldConstructor = @{
         FieldConstructor(twitterBootstrapInput.render)
     }
 @main("Consent to Publish") {
-    <h2>Consent to publish</h2> <br>
+
+    <h3>Consent to Publish</h3>
     <ol>
-        <li>Computer Science Journal publishes papers that have not been published before and have not been submitted
-            before or in parallel elsewhere. Authors submitting to the Computer Science Journal take the obligation of
-            acting in conformity with this condition.</li>
-        <li>Authors state, that they have full copyright and property rights to this work. At the same time Authors
-            guarantee that the work does not infringe copyright, trademark, patent or other third party's property
-            rights.</li>
-        <li>The Authors oblige themselves to reimburse AGH University of Science and Technology Press in Krakow for
-            any expenses and compensate any financial losses resulting from the third party's claims if it appeared that any
-            of declarations 1 or 2 are untrue.</li>
-        <li>The Authors retain the intellectual property rights associated with the paper published in the Journal, but all the
-            respective material rights pass on to the Publisher
-            of the Computer Science Journal, that is: AGH University of
-            Science and Technology Press, Al. Mickiewicza 30, 30-059 Krakow, Poland.</li>
-        <li>The above includes the right of the Publisher to
-            publish and disseminate the paper in any form available at the
-            date the present document is signed or in the future, with full acknowledgement of the authorship and
-            integrity of the work, represented by the paper.</li>
-        <li>In particular, the Publisher may, in order to assure the widest possible audience for the work published in the Computer Science Journal, make the work included in
-            the databases serving the purpose of worldwide
-            dissemination. Likewise, the Publisher shall make the appropriate information on the work available to
-            abstracting, indexing and archiving services of its
-            choice.</li>
-        <li>In special cases, and upon explicit request from
-            the authors, the above point may be made void, or the scope of
-            making the paper available to the disseminating services made explicit through a separate agreement.</li>
-        <li>The Authors have right to store the work, duplicate it in printing (as well as in the form of a digital recording),
-            to make it available in the digital form, on the Internet and putting into circulation multiplied copies of the
-            work worldwide. However, in case the authors have made the text of the paper public in any way prior to
-            submission to the Journal, without contravening the
-            conditions of point 1 above, like by making it available
-            through a website, at the instance of publication with the Journal this way of making the work public
-            ought to be fully replaced by the pdf copy of the paper as published in the Journal.</li>
-        <li>The submitted papers are subject to the peer review procedure, in which they are evaluated by anonymous
-            independent reviewers. It is assumed that two reviews be prepared per paper. On the basis of reviews decisions
-            are made by the Editors, along with potential indicewed. The
-            final decisions on publication or rejection are also made by the Editors on the basis of reviews obtained.</li>
-        <li>The authors obtain one copy of the volume, in which the paper appeared, free of charge. Any additional copies
-            of the volume, can be purchased from the Publisher.</li>
-        <li>The authors attach the filled-out Appendix
-            and state, that the information provided there (regarding financial disclosure and co-authors contributions) is true.</li>
+        @consentText.map { line => <li>@line</li> }
     </ol>
 
     <style type="text/css">
     #author-template {
     display: none;
     }
+    #remove-author {
+    display:none;
+    }
     </style>
+
+    <button type="button" class="btn btn-default" id="remove-author" onclick="removeButton($(this))">
+        Remove last author
+    </button>
+
 
     @* this is hidden *@
     <div id="author-template">
@@ -85,7 +55,11 @@
             'size -> 30,
             'class -> "form-control"
         )
+
+
+
     </div>
+
 
     @helper.form(action = routes.CopyrightTransfer.submit(), 'class -> "form-horizontal", 'id -> "consent-form") {
         <fieldset>
@@ -131,31 +105,54 @@
             </button>
 
             <script type="text/javascript">
+
+            function removeButton($button_to_remove) {
+                var $fieldset = $button_to_remove.parent('div' ).parent('fieldset' );
+                $button_to_remove.parent('div').remove();
+                author_nr--;
+                if (author_nr != 1) { // we need to always have one author
+                    var $button = $('#remove-author').clone().removeAttr('id');
+                    $button.attr('display', 'block');
+                    $button.appendTo(fieldset.children('div')[author_nr-1]);
+                }
+            }
+
             var author_nr = 0;
-            $(document ).ready(function() {
-            $('#add-new-author').click(function() {
-            // clone the template and remove id
-            var $newAuthor = $('#author-template').clone().removeAttr('id');
+                $(document ).ready(function() {
+                    $('#add-new-author').click(function() {
+                        // clone the template and remove id
+                        var $newAuthor = $('#author-template').clone().removeAttr('id');
+                        // loop over every element and add name attribute
+                        $newAuthor.find("input, textarea" ).each(function() {
+                            $(this).attr('name', 'contribution['+author_nr+'].'+$(this).attr('name'));
+                        });
+                        // unhide it
+                        $newAuthor.attr('display', 'block');
+                        // set author number
+                        $newAuthor.find('.author-nr').html(author_nr + 1);
 
-            // loop over every element and add name attribute
-            $newAuthor.find("input, textarea" ).each(function() {
-            $(this).attr('name', 'contribution['+author_nr+'].'+$(this).attr('name'));
-            });
+                        // insert where it should be
+                        $newAuthor.insertBefore("#add-new-author");
 
-            // unhide it
-            $newAuthor.attr('display', 'block');
+                        if (author_nr != 0) {
+                            var $parent = $newAuthor.parent('fieldset');
+                            var $d = $parent.children('div');
+                            $d.each(function() {
+                                var $b = $(this ).children('button');
+                                if ($b && $b[0]) {
+                                    $b[0].remove()
+                                }
+                            });
+                            var $button = $('#remove-author').clone().removeAttr('id');
+                            $button.attr('display', 'block');
+                            $newAuthor.append($button);
+                        }
+                        author_nr++;
+                    });
+                    // add default contributor
+                    $('#add-new-author').trigger('click');
 
-            // set author number
-            $newAuthor.find('.author-nr').html(author_nr + 1);
-
-            // insert where it should be
-            $newAuthor.insertBefore("#add-new-author");
-            author_nr++;
-            });
-
-            // add default contributor
-            $('#add-new-author').trigger('click');
-            });
+                });
             </script>
 
             <br><legend>Financial disclosure</legend><br>

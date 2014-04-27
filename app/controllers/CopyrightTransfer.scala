@@ -9,6 +9,7 @@ import views._
 import models.copyright.{Copyright, Contribution, CorrespondingAuthor}
 import org.joda.time.DateTime
 import utils.MailSender.{Mail, send}
+import java.io.File
 
 object CopyrightTransfer extends Controller {
 
@@ -36,7 +37,11 @@ object CopyrightTransfer extends Controller {
   )
 
   def index = Action {
-    Ok(html.copyright.consent(form))
+
+    val consentText = scala.io.Source.fromFile(".\\public\\resources\\Computer_Science_ctp.txt").getLines().toList
+
+    //println(new File(".").getAbsolutePath())
+    Ok(html.copyright.consent(form, consentText))
   }
 
   def submit = Action {
