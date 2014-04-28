@@ -37,7 +37,7 @@ object CopyrightTransfer extends Controller {
 
   def index = Action {
 
-    val consentText = scala.io.Source.fromFile(".\\public\\resources\\Computer_Science_ctp.txt").getLines().toList
+    val consentText = scala.io.Source.fromFile("./public/resources/Computer_Science_ctp.txt").getLines().toList
 
     //println(new File(".").getAbsolutePath())
     Ok(html.copyright.consent(form, consentText))

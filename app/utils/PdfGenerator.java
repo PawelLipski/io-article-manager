@@ -58,7 +58,7 @@ public class PdfGenerator {
     }
 
     private static String[] getConsentToPublishText() throws IOException {
-        File file = new File( ".\\\\public\\\\resources\\\\Computer_Science_ctp.txt");
+        File file = new File( "./public/resources/Computer_Science_ctp.txt");
         return Files.readLines(file, Charset.forName("UTF-8")).toArray(new String[] {} );
     }
 
