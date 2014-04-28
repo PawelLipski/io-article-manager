@@ -20,7 +20,7 @@
     }
     </style>
 
-    <button type="button" class="btn btn-default" id="remove-author" onclick="removeButton($(this))">
+    <button type="button" class="btn btn-default" id="remove-author">
         Remove last author
     </button>
 
@@ -106,15 +106,21 @@
 
             <script type="text/javascript">
 
-            function removeButton($button_to_remove) {
-                var $fieldset = $button_to_remove.parent('div' ).parent('fieldset' );
-                $button_to_remove.parent('div').remove();
+            function removeAuthorAction() {
+                $('#author-'+author_nr).remove();
                 author_nr--;
                 if (author_nr != 1) { // we need to always have one author
-                    var $button = $('#remove-author').clone().removeAttr('id');
-                    $button.attr('display', 'block');
-                    $button.appendTo($fieldset.children('div')[author_nr-1]);
+                    var $button = createRemoveAuthorButton();
+                    $button.appendTo($('#author-'+author_nr));
                 }
+            }
+
+            function createRemoveAuthorButton() {
+                var $button = $('#remove-author').clone().removeAttr('id');
+                $button.attr('display', 'block');
+                $button.attr('id', 'remove-author-button');
+                $button.click(removeAuthorAction);
+                return $button;
             }
 
             var author_nr = 0;
@@ -128,23 +134,16 @@
                         });
                         // unhide it
                         $newAuthor.attr('display', 'block');
-                        // set author number
+                        $newAuthor.attr('id', 'author-'+(author_nr + 1));
                         $newAuthor.find('.author-nr').html(author_nr + 1);
 
                         // insert where it should be
                         $newAuthor.insertBefore("#add-new-author");
 
                         if (author_nr != 0) {
-                            var $parent = $newAuthor.parent('fieldset');
-                            var $d = $parent.children('div');
-                            $d.each(function() {
-                                var $b = $(this ).children('button');
-                                if ($b && $b[0]) {
-                                    $b[0].remove()
-                                }
-                            });
-                            var $button = $('#remove-author').clone().removeAttr('id');
-                            $button.attr('display', 'block');
+                            // remove existing button and append new to just created div
+                            $('#remove-author-button' ).remove();
+                            var $button = createRemoveAuthorButton();
                             $newAuthor.append($button);
                         }
                         author_nr++;
