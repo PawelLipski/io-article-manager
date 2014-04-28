@@ -5,179 +5,146 @@
 
     <style type="text/css">
         #table-filter {
-            background : #ccc ;
-        }
-        #table-filter fieldset {
-            border : none ;
-            display : inline ;
+            padding: 10px 0px;
         }
 
-        #data-table {
-            width : 100%;
-            border-spacing: 0px;
-            border-collapse: collapse;
-        }
-
-        #data-table th {
-            font-weight: 500;
-            border: 1px solid #000;
-        }
-
-        #data-table td {
-            border: 1px solid #000;
-            padding: 0px;
+        .gap-sides {
+            margin: 0px 10px;
         }
 
         #data-table td:first-child, #data-table th:first-child {
             text-align: center;
-
         }
 
-        .pagination {
-            margin-top: 10px;
-        }
-        .pagination .page-number {
-            margin: 5px 10px;
+        .green {
+            color: #1be533;
         }
 
-        .pagination .page-number:after {
-            content: ',';
+        .red {
+            color: #e51b24;
         }
-
-        .pagination .page-number:last-child:after {
-            content: '';
-        }
-
-        #input-filter {
-            position: relative;
-            top: 3px;
-        }
-
-        .filter-table .quick { margin-left: 0.5em; font-size: 0.8em; text-decoration: none; }
-        .fitler-table .quick:hover { text-decoration: underline; }
-        td.alt { background-color: #ffc; background-color: rgba(255, 255, 0, 0.2); }
     </style>
 
     <div>
         <div>
-            <form id="table-filter">
-                <fieldset>
+            <form id="table-filter" class="form-inline">
+                <div class="form-group">
                     <span>Journal</span>
-                    <select>
+                    <select class="form-control gap-sides">
                         <option>Computer science</option>
                         <option>New scientist</option>
                         <option>Biologist</option>
                     </select>
-                </fieldset>
-                <fieldset>
+                </div>
+                <div class="form-group">
                     <span>Year</span>
-                    <select>
+                    <select class="form-control gap-sides">
                         <option>2014</option>
                         <option>2013</option>
                         <option>2012</option>
                     </select>
-                </fieldset>
-                <fieldset>
+                </div>
+                <div class="form-group">
                     <span>Volume</span>
-                    <select>
+                    <select class="form-control gap-sides">
                         <option>Vol 13, No 4</option>
                         <option>Vol 13, No 3</option>
                         <option>Vol 13, No 2</option>
                         <option>Vol 13, No 1</option>
                     </select>
-                </fieldset>
-                <fieldset>
-                    <div class="input-filter-container"><input type="search" placeholder="Find..." size="15" id="input-filter"></div>
-                </fieldset>
+                </div>
+                <div class="form-group">
+                    <div class="input-filter-container"><input type="search" class="form-control" placeholder="Find..." size="15" id="input-filter"></div>
+                </div>
             </form>
         </div>
 
-        <table id="data-table">
+        <table id="data-table" class="table table-striped">
             <thead>
                 <tr>
-                    <th><input type="checkbox"></th>
+                    <th><input id="select-all-authors" type="checkbox"></th>
                     <th>Paper title</th>
+                    <th>Confirmed</th>
                     <th>Corresp. author</th>
                     <th>Affiliation</th>
                     <th>E-mail addres</th>
                     <th>Date filled</th>
-                    <th>Place</th>
                     <th>Details</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td><input type="checkbox" name="people[]"></td>
+                    <td><input class="selected-author" type="checkbox" data-author-id="1" name="people[]"></td>
                     <td>Artificial Intelligence</td>
+                    <td><i class="glyphicon glyphicon-ok green"></i></td>
                     <td>John, Towards Lorem Ipsum</td>
                     <td>UC Berkeley</td>
                     <td>john.doe&#64;berkeley.edu</td>
-                    <td>10-10-2014</td>
-                    <td>Berkeley, USA</td>
+                    <td>10-10-2014 12:30</td>
                     <td>
-                        <a href="#">Details</a>
+                        <i class="glyphicon glyphicon-info-sign"></i>
                     </td>
                 </tr>
                 <tr>
-                    <td><input type="checkbox" name="people[]"></td>
+                    <td><input class="selected-author" type="checkbox" data-author-id="2" name="people[]"></td>
                     <td>IEEE Transactions on Computers</td>
+                    <td><i class="glyphicon glyphicon-remove red"></i></td>
                     <td>John, Towards Lorem Ipsum</td>
                     <td>UC Berkeley</td>
                     <td>john.doe&#64;berkeley.edu</td>
-                    <td>10-10-2014</td>
-                    <td>Berkeley, USA</td>
+                    <td>10-10-2014 12:30</td>
                     <td>
-                        <a href="#">Details</a>
+                        <i class="glyphicon glyphicon-info-sign"></i>
                     </td>
                 </tr>
                 <tr>
-                    <td><input type="checkbox" name="people[]"></td>
+                    <td><input class="selected-author" type="checkbox" data-author-id="3" name="people[]"></td>
                     <td>Chemical Engineering Science</td>
+                    <td><i class="glyphicon glyphicon-ok green"></i></td>
                     <td>John, Towards Lorem Ipsum</td>
                     <td>UC Berkeley</td>
                     <td>john.doe&#64;berkeley.edu</td>
-                    <td>10-10-2014</td>
-                    <td>Berkeley, USA</td>
+                    <td>10-10-2014 12:30</td>
                     <td>
-                        <a href="#">Details</a>
+                        <i class="glyphicon glyphicon-info-sign"></i>
                     </td>
                 </tr>
                 <tr>
-                    <td><input type="checkbox" name="people[]"></td>
+                    <td><input class="selected-author" type="checkbox" data-author-id="4" name="people[]"></td>
                     <td>NASA Tech Briefs</td>
+                    <td><i class="glyphicon glyphicon-remove red"></i></td>
                     <td>John, Towards Lorem Ipsum</td>
                     <td>UC Berkeley</td>
                     <td>john.doe&#64;berkeley.edu</td>
-                    <td>10-10-2014</td>
-                    <td>Berkeley, USA</td>
+                    <td>10-10-2014 12:30</td>
                     <td>
-                        <a href="#">Details</a>
+                        <i class="glyphicon glyphicon-info-sign"></i>
                     </td>
                 </tr>
                 <tr>
-                    <td><input type="checkbox" name="people[]"></td>
+                    <td><input class="selected-author" type="checkbox" data-author-id="5" name="people[]"></td>
                     <td>Annals of Mathematics</td>
+                    <td><i class="glyphicon glyphicon-ok green"></i></td>
                     <td>John, Towards Lorem Ipsum</td>
                     <td>UC Berkeley</td>
                     <td>john.doe&#64;berkeley.edu</td>
-                    <td>10-10-2014</td>
-                    <td>Berkeley, USA</td>
+                    <td>10-10-2014 12:30</td>
                     <td>
-                        <a href="#">Details</a>
+                        <i class="glyphicon glyphicon-info-sign"></i>
                     </td>
                 </tr>
 
                 @for(author <- authors) {
                     <tr>
-                        <td><input type="checkbox" name="people[]"></td>
+                        <td><input class="selected-author" type="checkbox" data-author-id="id_from_db" name="people[]"></td>
                         <td>@author.papertitle</td>
+                        <td><i class="glyphicon glyphicon-ok green"></i></td>
                         <td>@author.lastname, @author.username</td>
                         <td>@author.affiliation</td>
                         <td>@author.email</td>
                         <td>@author.date_filled</td>
-                        <td>@author.place</td>
                         <td>
-                            <a href="#">Details</a>
+                            <i class="glyphicon glyphicon-info-sign"></i>
                             @*
                             <a href=" @routes.Authors.edit(author.id)">E</a>
                             @helper.form(routes.Authors.delete(author.id)) {
@@ -198,7 +165,7 @@
     </div>
 
     <div id="bottomrow" style="padding: 10px 0px; position: relative">
-        <button style="position: absolute; right: 10px; top: 20px">
+        <button type="button" id="generate-report" class="btn btn-default" style="position: absolute; right: 10px; top: 20px">
             Generate report
         </button>
     </div>
