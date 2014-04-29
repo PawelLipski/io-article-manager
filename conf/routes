@@ -22,5 +22,11 @@ POST        /authors/:id                            controllers.Authors.update(i
 POST        /authors/:id/delete                     controllers.Authors.delete(id: Int)
 
 #ranking
-GET         /report                                controllers.ReportGenerator.index
-POST        /report/gen                            controllers.ReportGenerator.submit
+GET         /ranking                               controllers.ReportGenerator.index
+POST        /ranking                               controllers.ReportGenerator.submit
+
+#lists
+GET         /lists/authors                         controllers.Lists.index
+POST        /lists/authors                         controllers.Lists.indexPost
+GET         /lists/rewriters                       controllers.Lists.rewriters
+POST        /lists/rewriters                       controllers.Lists.rewritersPost
