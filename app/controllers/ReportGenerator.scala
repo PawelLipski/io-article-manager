@@ -37,8 +37,9 @@ object ReportGenerator extends Controller {
           val percentOfForeignReviewers = RankingDataExtractorOjsDao.getPercentOfForeignReviewers(ojsJournalId, year)
           val numberOfPublishedArticles = RankingDataExtractorOjsDao.getNumberOfPublishedArticles(ojsJournalId, year)
           val listOfUnknownAuthors = RankingDataExtractorOjsDao.getListOfUnknownAuthors(ojsJournalId, year)
+          val listOfUnknownReviewers= RankingDataExtractorOjsDao.getListOfUnknownReviewers(ojsJournalId, year)
 
-          Ok( html.ranking.report(form.fill(ranking),percentOfForeignAuthors, percentOfForeignReviewers, numberOfPublishedArticles, listOfUnknownAuthors))
+          Ok( html.ranking.report(form.fill(ranking),percentOfForeignAuthors, percentOfForeignReviewers, numberOfPublishedArticles, listOfUnknownAuthors, listOfUnknownReviewers))
         }
       )
   }
