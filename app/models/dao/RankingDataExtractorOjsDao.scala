@@ -22,8 +22,14 @@ object RankingDataExtractorOjsDao {
 
   def getListOfUnknownAuthors(ojsJournalId: Int, year: Int):Iterable[Author] = {
     List(
-      new Author("Name_1", "Surname_1", "Computer Science", "Poland", "2014-01-01", "fake@example.com", "AGH"),
-      new Author("Name_2", "Surname_2", "Computer Science", "USA", "2014-02-01", "fake2@example.com", "MIT"))
+      new Author("Name_1", "Surname_1", "Computer Science", null, "2014-01-01", "fake@example.com", "AGH"),
+      new Author("Name_2", "Surname_2", "Computer Science", null, "2014-02-01", "fake2@example.com", "MIT"))
+  }
+
+  def getListOfUnknownReviewers(ojsJournalId: Int, year: Int):Iterable[Author] = {
+    List(
+      new Author("Reviewer 1", "Surname_1", "Computer Science", null, "2014-01-01", "fake@example.com", "UJ"),
+      new Author("Reviewer 2", "Surname_2", "Computer Science", null, "2014-02-01", "fake2@example.com", "Univerity of Cambodia"))
   }
 
   def getListOJournals() = {
