@@ -1,5 +1,5 @@
 @(transferForm: Form[models.copyright.Copyright], consentText: List[String])
-
+@import models.copyright.Copyright;
 @import helper._
     @implicitFieldConstructor = @{
         FieldConstructor(twitterBootstrapInput.render)
@@ -153,8 +153,7 @@
 
                 });
             </script>
-
-            <br><legend>Financial disclosure</legend><br>
+            <br><br><legend>Financial disclosure</legend><br>
 
         @textarea(
             transferForm("financial"),
@@ -163,7 +162,7 @@
         )
 
         </fieldset>
-        <input id="consent-form-send" type="submit" class="btn primary" value="Send">
+        <input id="consent-form-send" type="submit" class="btn btn-primary" value="Send">
     }
 
 }
