@@ -53,7 +53,7 @@ object CopyrightTransfer extends Controller {
       )
   }
 
-  def confirm = Action {
+  def confirm = Action { request =>
     val pdfFile = java.io.File.createTempFile("CopyrightTransferForm", ".pdf")
     PdfGenerator.generate(copyrightData, dateFilled, ipAddress, pdfFile)
     send a new Mail(
@@ -63,7 +63,7 @@ object CopyrightTransfer extends Controller {
       message = "This is the Journal Manager system.\n" +
         "Your e-mail address was used to fill a copyright transfer form. Details of the transfer can be found in the attached PDF file.\n" +
         "Please confirm the copyright transfer by clicking the link below:\n" +
-        "http://localhost:9000/confirm/" + TokenGenerator.generateAndSave(copyrightData.correspondingAuthor.email) + "\n" +
+        "http://" +  request.host + "/confirm/" + TokenGenerator.generateAndSave(copyrightData.correspondingAuthor.email) + "\n" +
         "If you didn't fill the copyright transfer form, please ignore this message.\n",
       attachment = Option(pdfFile)
     )
