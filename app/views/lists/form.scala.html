@@ -1,0 +1,35 @@
+@(authorListForm: Form[models.reports.AuthorList], target: Call)
+@import models.reports.ArticleStatus
+
+@import helper._
+    @implicitFieldConstructor = @{
+        FieldConstructor(twitterBootstrapInput.render)
+    }
+@import views.html.helper.inputText
+
+@helper.form(action = target, 'class -> "form-horizontal", 'id -> "consent-form") {
+    @select(
+        authorListForm("journal.id"),
+        options = List(new Tuple2(null, null)).++(models.RankingDataExtractorOjsDao.getListOfJournals.map(j => new Tuple2(j.id.toString, j.title))).seq,
+        '_label -> "Journal",
+        'class -> "form-control",
+        'inputDivClass -> "col-lg-8"
+    )
+    @inputText(
+        authorListForm("year"),
+        '_label -> "Year",
+        'class -> "form-control",
+        'type -> "number",
+        'min -> "2013",
+        'max -> "2048"
+    )
+    @select(
+        authorListForm("article status"),
+        options = List(new Tuple2(null, null)).++(ArticleStatus.values.toList.map(j => new Tuple2(j.toString, j.toString))).seq,
+        '_label -> "Article status",
+        'class -> "form-control",
+        'inputDivClass -> "col-lg-8"
+    )
+    <input type="submit" class="btn primary" value="Generate">
+}
+

@@ -1,71 +1,16 @@
-@(reportForm: Form[models.reports.Report], percentOfForeignAuthors: Double, percentOfForeignReviewers: Double, numberOfPublishedArticles: Int, listOfUnknownAuthors: Iterable[models.Author])
+@(reportForm: Form[models.reports.Report], percentOfForeignAuthors: Double, percentOfForeignReviewers: Double, numberOfPublishedArticles: Int, listOfUnknownAuthors: Iterable[models.Author], listOfUnknownReviewers: Iterable[models.Author])
 
 @main("Ranking") {
 
     <div class="col-md-4">
-        @ranking.form(reportForm)
+    @ranking.form(reportForm)
     </div>
     <div class="col-md-8">
 
         <h1>Journal manager</h1>
 
-        <style type="text/css">
-        #table-filter {
-        background : #ccc ;
-        }
-        #table-filter fieldset {
-        border : none ;
-        display : inline ;
-        }
 
-        #data-table {
-        width : 100 % ;
-        border-spacing : 0 px ;
-        border-collapse : collapse ;
-        }
-
-        #data-table th {
-        font-weight : 500 ;
-        border : 1 px solid #000 ;
-        }
-
-        #data-table td {
-        border : 1 px solid #000 ;
-        padding : 0 px ;
-        }
-
-        #data-table td : first-child, #data-table th : first-child {
-        text-align : center ;
-
-        }
-
-        .pagination {
-        margin-top : 10 px ;
-        }
-        .pagination.page-number {
-        margin : 5 px 10 px ;
-        }
-
-        .pagination.page-number : after {
-        content : ',' ;
-        }
-
-        .pagination.page-number : last-child : after {
-        content : '' ;
-        }
-
-        #input-filter {
-        position : relative ;
-        top : 3 px ;
-        }
-
-        .filter-table.quick { margin-left : 0.5 em ; font-size : 0.8 em ; text-decoration : none ; }
-        .fitler-table.quick : hover { text-decoration : underline ; }
-        td.alt { background-color : #ffc ; background-color : rgba ( 255, 255, 0, 0.2 ) ; }
-        </style>
-
-
-        <table>
+        <table class="table">
             <thead>
                 <tr>
                     <td>Parameter</td>
@@ -96,7 +41,7 @@
         <div>
             <h1>Authors with unknown affiliation:</h1>
 
-            <table id="data-table">
+            <table id="data-table" class="table">
                 <thead>
                     <tr>
                         <th><input type="checkbox"></th>
@@ -110,17 +55,48 @@
                 </thead>
                 <tbody>
 
-                    @for(author <- listOfUnknownAuthors) {
-                        <tr>
-                            <td><input type="checkbox" name="people[]"></td>
-                            <td>@author.papertitle</td>
-                            <td>@author.lastname, @author.username</td>
-                            <td>@author.affiliation</td>
-                            <td>@author.email</td>
-                            <td>@author.date_filled</td>
-                            <td>@author.place</td>
-                        </tr>
-                    }
+                @for(author <- listOfUnknownAuthors) {
+                    <tr>
+                        <td><input type="checkbox" name="people[]"></td>
+                        <td>@author.papertitle</td>
+                        <td>@author.lastname, @author.username</td>
+                        <td>@author.affiliation</td>
+                        <td>@author.email</td>
+                        <td>@author.date_filled</td>
+                        <td>@author.place</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <h1>Reviewers with unknown affiliation:</h1>
+
+            <table id="data-table" class="table">
+                <thead>
+                    <tr>
+                        <th><input type="checkbox"></th>
+                        <th>Paper title</th>
+                        <th>Corresp. author</th>
+                        <th>Affiliation</th>
+                        <th>E-mail addres</th>
+                        <th>Date filled</th>
+                        <th>Place</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                @for(author <- listOfUnknownReviewers) {
+                    <tr>
+                        <td><input type="checkbox" name="people[]"></td>
+                        <td>@author.papertitle</td>
+                        <td>@author.lastname, @author.username</td>
+                        <td>@author.affiliation</td>
+                        <td>@author.email</td>
+                        <td>@author.date_filled</td>
+                        <td>@author.place</td>
+                    </tr>
+                }
                 </tbody>
             </table>
         </div>

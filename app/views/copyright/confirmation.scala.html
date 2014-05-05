@@ -1,0 +1,14 @@
+@(email : String)
+
+@import helper._
+
+@implicitFieldConstructor = @{
+    FieldConstructor(twitterBootstrapInput.render)
+}
+
+@main("Confirmed") {
+    <h4>Thank you for filling the form.</h4>
+    <p>Confirmation e-mail has been sent to <i>@email</i>. Please check your mailbox.</p>
+}
+
+

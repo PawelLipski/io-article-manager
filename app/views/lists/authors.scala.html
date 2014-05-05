@@ -1,0 +1,40 @@
+@(authors: Iterable[models.reports.ArticleAuthor], authorListForm: Form[models.reports.AuthorList], topic: String, target: Call)
+
+@main(topic) {
+    <h1>@topic</h1>
+
+    <div class="col-md-4">
+    @lists.form(authorListForm, target)
+    </div>
+
+    <div class="col-md-8">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name, Surname</th>
+                    <th>Article</th>
+                    <th>Article status</th>
+                    <th>Journal</th>
+                    <th>Affiliation</th>
+                    <th>E-mail addres</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            @for(author <- authors) {
+                <tr>
+                    <td>@author.lastname, @author.username</td>
+                    <td>@author.article.title</td>
+                    <td>@author.article.status.toString</td>
+                    <td>@author.journal.title</td>
+                    <td>@author.affiliation</td>
+                    <td>@author.email</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+
+    </div>
+    <div class="clearfix" />
+
+}

@@ -1,5 +1,6 @@
 package utils;
 
+import com.google.common.io.Files;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Paragraph;
@@ -12,6 +13,7 @@ import scala.collection.Iterator;
 import scala.collection.immutable.List;
 
 import java.io.*;
+import java.nio.charset.Charset;
 
 /**
  * @author Piotr Góralczyk
@@ -30,10 +32,19 @@ public class PdfGenerator {
     }
 
     private static void generate(Copyright copyright, DateTime dateFilled, String ipAddress, OutputStream outputStream) throws DocumentException, IOException {
+        String[] list = getConsentToPublishText();
+
         Document document = new Document();
         PdfWriter.getInstance(document, outputStream);
         document.open();
-        document.add(new Paragraph("Copyright transfer form\n\n"));
+        document.add(new Paragraph("Consent to Publish\n"));
+        for (int i = 0; i < list.length; i++) {
+            String line = list[i];
+            Paragraph consentParagraph = new Paragraph((i+1)+":\t\t" + line);
+            consentParagraph.setAlignment(Paragraph.ALIGN_JUSTIFIED);
+            document.add(consentParagraph);
+        }
+        document.add(new Paragraph("\nCopyright transfer form\n\n"));
         document.add(createParagraph("Date filled", dateFilled));
         document.add(createParagraph("IP address", ipAddress));
         document.add(createParagraph("\nArticle ID", "1"));
@@ -44,6 +55,11 @@ public class PdfGenerator {
         document.add(createParagraph("\nFinancial disclosure", copyright.financialDisclosure()));
         document.close();
         outputStream.close();
+    }
+
+    private static String[] getConsentToPublishText() throws IOException {
+        File file = new File( "./public/resources/Computer_Science_ctp.txt");
+        return Files.readLines(file, Charset.forName("UTF-8")).toArray(new String[] {} );
     }
 
     private static PdfPTable createContributionTable(List<Contribution> contributionList) {
