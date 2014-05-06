@@ -67,7 +67,7 @@ object Application extends Controller {
 
   def index = Action {
 
-    var contents = "Your new application is ready. So let's start coding, John Doe! "
+    var contents = "I`m ready. So let's start coding, John Slon! "
 
     contents += "MySQL: "
     contents += mysql_test
