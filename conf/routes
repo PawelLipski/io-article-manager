@@ -28,5 +28,5 @@ POST        /ranking                               controllers.ReportGenerator.s
 #lists
 GET         /lists/authors                         controllers.Lists.index
 POST        /lists/authors                         controllers.Lists.indexPost
-GET         /lists/rewriters                       controllers.Lists.rewriters
-POST        /lists/rewriters                       controllers.Lists.rewritersPost
+GET         /lists/reviewers                       controllers.Lists.reviewers
+POST        /lists/reviewers                       controllers.Lists.reviewersPost

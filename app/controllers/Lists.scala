@@ -35,11 +35,11 @@ object Lists extends Controller {
       )
   }
 
-  def rewriters = Action {
-    Ok(html.lists.authors(RankingDataExtractorOjsDao.getListOfAllRewriters(0, 0, null), form,  "List of Rewriters", routes.Lists.rewritersPost()))
+  def reviewers = Action {
+    Ok(html.lists.authors(RankingDataExtractorOjsDao.getListOfAllRewriters(0, 0, null), form,  "List of Rewriters", routes.Lists.reviewersPost()))
   }
 
-  def rewritersPost = Action {
+  def reviewersPost = Action {
     implicit request =>
       form.bindFromRequest.fold(
         errors => BadRequest("Unspecified error occurred, nobody knows what happened yet. Try again.\n"+errors.errors),
@@ -48,7 +48,7 @@ object Lists extends Controller {
           val year = authorList.year
           val status = authorList.articleStatus
 
-          Ok( html.lists.authors(RankingDataExtractorOjsDao.getListOfAllRewriters(ojsJournalId, year, status), form.fill(authorList), "List of Rewriters", routes.Lists.rewritersPost()))
+          Ok( html.lists.authors(RankingDataExtractorOjsDao.getListOfAllRewriters(ojsJournalId, year, status), form.fill(authorList), "List of reviewers", routes.Lists.reviewersPost()))
         }
       )
   }
