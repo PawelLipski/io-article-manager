@@ -1,0 +1,105 @@
+@(reportForm: Form[models.reports.Report], percentOfForeignAuthors: Double, percentOfForeignReviewers: Double, numberOfPublishedArticles: Int, listOfUnknownAuthors: Iterable[models.Author], listOfUnknownReviewers: Iterable[models.Author])
+
+@main("Ranking") {
+
+    <div class="col-md-4">
+    @ranking.form(reportForm)
+    </div>
+    <div class="col-md-8">
+
+        <h1>Journal manager</h1>
+
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <td>Parameter</td>
+                    <td>Value</td>
+                </tr>
+            </thead>
+            <tbody>
+
+                <tr>
+                    <td>foreign authors</td>
+                    <td>@percentOfForeignAuthors %</td>
+                </tr>
+                <tr>
+                    <td>foreign reviewers</td>
+                    <td>@percentOfForeignReviewers %</td>
+                </tr>
+                <tr>
+                    <td>published articles</td>
+                    <td>@numberOfPublishedArticles</td>
+                </tr>
+                <tr>
+                    <td>unknown authors</td>
+                    <td>@listOfUnknownAuthors.size</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div>
+            <h1>Authors with unknown affiliation:</h1>
+
+            <table id="data-table" class="table">
+                <thead>
+                    <tr>
+                        <th><input type="checkbox"></th>
+                        <th>Paper title</th>
+                        <th>Corresp. author</th>
+                        <th>Affiliation</th>
+                        <th>E-mail addres</th>
+                        <th>Date filled</th>
+                        <th>Place</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                @for(author <- listOfUnknownAuthors) {
+                    <tr>
+                        <td><input type="checkbox" name="people[]"></td>
+                        <td>@author.papertitle</td>
+                        <td>@author.lastname, @author.username</td>
+                        <td>@author.affiliation</td>
+                        <td>@author.email</td>
+                        <td>@author.date_filled</td>
+                        <td>@author.place</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <h1>Reviewers with unknown affiliation:</h1>
+
+            <table id="data-table" class="table">
+                <thead>
+                    <tr>
+                        <th><input type="checkbox"></th>
+                        <th>Paper title</th>
+                        <th>Corresp. author</th>
+                        <th>Affiliation</th>
+                        <th>E-mail addres</th>
+                        <th>Date filled</th>
+                        <th>Place</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                @for(author <- listOfUnknownReviewers) {
+                    <tr>
+                        <td><input type="checkbox" name="people[]"></td>
+                        <td>@author.papertitle</td>
+                        <td>@author.lastname, @author.username</td>
+                        <td>@author.affiliation</td>
+                        <td>@author.email</td>
+                        <td>@author.date_filled</td>
+                        <td>@author.place</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="clearfix"/>
+}

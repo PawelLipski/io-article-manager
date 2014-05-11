@@ -1,0 +1,14 @@
+@(reportForm: Form[models.reports.Report])
+
+@import helper._
+    @implicitFieldConstructor = @{
+        FieldConstructor(twitterBootstrapInput.render)
+    }
+@import views.html.helper.inputText
+@main("Ranking") {
+
+    <div class="col-md-4">
+    @ranking.form(reportForm)
+    </div>
+    <div class="clearfix"/>
+}

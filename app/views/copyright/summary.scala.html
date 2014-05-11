@@ -1,0 +1,64 @@
+@(copyrightData: models.copyright.Copyright, dateFilled: org.joda.time.DateTime, ipAddress: String, copyrightForm: Form[models.copyright.Copyright])
+
+@import helper._
+
+
+
+@main("Consent to Publish") {
+
+    <style>
+    p   { text-indent:50px;  }
+    </style>
+
+    <h4>Paper title</h4>
+    <p>@copyrightData.title</p><br>
+
+    <h4>Corresponding author</h4>
+    <label>Name:</label>
+    <p>@copyrightData.correspondingAuthor.name</p>
+    <label>Surname:</label>
+    <p>@copyrightData.correspondingAuthor.affiliation</p>
+    <label>Email:</label>
+    <p>@copyrightData.correspondingAuthor.email</p>
+    <br>
+    <h4>Authors</h4>
+
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Name, surname</th>
+                <th>Affiliation</th>
+                <th>Contribution to the paper</th>
+                <th>Estimated % of the total contribution</th>
+            </tr>
+        </thead>
+    @copyrightData.contribution.map { contribution =>
+        <tr>
+            <td>@contribution.authorName</td>
+            <td>@contribution.affiliation</td>
+            <td>@contribution.contribution</td>
+            <td>@contribution.percent</td>
+        </tr>
+    }
+
+    </table>
+    <br>
+    <h4>Financial disclosure:</h4>
+    <p>@copyrightData.financialDisclosure</p>
+
+    <br>
+    <label>Date filled:</label>
+    <p>@Html(dateFilled.toString("yyyy-MM-dd HH:mm:ss SSSZZ"))</p>
+    <label>IP address:</label>
+    <p>@Html(ipAddress)</p>
+    <br>
+
+    @form(action = routes.CopyrightTransfer.confirm) {
+        <input type="submit" value="Confirm" class="btn btn-primary"/>
+    }
+
+    <br>
+
+    <input type="submit" value="Back" class="btn btn-primary" onClick="history.go(-1)"/>
+
+}

@@ -1,0 +1,176 @@
+@(authors: Iterable[models.Author])
+
+@main("All Authors") {
+    <h1>Journal manager</h1>
+
+    <style type="text/css">
+        #table-filter {
+            padding: 10px 0px;
+        }
+
+        .gap-sides {
+            margin: 0px 10px;
+        }
+
+        #data-table td:first-child, #data-table th:first-child {
+            text-align: center;
+        }
+
+        .green {
+            color: #1be533;
+        }
+
+        .red {
+            color: #e51b24;
+        }
+    </style>
+
+    <div>
+        <div>
+            <form id="table-filter" class="form-inline">
+                <div class="form-group">
+                    <span>Journal</span>
+                    <select class="form-control gap-sides">
+                        <option>Computer science</option>
+                        <option>New scientist</option>
+                        <option>Biologist</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <span>Year</span>
+                    <select class="form-control gap-sides">
+                        <option>2014</option>
+                        <option>2013</option>
+                        <option>2012</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <span>Volume</span>
+                    <select class="form-control gap-sides">
+                        <option>Vol 13, No 4</option>
+                        <option>Vol 13, No 3</option>
+                        <option>Vol 13, No 2</option>
+                        <option>Vol 13, No 1</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <div class="input-filter-container"><input type="search" class="form-control" placeholder="Find..." size="15" id="input-filter"></div>
+                </div>
+            </form>
+        </div>
+
+        <table id="data-table" class="table table-striped">
+            <thead>
+                <tr>
+                    <th><input id="select-all-authors" type="checkbox"></th>
+                    <th>Paper title</th>
+                    <th>Confirmed</th>
+                    <th>Corresp. author</th>
+                    <th>Affiliation</th>
+                    <th>E-mail addres</th>
+                    <th>Date filled</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><input class="selected-author" type="checkbox" data-author-id="1" name="people[]"></td>
+                    <td>Artificial Intelligence</td>
+                    <td><i class="glyphicon glyphicon-ok green"></i></td>
+                    <td>John, Towards Lorem Ipsum</td>
+                    <td>UC Berkeley</td>
+                    <td>john.doe&#64;berkeley.edu</td>
+                    <td>10-10-2014 12:30</td>
+                    <td>
+                        <i class="glyphicon glyphicon-info-sign"></i>
+                    </td>
+                </tr>
+                <tr>
+                    <td><input class="selected-author" type="checkbox" data-author-id="2" name="people[]"></td>
+                    <td>IEEE Transactions on Computers</td>
+                    <td><i class="glyphicon glyphicon-remove red"></i></td>
+                    <td>John, Towards Lorem Ipsum</td>
+                    <td>UC Berkeley</td>
+                    <td>john.doe&#64;berkeley.edu</td>
+                    <td>10-10-2014 12:30</td>
+                    <td>
+                        <i class="glyphicon glyphicon-info-sign"></i>
+                    </td>
+                </tr>
+                <tr>
+                    <td><input class="selected-author" type="checkbox" data-author-id="3" name="people[]"></td>
+                    <td>Chemical Engineering Science</td>
+                    <td><i class="glyphicon glyphicon-ok green"></i></td>
+                    <td>John, Towards Lorem Ipsum</td>
+                    <td>UC Berkeley</td>
+                    <td>john.doe&#64;berkeley.edu</td>
+                    <td>10-10-2014 12:30</td>
+                    <td>
+                        <i class="glyphicon glyphicon-info-sign"></i>
+                    </td>
+                </tr>
+                <tr>
+                    <td><input class="selected-author" type="checkbox" data-author-id="4" name="people[]"></td>
+                    <td>NASA Tech Briefs</td>
+                    <td><i class="glyphicon glyphicon-remove red"></i></td>
+                    <td>John, Towards Lorem Ipsum</td>
+                    <td>UC Berkeley</td>
+                    <td>john.doe&#64;berkeley.edu</td>
+                    <td>10-10-2014 12:30</td>
+                    <td>
+                        <i class="glyphicon glyphicon-info-sign"></i>
+                    </td>
+                </tr>
+                <tr>
+                    <td><input class="selected-author" type="checkbox" data-author-id="5" name="people[]"></td>
+                    <td>Annals of Mathematics</td>
+                    <td><i class="glyphicon glyphicon-ok green"></i></td>
+                    <td>John, Towards Lorem Ipsum</td>
+                    <td>UC Berkeley</td>
+                    <td>john.doe&#64;berkeley.edu</td>
+                    <td>10-10-2014 12:30</td>
+                    <td>
+                        <i class="glyphicon glyphicon-info-sign"></i>
+                    </td>
+                </tr>
+
+                @for(author <- authors) {
+                    <tr>
+                        <td><input class="selected-author" type="checkbox" data-author-id="id_from_db" name="people[]"></td>
+                        <td>@author.papertitle</td>
+                        <td><i class="glyphicon glyphicon-ok green"></i></td>
+                        <td>@author.lastname, @author.username</td>
+                        <td>@author.affiliation</td>
+                        <td>@author.email</td>
+                        <td>@author.date_filled</td>
+                        <td>
+                            <i class="glyphicon glyphicon-info-sign"></i>
+                            @*
+                            <a href=" @routes.Authors.edit(author.id)">E</a>
+                            @helper.form(routes.Authors.delete(author.id)) {
+                                <button type="submit">Delete</button>
+                            } *@
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <script src="@routes.Assets.at("javascripts/jquery.table-filter.js")" type="text/javascript"></script>
+        <script type="text/javascript">
+
+        $("#data-table").addTableFilter({ inputid: 'input-filter' });
+
+        </script>
+    </div>
+
+    <div id="bottomrow" style="padding: 10px 0px; position: relative">
+        <button type="button" id="generate-report" class="btn btn-default" style="position: absolute; right: 10px; top: 20px">
+            Generate report
+        </button>
+    </div>
+
+    <br><br><br><br>
+
+    <a href="@routes.Authors.add">Add new</a>
+}
