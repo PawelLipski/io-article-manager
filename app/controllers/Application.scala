@@ -18,8 +18,9 @@ object Application extends Controller {
       val statement = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)
 
       val rs = statement.executeQuery("SELECT * FROM journals")
+
       while (rs.next)
-        contents += rs.getString("path") + " "      
+        contents += rs.getString("path") + " "
 
     } finally {
       conn.close()

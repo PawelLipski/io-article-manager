@@ -29,10 +29,9 @@ object RankingDataExtractorOjsDao {
       val rs = statement.executeQuery(napis)
 
        val contents = rs.getInt("count(distinct user_id)")
-      val nexQ = " SELECT count( DISTINCT user_id ) FROM articles INNER JOIN authors ON articles.user_id = authors.author_id WHERE articles.journal_id =" + ojsJournalId.toString() "AND year( articles.date_submitted ) =" + year.toString() +
-    "AND authors.country != 'poland'"
-
-      val nt = statement.executeQuery(nexQ)
+      val nexQ = "SELECT count( DISTINCT user_id ) FROM articles INNER JOIN authors ON articles.user_id = authors.author_id WHERE articles.journal_id =" + ojsJournalId.toString() + "AND year( articles.date_submitted ) =" + year.toString() + "AND authors.country != 'poland'"
+      val stat = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)
+      val nt = stat.executeQuery(nexQ)
 
       val second_var = nt.getInt("count( DISTINCT user_id )")
 
@@ -90,7 +89,8 @@ object RankingDataExtractorOjsDao {
         "AND year( review_assignments.date_assigned) =" + year.toString() +
         "AND authors.country != 'poland'"
 
-      val nt = statement.executeQuery(nexQ)
+      val stat = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)
+      val nt = stat.executeQuery(nexQ)
 
       val second_var = nt.getInt("count(distinct reviewer_id)")
 
