@@ -20,6 +20,7 @@ object CopyrightTransfer extends Controller {
 
   val form: Form[Copyright] = Form(
     mapping(
+      "ojsId" -> number,
       "title" -> text,
       "correspondingAuthor" -> mapping(
         "name" -> text,
@@ -46,7 +47,7 @@ object CopyrightTransfer extends Controller {
       form.bindFromRequest.fold(
         errors => BadRequest("Unspecified error occurred, nobody knows what happened yet. Try again."),
         cd => {
-          copyrightTransferRequest = CopyrightTransferRequest(12345, cd, DateTime.now(), request.remoteAddress, CopyrightTransferStatus.UNCONFIRMED)
+          copyrightTransferRequest = CopyrightTransferRequest(None, cd, DateTime.now(), request.remoteAddress, CopyrightTransferStatus.UNCONFIRMED)
           Ok(html.copyright.summary(copyrightTransferRequest, form.fill(cd)))
         }
       )
