@@ -8,7 +8,7 @@ import org.joda.time.DateTime
 import views.html
 import utils.{TokenGenerator, PdfGenerator}
 import utils.MailSender.{Mail, send}
-import java.io.File
+import models.dao.CopyrightTransferOjsDao
 
 object CopyrightTransfer extends Controller {
 
@@ -36,8 +36,15 @@ object CopyrightTransfer extends Controller {
   )
 
   def index = Action {
-    val consentText = scala.io.Source.fromFile("./public/resources/Computer_Science_ctp.txt").getLines().toList
-    Ok(html.copyright.consent(form, consentText))
+    Ok(html.copyright.index())
+  }
+
+  def consent = Action {
+    implicit request => {
+      val id = request.body.asFormUrlEncoded.get("article-id").apply(0)
+      val consentText = scala.io.Source.fromFile("./public/resources/Computer_Science_ctp.txt").getLines().toList
+      Ok(html.copyright.consent(form, consentText))
+    }
   }
 
   def submit = Action {

@@ -1,0 +1,18 @@
+@()
+
+@import helper._
+
+    @implicitFieldConstructor = @{
+        FieldConstructor(twitterBootstrapInput.render)
+    }
+
+@main("Consent to publish") {
+
+    @form(action = routes.CopyrightTransfer.consent) {
+        Enter your article ID: <input type="text" name="article-id"><br><br>
+        <input type="submit" value="Submit" class="btn btn-primary"/>
+    }
+
+
+
+}
