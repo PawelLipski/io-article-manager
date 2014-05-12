@@ -1,0 +1,14 @@
+@(ojsDbTestResults: String, internalDbTestResults: String)
+
+@main("IO Article Manager") {
+
+    <div class="container-fluid">
+
+        <h3>Database connection test results</h3>
+        <h4>OJS database</h4>
+        <p>@ojsDbTestResults</p>
+        <h4>Internal database</h4>
+        <p>@internalDbTestResults</p>
+
+    </div>
+}
