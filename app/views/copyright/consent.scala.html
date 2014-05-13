@@ -1,4 +1,4 @@
-@(transferForm: Form[models.copyright.Copyright], consentText: List[String])
+@(transferForm: Form[models.copyright.Copyright], transferFormData: models.copyright.Copyright, consentText: List[String])
 @import models.copyright.Copyright;
 @import helper._
     @implicitFieldConstructor = @{
@@ -27,7 +27,7 @@
 
     @* this is hidden *@
     <div id="author-template">
-        <h4>Author <span class="author-nr">1</span>:</h4>
+        <h4>Author <span class="author-nr">@transferFormData.contribution.length</span>:</h4>
         @inputText(
             transferForm("authorName"),
             '_label -> "Author name: ",
@@ -55,9 +55,6 @@
             'size -> 30,
             'class -> "form-control"
         )
-
-
-
     </div>
 
 
@@ -68,9 +65,9 @@
             <h4>Paper title</h4>
             @inputText(
                 transferForm("title"),
-                '_label -> "",
                 'size -> 80,
-                'class -> "form-control"
+                'class -> "form-control",
+                '_label -> ""
             )
             <h4>Corresponding author</h4><br>
 
@@ -100,6 +97,37 @@
 
         <fieldset>
             <legend>Contribution to paper</legend>
+            @for((item, index) <- transferFormData.contribution.zipWithIndex) {
+                <h4>Author <span class="author-nr">@(index+1)</span>:</h4>
+                @inputText(
+                    transferForm("contribution[" + index + "].authorName"),
+                    '_label -> "Author name: ",
+                    'size -> 30,
+                    'class -> "form-control"
+                )
+
+                @inputText(
+                    transferForm("contribution[" + index + "].affiliation"),
+                    '_label -> "Affiliation: ",
+                    'size -> 30,
+                    'class -> "form-control"
+                )
+
+                @textarea(
+                    transferForm("contribution[" + index + "].contribution"),
+                    '_label -> "Contribution: ",
+                    'size -> 30,
+                    'class -> "form-control"
+                )
+
+                @inputText(
+                    transferForm("contribution[" + index + "].percent"),
+                    '_label -> "Percent: ",
+                    'size -> 30,
+                    'class -> "form-control"
+                )
+            }
+
             <button type="button" class="btn btn-default" id="add-new-author">
                 Add new author
             </button>
@@ -123,35 +151,33 @@
                 return $button;
             }
 
-            var author_nr = 0;
-                $(document ).ready(function() {
-                    $('#add-new-author').click(function() {
-                        // clone the template and remove id
-                        var $newAuthor = $('#author-template').clone().removeAttr('id');
-                        // loop over every element and add name attribute
-                        $newAuthor.find("input, textarea" ).each(function() {
-                            $(this).attr('name', 'contribution['+author_nr+'].'+$(this).attr('name'));
-                        });
-                        // unhide it
-                        $newAuthor.attr('display', 'block');
-                        $newAuthor.attr('id', 'author-'+(author_nr + 1));
-                        $newAuthor.find('.author-nr').html(author_nr + 1);
+            var author_nr = new Number ($('#author-template' ).find ('.author-nr' ).html( ));
+            $(document ).ready(function() {
 
-                        // insert where it should be
-                        $newAuthor.insertBefore("#add-new-author");
-
-                        if (author_nr != 0) {
-                            // remove existing button and append new to just created div
-                            $('#remove-author-button' ).remove();
-                            var $button = createRemoveAuthorButton();
-                            $newAuthor.append($button);
-                        }
-                        author_nr++;
+                $('#add-new-author').click(function() {
+                    // clone the template and remove id
+                    var $newAuthor = $('#author-template').clone().removeAttr('id' );
+                    // loop over every element and add name attribute
+                    $newAuthor.find("input, textarea" ).each(function() {
+                        $(this).attr('name', 'contribution['+author_nr+'].'+$(this).attr('name'));
                     });
-                    // add default contributor
-                    $('#add-new-author').trigger('click');
+                    // unhide it
+                    $newAuthor.attr('display', 'block');
+                    $newAuthor.attr('id', 'author-'+(author_nr + 1));
+                    $newAuthor.find('.author-nr').html(author_nr + 1);
 
+                    // insert where it should be
+                    $newAuthor.insertBefore("#add-new-author");
+
+                    if (author_nr != 0) {
+                        // remove existing button and append new to just created div
+                        $('#remove-author-button' ).remove();
+                        var $button = createRemoveAuthorButton();
+                        $newAuthor.append($button);
+                    }
+                    author_nr++;
                 });
+            });
             </script>
             <br><br><legend>Financial disclosure</legend><br>
 
