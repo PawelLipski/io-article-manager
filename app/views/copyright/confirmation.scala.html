@@ -9,6 +9,10 @@
 @main("Confirmed") {
     <h4>Thank you for filling the form.</h4>
     <p>Confirmation e-mail has been sent to <i>@email</i>. Please check your mailbox.</p>
+
+    @form(action = routes.Application.index) {
+        <input type="submit" value="Back to the main page" class="btn btn-primary"/>
+    }
 }
 
 
