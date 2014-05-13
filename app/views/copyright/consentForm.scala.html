@@ -62,8 +62,14 @@
     @helper.form(action = routes.CopyrightTransfer.submit(), 'class -> "form-horizontal", 'id -> "consentForm-form") {
         <fieldset>
             <legend>General information</legend>
+            <h4>Paper</h4>
+            @inputText(
+                transferForm("ojsId"),
+                '_label -> "ID",
+                'size -> 8,
+                'class -> "form-control"
+            )
 
-            <h4>Paper title</h4>
             @inputText(
                 transferForm("title"),
                 'size -> 80,
