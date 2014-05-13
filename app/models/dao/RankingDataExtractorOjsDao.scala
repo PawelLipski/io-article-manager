@@ -3,6 +3,8 @@ package models
 import models.reports.{Article, ArticleAuthor, Journal}
 import models.reports.ArticleStatus.ArticleStatus
 import models.reports.ArticleStatus
+import scala.slick.lifted.{Compiled, Query}
+import scala.slick.driver.H2Driver.simple._
 
 /**
  * Author: Mateusz Pszczółka <mateusz.pszczolka@gmail.com>
@@ -11,7 +13,11 @@ import models.reports.ArticleStatus
  */
 object RankingDataExtractorOjsDao {
   def getPercentOfForeignAuthors(ojsJournalId: Int, year: Int): Double = {
-    1.0
+    Database.forURL("jdbc:h2:mem:test1", driver = "org.h2.Driver") withSession {
+      implicit session =>
+        val q = Query(slick.Tables.Authors.countDistinct)
+        q.first
+    }
   }
 
   def getNumberOfPublishedArticles(ojsJournalId: Int, year: Int): Int = {
