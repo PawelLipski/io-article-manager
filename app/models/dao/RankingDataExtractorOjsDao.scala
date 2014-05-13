@@ -3,8 +3,10 @@ package models
 import models.reports.{Article, ArticleAuthor, Journal}
 import models.reports.ArticleStatus.ArticleStatus
 import models.reports.ArticleStatus
-import scala.slick.lifted.{Compiled, Query}
-import scala.slick.driver.H2Driver.simple._
+import scala.slick.driver.MySQLDriver.simple._
+import scala.slick.driver.MySQLDriver
+import play.api.db.DB
+import play.api.Play.current
 
 /**
  * Author: Mateusz Pszczółka <mateusz.pszczolka@gmail.com>
@@ -13,10 +15,18 @@ import scala.slick.driver.H2Driver.simple._
  */
 object RankingDataExtractorOjsDao {
   def getPercentOfForeignAuthors(ojsJournalId: Int, year: Int): Double = {
-    Database.forURL("jdbc:h2:mem:test1", driver = "org.h2.Driver") withSession {
+    Database.forDataSource(DB.getDataSource("ojs")).withSession {
       implicit session =>
-        val q = Query(slick.Tables.Authors.countDistinct)
-        q.first
+        val authors = for {
+          author <- slick.Tables.Authors //it is really
+          article <- slick.Tables.Articles if author.submissionId === article.articleId && article.journalId === ojsJournalId.asInstanceOf[Long]
+        } yield author.country
+        val authorsAll = authors.length.run
+        val foreignAuthors = authors.filterNot(_ === "poland").length.run
+        if ( authorsAll > 0)
+          return foreignAuthors / authorsAll * 100
+        else
+          return 100
     }
   }
 
@@ -74,10 +84,10 @@ object RankingDataExtractorOjsDao {
   }
 
   def getListOfJournals = {
-    List(
-      Journal(1, "New Earth"),
-      Journal(2, "Computer Science")
-    )
+    Database.forDataSource(DB.getDataSource("ojs")).withSession {
+      implicit session =>
+        slick.Tables.Journals.list.map(a=> models.reports.Journal(a.journalId.asInstanceOf[Int], a.path))
+    }
   }
 
 }
