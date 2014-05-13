@@ -46,8 +46,8 @@ public class PdfGenerator {
         document.add(new Paragraph("\nCopyright transfer form\n\n"));
         document.add(createParagraph("Date filled", request.dateFilled()));
         document.add(createParagraph("IP address", request.ipAddress()));
-        document.add(createParagraph("\nArticle ID", "1"));
-        document.add(createParagraph("Article title", request.copyrightData().title()));
+        document.add(createParagraph("\nPaper ID", request.copyrightData().ojsId()));
+        document.add(createParagraph("Paper title", request.copyrightData().title()));
         document.add(createParagraph("\nCorresponding author", "Name: " + request.copyrightData().correspondingAuthor().name() + "\n\t\t\t\tAffiliation: " + request.copyrightData().correspondingAuthor().affiliation() + "\n\t\t\t\tE-mail: " + request.copyrightData().correspondingAuthor().email()));
         document.add(createParagraph("\nContribution of authors", ""));
         document.add(createContributionTable(request.copyrightData().contribution()));
