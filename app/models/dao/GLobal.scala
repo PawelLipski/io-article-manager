@@ -1,30 +1,31 @@
 import play.api.db.DB
 import play.api.GlobalSettings
-// Use H2Driver to connect to an H2 database
-import scala.slick.driver.H2Driver.simple._
-
-// Use the implicit threadLocalSession
-
-import play.api.Application
+import scala.slick.model.codegen.SourceCodeGenerator
+import scala.slick.driver.MySQLDriver.simple._
+import scala.slick.driver.{JdbcProfile, MySQLDriver}
+import scala.reflect.runtime.currentMirror
 import play.api.Play.current
 
+import play.api.Application
 
 object Global extends GlobalSettings {
 
 
   override def onStart(app: Application) {
-    val passwd = System.getenv("OJS_DB_PASSWD")
-    val url = "jdbc:mysql://sql.udl.pl:3306/slonka_ojs238?user=slonka_ojs&password=" + passwd
-    val jdbcDriver = "com.mysql.jdbc.Driver"
     val slickDriver = "scala.slick.driver.MySQLDriver"
 
-    val outputFolder = "gen/"
+    val outputFolder = "gen/app/"
     val pkg = "slick"
-    val loadDriver = classOf[com.mysql.jdbc.Driver]
 
-    scala.slick.model.codegen.SourceCodeGenerator.main(
-      Array(slickDriver, jdbcDriver, url, outputFolder, pkg)
-    )
+    val driver: JdbcProfile = currentMirror.reflectModule(
+      currentMirror.staticModule(slickDriver)
+    ).instance.asInstanceOf[JdbcProfile]
 
+    Database.forDataSource(DB.getDataSource("ojs")) withSession {
+      implicit session =>
+        new SourceCodeGenerator(driver.createModel).writeToFile(slickDriver, outputFolder, pkg)
+    }
   }
+
 }
+
