@@ -6,7 +6,7 @@
     FieldConstructor(twitterBootstrapInput.render)
 }
 
-@main("Consent to Publish") {
+@main("Consent to publish") {
 
     <style type="text/css">
         #author-template {
@@ -59,7 +59,7 @@
         @consentText.map { line => <li>@line</li> }
     </ol>
 
-    @helper.form(action = routes.CopyrightTransfer.submit(), 'class -> "form-horizontal", 'id -> "consent-form") {
+    @helper.form(action = routes.CopyrightTransfer.submit(), 'class -> "form-horizontal", 'id -> "consentForm-form") {
         <fieldset>
             <legend>General information</legend>
 
@@ -193,7 +193,7 @@
             )
 
         </fieldset>
-        <input id="consent-form-send" type="submit" class="btn btn-primary" value="Send">
+        <input id="consentForm-form-send" type="submit" class="btn btn-primary" value="Send">
     }
 
 }

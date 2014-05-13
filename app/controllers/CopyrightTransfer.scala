@@ -45,17 +45,19 @@ object CopyrightTransfer extends Controller {
   def consent = Action {
     implicit request => {
       val id = request.body.asFormUrlEncoded.get("article-id").apply(0)
+      val copyright = getPaperDataById(id.toInt)
       val consentText = scala.io.Source.fromFile("./public/resources/Computer_Science_ctp.txt").getLines().toList
-      // weird code
-
-      val correspondingAuthor = new CorrespondingAuthor("John Smith", "AGH", "john@agh.edu.pl")
-      val authors = List(new Contribution("author1", "AGH", "Lorem Ipsum", 0), new Contribution("author2", "AGH2", "Lorem Ipsum2", 0))
-      val copyright = new Copyright("Great theory of multitudes", correspondingAuthor, authors, "")
-
-
-      // weird code ENDS
-      Ok(html.copyright.consent(form.fill(copyright), copyright, consentText))
+      Ok(html.copyright.consentForm(form.fill(copyright), copyright, consentText))
     }
+  }
+
+  def getPaperDataById(s: Int) : Copyright = {
+    val correspondingAuthor = new CorrespondingAuthor("John Smith", "AGH", "john@agh.edu.pl")
+    val financialDisclosure = "The research presented in this paper was partially funded by the ... under the project ... . " +
+      "The research presented in this paper was partially supported by ... . The research presented here was partially funded by the statutory funds of the ... ."
+    val authors = List(new Contribution("author1", "AGH", "Lorem Ipsum", 0), new Contribution("author2", "AGH2", "Lorem Ipsum2", 0))
+    val copyright = new Copyright("Great theory of multitudes", correspondingAuthor, authors, financialDisclosure)
+    return copyright
   }
 
   def submit = Action {
