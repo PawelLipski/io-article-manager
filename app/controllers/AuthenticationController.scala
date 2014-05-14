@@ -20,7 +20,7 @@ trait Secured {
     Results.Redirect(routes.AuthenticationController.login()).withSession(("returnUrl", request.path))
 
 
-  def IsAuthenticated(f: => String => Request[AnyContent] => Result) =
+  def withAuth(f: => String => Request[AnyContent] => Result) =
     Security.Authenticated(username, onUnauthorized) { user =>
       Action(request => f(user)(request))
     }
