@@ -16,7 +16,9 @@ trait Secured {
   /**
    * Redirect to login if the use in not authorized.
    */
-  def onUnauthorized(request: RequestHeader): SimpleResult
+  def onUnauthorized(request: RequestHeader): SimpleResult =
+    Results.Redirect(routes.AuthenticationController.login())
+
 
   def IsAuthenticated(f: => String => Request[AnyContent] => Result) =
     Security.Authenticated(username, onUnauthorized) { user =>
@@ -24,7 +26,7 @@ trait Secured {
     }
 }
 
-object AuthTest extends Controller with Secured {
+object AuthenticationController extends Controller with Secured {
 
   lazy val loginForm = Form(
     tuple(
@@ -36,27 +38,20 @@ object AuthTest extends Controller with Secured {
     })
   )
 
-  def onUnauthorized(request: RequestHeader) = Results.Redirect(routes.AuthTest.login())
-
-  def index = IsAuthenticated { username => implicit request =>
-    //Ok(views.html.index("You have been successfully authenticated"))
-    Ok(views.html.index())
-  }
-
   def doLogin = Action { implicit request =>
     Logger.info("Authenticating user")
     loginForm.bindFromRequest.fold(
-      formWithErrors => BadRequest(views.html.login(formWithErrors, routes.AuthTest.login)),
+      formWithErrors => BadRequest(views.html.login(formWithErrors, routes.AuthenticationController.login)),
       user => Redirect(routes.Application.index).withSession("user" -> user._1)
     )
   }
 
   def login = Action { implicit request =>
-    Ok(views.html.login(loginForm, routes.AuthTest.doLogin))
+    Ok(views.html.login(loginForm, routes.AuthenticationController.doLogin))
   }
 
   def logout = Action {
-    Redirect(routes.AuthTest.login).withNewSession.flashing(
+    Redirect(routes.AuthenticationController.login).withNewSession.flashing(
       "success" -> "You've been logged out"
     )
   }

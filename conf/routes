@@ -10,9 +10,10 @@ GET         /assets/*file                           controllers.Assets.at(path="
 
 
 # log in/log out
-GET         /login                                  controllers.AuthTest.login
-POST        /login                                  controllers.AuthTest.doLogin
-GET         /logout                                 controllers.AuthTest.logout
+GET         /login                                  controllers.AuthenticationController.login
+POST        /login                                  controllers.AuthenticationController.doLogin
+GET         /logout                                 controllers.AuthenticationController.logout
+GET         /confidential                           controllers.Confidential.index
 
 # consent to publish
 GET         /consent_to_publish/index               controllers.CopyrightTransfer.index
