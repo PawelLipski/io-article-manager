@@ -21,14 +21,25 @@ object Authentication extends Controller with Secured {
 
   private def verifyCredentials(user: String, password: String): Boolean = {
 
+    Logger.info("Trying to authenticate user " + user)
+
     val sha1 = java.security.MessageDigest.getInstance("SHA-1")
     val actualSha1Sum = new String(Hex.encodeHex(sha1.digest(password.getBytes)))
     val expectedSha1Sum = AuthenticationDao.getPasswordSha1SumForUser(user)
-    actualSha1Sum == expectedSha1Sum
+
+    expectedSha1Sum match {
+      case Some(value) if actualSha1Sum == value => {
+        Logger.info("User " + user + " successfully authenticated")
+        true
+      }
+      case _ => {
+        Logger.info("Failed to authenticate user " + user)
+        false
+      }
+    }
   }
 
   def doLogin = Action { implicit request =>
-    Logger.info("Authenticating user")
     loginForm.bindFromRequest.fold(
       formWithErrors => BadRequest(views.html.login(formWithErrors, routes.Authentication.doLogin())),
       user => Redirect(session.get("returnUrl").getOrElse("/")).withSession(session + ("user" -> user._1) - "returnUrl")

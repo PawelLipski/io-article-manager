@@ -32,8 +32,12 @@ object AuthenticationDao {
     }
   }
 
-  def getPasswordSha1SumForUser(userName: String) = {
-    "4a0c5a8df03ea9c60cea9a4b876f97f716e42dbf"
+  def getPasswordSha1SumForUser(userName: String): Option[String] = {
+    Database.forDataSource(DB.getDataSource("internal")).withSession {
+      implicit session =>
+        val found = users.filter(_.name === userName).map(_.passwordSha1Sum)
+        found.firstOption
+    }
   }
 
 }
