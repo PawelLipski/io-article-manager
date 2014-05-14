@@ -4,6 +4,8 @@ import play.api._
 import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
+import models.dao.AuthenticationDao
+import org.apache.commons.codec.binary.Hex
 
 trait Secured {
   self: Controller =>
@@ -33,10 +35,19 @@ object AuthenticationController extends Controller with Secured {
       "user" -> text,
       "password" -> text
     ) verifying ("Invalid user or password", result => result match {
-      case (user, password) if user == "user" && password == "password" => true
+      case (user, password) if verifyCredentials(user, password) => true
       case _ => false
     })
   )
+
+  private def verifyCredentials(user: String, password: String): Boolean = {
+    val sha1 = java.security.MessageDigest.getInstance("SHA-1")
+    val actualSha1Sum = new String(Hex.encodeHex(sha1.digest(password.getBytes)))
+    println(actualSha1Sum)
+    val expectedSha1Sum = AuthenticationDao.getPasswordSha1SumForUser(user)
+    println(expectedSha1Sum)
+    actualSha1Sum == expectedSha1Sum
+  }
 
   def doLogin = Action { implicit request =>
     Logger.info("Authenticating user")

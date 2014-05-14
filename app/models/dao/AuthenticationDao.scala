@@ -4,7 +4,7 @@ import play.api.db.DB
 import scala.slick.driver.MySQLDriver.simple._
 import play.api.Play.current
 
-object InternalDbDao {
+object AuthenticationDao {
 
   // Definition of the SUPPLIERS table
   class User(tag: Tag) extends Table[(Int, String, String)](tag, "INTERNAL_USERS") {
@@ -31,5 +31,9 @@ object InternalDbDao {
         }
     }
   }
-}
 
+  def getPasswordSha1SumForUser(userName: String) = {
+    "4a0c5a8df03ea9c60cea9a4b876f97f716e42dbf"
+  }
+
+}
