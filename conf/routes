@@ -9,8 +9,9 @@ GET         /                                       controllers.Application.inde
 GET         /assets/*file                           controllers.Assets.at(path="/public", file)
 
 
-GET         /consent_to_publish                     controllers.CopyrightTransfer.index
-POST        /consent_to_publish                     controllers.CopyrightTransfer.submit
+GET         /consent_to_publish/index               controllers.CopyrightTransfer.index
+POST        /consent_to_publish                     controllers.CopyrightTransfer.consent
+POST        /consent_to_publish/submit              controllers.CopyrightTransfer.submit
 POST        /consent_to_publish/confirmation        controllers.CopyrightTransfer.confirm
 
 #authors

@@ -1,33 +1,30 @@
-@(transferForm: Form[models.copyright.Copyright], consentText: List[String])
-@import models.copyright.Copyright;
-@import helper._
-    @implicitFieldConstructor = @{
-        FieldConstructor(twitterBootstrapInput.render)
-    }
-@main("Consent to Publish") {
+@(transferForm: Form[models.copyright.Copyright], transferFormData: models.copyright.Copyright, consentText: List[String])
 
-    <h3>Consent to Publish</h3>
-    <ol>
-        @consentText.map { line => <li>@line</li> }
-    </ol>
+@import helper._
+
+@implicitFieldConstructor = @{
+    FieldConstructor(twitterBootstrapInput.render)
+}
+
+@main("Consent to publish") {
 
     <style type="text/css">
-    #author-template {
-    display: none;
-    }
-    #remove-author {
-    display:none;
-    }
+        #author-template {
+            display: none;
+        }
+        #remove-author {
+            display:none;
+        }
     </style>
 
+    @* this is hidden *@
     <button type="button" class="btn btn-default" id="remove-author">
         Remove last author
     </button>
 
-
     @* this is hidden *@
     <div id="author-template">
-        <h4>Author <span class="author-nr">1</span>:</h4>
+        <h4>Author <span class="author-nr">@transferFormData.contribution.length</span>:</h4>
         @inputText(
             transferForm("authorName"),
             '_label -> "Author name: ",
@@ -55,13 +52,14 @@
             'size -> 30,
             'class -> "form-control"
         )
-
-
-
     </div>
 
+    <h3>Consent to Publish</h3>
+    <ol>
+        @consentText.map { line => <li>@line</li> }
+    </ol>
 
-    @helper.form(action = routes.CopyrightTransfer.submit(), 'class -> "form-horizontal", 'id -> "consent-form") {
+    @helper.form(action = routes.CopyrightTransfer.submit(), 'class -> "form-horizontal", 'id -> "consentForm-form") {
         <fieldset>
             <legend>General information</legend>
             <h4>Paper</h4>
@@ -74,12 +72,12 @@
 
             @inputText(
                 transferForm("title"),
-                '_label -> "Title",
                 'size -> 80,
-                'class -> "form-control"
+                'class -> "form-control",
+                '_label -> ""
             )
-            <h4>Corresponding author</h4><br>
 
+            <h4>Corresponding author</h4><br>
             @inputText(
                 transferForm("correspondingAuthor.name"),
                 '_label -> "Name: ",
@@ -100,40 +98,73 @@
                 'size -> 30,
                 'class -> "form-control"
             )
-
-
         </fieldset>
 
         <fieldset>
             <legend>Contribution to paper</legend>
+            @*create default authors forms based on information from database*@
+            @for((item, index) <- transferFormData.contribution.zipWithIndex) {
+
+                <h4>Author <span class="author-nr">@(index+1)</span>:</h4>
+
+                @inputText(
+                    transferForm("contribution[" + index + "].authorName"),
+                    '_label -> "Author name: ",
+                    'size -> 30,
+                    'class -> "form-control"
+                )
+
+                @inputText(
+                    transferForm("contribution[" + index + "].affiliation"),
+                    '_label -> "Affiliation: ",
+                    'size -> 30,
+                    'class -> "form-control"
+                )
+
+                @textarea(
+                    transferForm("contribution[" + index + "].contribution"),
+                    '_label -> "Contribution: ",
+                    'size -> 30,
+                    'class -> "form-control"
+                )
+
+                @inputText(
+                    transferForm("contribution[" + index + "].percent"),
+                    '_label -> "Percent: ",
+                    'size -> 30,
+                    'class -> "form-control"
+                )
+            }
+
             <button type="button" class="btn btn-default" id="add-new-author">
                 Add new author
             </button>
 
             <script type="text/javascript">
 
-            function removeAuthorAction() {
-                $('#author-'+author_nr).remove();
-                author_nr--;
-                if (author_nr != 1) { // we need to always have one author
-                    var $button = createRemoveAuthorButton();
-                    $button.appendTo($('#author-'+author_nr));
+                function removeAuthorAction() {
+                    $('#author-'+author_nr).remove();
+                    author_nr--;
+                    if (author_nr != 1) { // we need to always have one author
+                        var $button = createRemoveAuthorButton();
+                        $button.appendTo($('#author-'+author_nr));
+                    }
                 }
-            }
 
-            function createRemoveAuthorButton() {
-                var $button = $('#remove-author').clone().removeAttr('id');
-                $button.attr('display', 'block');
-                $button.attr('id', 'remove-author-button');
-                $button.click(removeAuthorAction);
-                return $button;
-            }
+                function createRemoveAuthorButton() {
+                    var $button = $('#remove-author').clone().removeAttr('id');
+                    $button.attr('display', 'block');
+                    $button.attr('id', 'remove-author-button');
+                    $button.click(removeAuthorAction);
+                    return $button;
+                }
 
-            var author_nr = 0;
+                var author_nr = new Number ($('#author-template' ).find ('.author-nr' ).html( ));
                 $(document ).ready(function() {
+
                     $('#add-new-author').click(function() {
                         // clone the template and remove id
-                        var $newAuthor = $('#author-template').clone().removeAttr('id');
+                        var $newAuthor = $('#author-template').clone().removeAttr('id' );
                         // loop over every element and add name attribute
                         $newAuthor.find("input, textarea" ).each(function() {
                             $(this).attr('name', 'contribution['+author_nr+'].'+$(this).attr('name'));
@@ -154,21 +185,21 @@
                         }
                         author_nr++;
                     });
-                    // add default contributor
-                    $('#add-new-author').trigger('click');
-
                 });
             </script>
-            <br><br><legend>Financial disclosure</legend><br>
 
-        @textarea(
-            transferForm("financial"),
-            '_label -> "",
-            'class ->"form-control"
-        )
+            <br><br>
+
+            <legend>Financial disclosure</legend><br>
+
+            @textarea(
+                transferForm("financial"),
+                '_label -> "",
+                'class ->"form-control"
+            )
 
         </fieldset>
-        <input id="consent-form-send" type="submit" class="btn btn-primary" value="Send">
+        <input id="consentForm-form-send" type="submit" class="btn btn-primary" value="Send">
     }
 
 }

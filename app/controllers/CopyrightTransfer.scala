@@ -7,6 +7,8 @@ import models.copyright._
 import org.joda.time.DateTime
 import views.html
 import utils.{TokenGenerator, PdfGenerator}
+import utils.MailSender.{Mail, send}
+
 import utils.MailSender.send
 import utils.MailSender.Mail
 import models.copyright.Copyright
@@ -38,8 +40,25 @@ object CopyrightTransfer extends Controller {
   )
 
   def index = Action {
-    val consentText = scala.io.Source.fromFile("./public/resources/Computer_Science_ctp.txt").getLines().toList
-    Ok(html.copyright.consent(form, consentText))
+    Ok(html.copyright.index())
+  }
+
+  def consent = Action {
+    implicit request => {
+      val id = request.body.asFormUrlEncoded.get("article-id").apply(0)
+      val copyright = getPaperDataById(id.toInt)
+      val consentText = scala.io.Source.fromFile("./public/resources/Computer_Science_ctp.txt").getLines().toList
+      Ok(html.copyright.consentForm(form.fill(copyright), copyright, consentText))
+    }
+  }
+
+  def getPaperDataById(id: Int) : Copyright = {
+    val correspondingAuthor = new CorrespondingAuthor("John Smith", "AGH", "john@agh.edu.pl")
+    val financialDisclosure = "The research presented in this paper was partially funded by the ... under the project ... . " +
+      "The research presented in this paper was partially supported by ... . The research presented here was partially funded by the statutory funds of the ... ."
+    val authors = List(new Contribution("author1", "AGH", "Lorem Ipsum", 0), new Contribution("author2", "AGH2", "Lorem Ipsum2", 0))
+    val copyright = new Copyright(id, "Great theory of multitudes", correspondingAuthor, authors, financialDisclosure)
+    return copyright
   }
 
   def submit = Action {
