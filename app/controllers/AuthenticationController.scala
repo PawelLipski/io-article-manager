@@ -17,7 +17,7 @@ trait Secured {
    * Redirect to login if the use in not authorized.
    */
   def onUnauthorized(request: RequestHeader): SimpleResult =
-    Results.Redirect(routes.AuthenticationController.login())
+    Results.Redirect(routes.AuthenticationController.login()).withSession(("returnUrl", request.path))
 
 
   def IsAuthenticated(f: => String => Request[AnyContent] => Result) =
@@ -42,7 +42,7 @@ object AuthenticationController extends Controller with Secured {
     Logger.info("Authenticating user")
     loginForm.bindFromRequest.fold(
       formWithErrors => BadRequest(views.html.login(formWithErrors, routes.AuthenticationController.login)),
-      user => Redirect(routes.Application.index).withSession("user" -> user._1)
+      user => Redirect(session.get("returnUrl").getOrElse("/")).withSession(session + ("user" -> user._1) - "returnUrl")
     )
   }
 
