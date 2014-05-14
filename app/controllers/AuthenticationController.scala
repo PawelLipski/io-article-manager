@@ -41,13 +41,13 @@ object AuthenticationController extends Controller with Secured {
   def doLogin = Action { implicit request =>
     Logger.info("Authenticating user")
     loginForm.bindFromRequest.fold(
-      formWithErrors => BadRequest(views.html.login(formWithErrors, routes.AuthenticationController.login)),
+      formWithErrors => BadRequest(views.html.login(formWithErrors, routes.AuthenticationController.doLogin())),
       user => Redirect(session.get("returnUrl").getOrElse("/")).withSession(session + ("user" -> user._1) - "returnUrl")
     )
   }
 
   def login = Action { implicit request =>
-    Ok(views.html.login(loginForm, routes.AuthenticationController.doLogin))
+    Ok(views.html.login(loginForm, routes.AuthenticationController.doLogin()))
   }
 
   def logout = Action {
