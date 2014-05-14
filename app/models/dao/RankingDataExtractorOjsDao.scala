@@ -3,7 +3,10 @@ package models
 import models.reports.{Article, ArticleAuthor, Journal}
 import models.reports.ArticleStatus.ArticleStatus
 import models.reports.ArticleStatus
-import java.sql.{ResultSet, DriverManager}
+import scala.slick.driver.MySQLDriver.simple._
+import scala.slick.driver.MySQLDriver
+import play.api.db.DB
+import play.api.Play.current
 
 /**
  * Author: Mateusz Pszczółka <mateusz.pszczolka@gmail.com>
@@ -11,95 +14,28 @@ import java.sql.{ResultSet, DriverManager}
  * Time: 2:13 PM
  */
 object RankingDataExtractorOjsDao {
-
   def getPercentOfForeignAuthors(ojsJournalId: Int, year: Int): Double = {
-
-    val passwd = System.getenv("OJS_DB_PASSWD")
-    val connStr = "jdbc:mysql://sql.udl.pl:3306/slonka_ojs238?user=slonka_ojs&password=" + passwd
-    var result = 0.0
-
-    val loadDriver = classOf[com.mysql.jdbc.Driver]
-
-    val conn = DriverManager.getConnection(connStr)
-    try {
-      val statement = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)
-      val napis = "SELECT count(distinct user_id) FROM articles WHERE articles.journal_id = " + ojsJournalId.toString() +
-        "AND year(articles.date_submitted) =" + year.toString()
-
-      val rs = statement.executeQuery(napis)
-
-       val contents = rs.getInt("count(distinct user_id)")
-      val nexQ = "SELECT count( DISTINCT user_id ) FROM articles INNER JOIN authors ON articles.user_id = authors.author_id WHERE articles.journal_id =" + ojsJournalId.toString() + "AND year( articles.date_submitted ) =" + year.toString() + "AND authors.country != 'poland'"
-      val stat = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)
-      val nt = stat.executeQuery(nexQ)
-
-      val second_var = nt.getInt("count( DISTINCT user_id )")
-
-      result = (second_var/contents)*100
-    } finally {
-      conn.close()
+    Database.forDataSource(DB.getDataSource("ojs")).withSession {
+      implicit session =>
+        val authors = for {
+          author <- slick.Tables.Authors //it is really
+          article <- slick.Tables.Articles if author.submissionId === article.articleId && article.journalId === ojsJournalId.asInstanceOf[Long]
+        } yield author.country
+        val authorsAll = authors.length.run
+        val foreignAuthors = authors.filterNot(_ === "poland").length.run
+        if ( authorsAll > 0)
+          return foreignAuthors / authorsAll * 100
+        else
+          return 100
     }
-    result
-
   }
 
   def getNumberOfPublishedArticles(ojsJournalId: Int, year: Int): Int = {
-
-    val passwd = System.getenv("OJS_DB_PASSWD")
-    val connStr = "jdbc:mysql://sql.udl.pl:3306/slonka_ojs238?user=slonka_ojs&password=" + passwd
-    var result = 0
-
-    val loadDriver = classOf[com.mysql.jdbc.Driver]
-
-    val conn = DriverManager.getConnection(connStr)
-    try {
-      val statement = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)
-      val napis = "SELECT count(distinct article_id) FROM articles WHERE articles.journal_id = " + ojsJournalId.toString() +
-        "AND year(articles.date_submitted) =" + year.toString()
-
-      val rs = statement.executeQuery(napis)
-
-      val contents = rs.getInt("count(distinct user_id)")
-      result = contents
-    } finally {
-      conn.close()
-    }
-    result
-
+    12
   }
 
-  def getPercentOfForeignReviewers(ojsJournalId: Int, year: Int):Double = {
-
-    val passwd = System.getenv("OJS_DB_PASSWD")
-    val connStr = "jdbc:mysql://sql.udl.pl:3306/slonka_ojs238?user=slonka_ojs&password=" + passwd
-    var result = 0.0
-
-    val loadDriver = classOf[com.mysql.jdbc.Driver]
-
-    val conn = DriverManager.getConnection(connStr)
-    try {
-      val statement = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)
-      val napis = "SELECT count(distinct reviewer_id) FROM review_assignments INNER JOIN sections ON sections.review_form_id = reviewer_assignments.review_form_id WHERE sections.journal_id = " + ojsJournalId.toString() +
-        "AND year( review_assignments.date_assigned) =" + year.toString()
-
-      val rs = statement.executeQuery(napis)
-
-      val contents = rs.getInt("count(distinct user_id)")
-      val nexQ = "SELECT count(distinct reviewer_id) FROM review_assignments INNER JOIN sections ON sections.review_form_id = review_assignments.review_form_id INNER JOIN authors ON review_assignments.reviewer_id = authors.author_id WHERE sections.journal_id = " + ojsJournalId.toString() +
-        "AND year( review_assignments.date_assigned) =" + year.toString() +
-        "AND authors.country != 'poland'"
-
-      val stat = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)
-      val nt = stat.executeQuery(nexQ)
-
-      val second_var = nt.getInt("count(distinct reviewer_id)")
-
-      result = (second_var/contents)*100
-    } finally {
-      conn.close()
-    }
-    result
-
+  def getPercentOfForeignReviewers(ojsJournalId: Int, year: Int) = {
+    8.0
   }
 
   def getListOfUnknownAuthors(ojsJournalId: Int, year: Int): Iterable[Author] = {
@@ -148,10 +84,10 @@ object RankingDataExtractorOjsDao {
   }
 
   def getListOfJournals = {
-    List(
-      Journal(1, "New Earth"),
-      Journal(2, "Computer Science")
-    )
+    Database.forDataSource(DB.getDataSource("ojs")).withSession {
+      implicit session =>
+        slick.Tables.Journals.list.map(a=> models.reports.Journal(a.journalId.asInstanceOf[Int], a.path))
+    }
   }
 
 }
