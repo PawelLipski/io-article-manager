@@ -13,7 +13,6 @@ GET         /assets/*file                           controllers.Assets.at(path="
 GET         /login                                  controllers.Authentication.login
 POST        /login                                  controllers.Authentication.doLogin
 GET         /logout                                 controllers.Authentication.logout
-GET         /confidential                           controllers.Confidential.index
 
 # consent to publish
 GET         /consent_to_publish/index               controllers.CopyrightTransfer.index
