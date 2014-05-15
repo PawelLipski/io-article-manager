@@ -43,7 +43,7 @@
                         <li><a href="@routes.Lists.reviewers()">List of reviewers</a></li>
                         <li><a href="@routes.Authors.list()">Manage consents</a></li>
                         @if(request.session.get("user")) {
-                            <li><a href="@routes.Authentication.logout">Log out</a></li>
+                            <li><a href="@routes.Authentication.logout">Log out (@request.session.get("user"))</a></li>
                         } else {
                             <li><a href="@routes.Authentication.login">Log in</a></li>
                         }
