@@ -7,7 +7,7 @@ import models.reports.{ArticleStatus, AuthorList, Journal}
 import views.html
 import models.RankingDataExtractorOjsDao
 
-object Lists extends Controller {
+object Lists extends Controller with Secured {
   val form: Form[AuthorList] = Form(
     mapping(
       "journal" -> mapping(
@@ -17,13 +17,13 @@ object Lists extends Controller {
       "article status" -> text
     )((journal, year, statusTxt) => AuthorList(journal, year.getOrElse(0), ArticleStatus.fromString(statusTxt)))((authorList) => Option(authorList.journal, Option(authorList.year), Option(authorList.articleStatus).getOrElse("").toString)))
 
-  def index = Action {
-    implicit request =>
+  def index = withAuth {
+    user => implicit request =>
       Ok(html.lists.authors(RankingDataExtractorOjsDao.getListOfAllAuthors(0, 0, null), form, "List of Authors", routes.Lists.indexPost()))
   }
 
-  def indexPost = Action {
-    implicit request =>
+  def indexPost = withAuth {
+    user => implicit request =>
       form.bindFromRequest.fold(
         errors => BadRequest("Unspecified error occurred, nobody knows what happened yet. Try again.\n"+errors.errors),
         authorList => {
@@ -36,13 +36,13 @@ object Lists extends Controller {
       )
   }
 
-  def reviewers = Action {
-    implicit request =>
+  def reviewers = withAuth {
+    user => implicit request =>
       Ok(html.lists.authors(RankingDataExtractorOjsDao.getListOfAllRewriters(0, 0, null), form,  "List of reviewers", routes.Lists.reviewersPost()))
   }
 
-  def reviewersPost = Action {
-    implicit request =>
+  def reviewersPost = withAuth {
+    user => implicit request =>
       form.bindFromRequest.fold(
         errors => BadRequest("Unspecified error occurred, nobody knows what happened yet. Try again.\n"+errors.errors),
         authorList => {
