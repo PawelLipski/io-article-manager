@@ -3,7 +3,7 @@
 @import helper._
 @import models.Author
 
-@main("Edit Author") {
+@main("Edit author") {
     <h1>Edit User</h1>
     @form(routes.Authors.update(userForm.get.id)) {
         @inputText(userForm("papertitle"))
