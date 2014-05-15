@@ -31,7 +31,7 @@ object Lists extends Controller with Secured {
           val year = authorList.year
           val status = authorList.articleStatus
 
-          Ok( html.lists.authors(RankingDataExtractorOjsDao.getListOfAllAuthors(ojsJournalId, year, status), form.fill(authorList), "List of Authors", routes.Lists.indexPost()))
+          Ok( html.lists.authors(RankingDataExtractorOjsDao.getListOfAllAuthors(ojsJournalId, year, status), form.fill(authorList), "List of authors", routes.Lists.indexPost()))
         }
       )
   }
