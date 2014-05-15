@@ -19,7 +19,7 @@ object Lists extends Controller with Secured {
 
   def index = withAuth {
     user => implicit request =>
-      Ok(html.lists.authors(RankingDataExtractorOjsDao.getListOfAllAuthors(0, 0, null), form, "List of Authors", routes.Lists.indexPost()))
+      Ok(html.lists.authors(RankingDataExtractorOjsDao.getListOfAllAuthors(0, 0, null), form, "List of authors", routes.Lists.indexPost()))
   }
 
   def indexPost = withAuth {
