@@ -1,4 +1,4 @@
-@(loginForm: Form[(String, String)], loginRoute: Call)(implicit flash: Flash)
+@(loginForm: Form[(String, String)], loginRoute: Call)(implicit request: Request[AnyContent], flash: Flash)
 
 @main("Log in") {
 

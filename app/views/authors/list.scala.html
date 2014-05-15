@@ -1,4 +1,4 @@
-@(authors: Iterable[models.Author])
+@(authors: Iterable[models.Author])(implicit request: Request[AnyContent])
 
 @main("All Authors") {
     <h1>Journal manager</h1>

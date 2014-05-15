@@ -23,15 +23,4 @@ trait Secured {
       Action(request => f(user)(request))
     }
 
-  /*
-  def withAuth(f: Request[AnyContent] => Result) =
-    Security.Authenticated(username, onUnauthorized) { user =>
-      Action(f)
-    }
-
-  def withAuth(f: => Result) =
-    Security.Authenticated(username, onUnauthorized) { user =>
-      Action(request => f)
-    }
-   */
 }

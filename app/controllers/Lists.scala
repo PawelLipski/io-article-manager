@@ -18,7 +18,8 @@ object Lists extends Controller {
     )((journal, year, statusTxt) => AuthorList(journal, year.getOrElse(0), ArticleStatus.fromString(statusTxt)))((authorList) => Option(authorList.journal, Option(authorList.year), Option(authorList.articleStatus).getOrElse("").toString)))
 
   def index = Action {
-    Ok(html.lists.authors(RankingDataExtractorOjsDao.getListOfAllAuthors(0, 0, null), form, "List of Authors", routes.Lists.indexPost()))
+    implicit request =>
+      Ok(html.lists.authors(RankingDataExtractorOjsDao.getListOfAllAuthors(0, 0, null), form, "List of Authors", routes.Lists.indexPost()))
   }
 
   def indexPost = Action {
@@ -36,7 +37,8 @@ object Lists extends Controller {
   }
 
   def reviewers = Action {
-    Ok(html.lists.authors(RankingDataExtractorOjsDao.getListOfAllRewriters(0, 0, null), form,  "List of reviewers", routes.Lists.reviewersPost()))
+    implicit request =>
+      Ok(html.lists.authors(RankingDataExtractorOjsDao.getListOfAllRewriters(0, 0, null), form,  "List of reviewers", routes.Lists.reviewersPost()))
   }
 
   def reviewersPost = Action {

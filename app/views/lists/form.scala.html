@@ -1,9 +1,10 @@
-@(authorListForm: Form[models.reports.AuthorList], target: Call)
+@(authorListForm: Form[models.reports.AuthorList], target: Call)(implicit request: Request[AnyContent])
+
 @import models.reports.ArticleStatus
 
 @import helper._
     @implicitFieldConstructor = @{
-        FieldConstructor(twitterBootstrapInput.render)
+        FieldConstructor(twitterBootstrapInput.render(_: FieldElements, request))
     }
 @import views.html.helper.inputText
 

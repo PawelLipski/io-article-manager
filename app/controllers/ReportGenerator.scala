@@ -22,7 +22,8 @@ object ReportGenerator extends Controller {
   )
 
   def index = Action {
-    Ok(html.ranking.index(form))
+    implicit request =>
+      Ok(html.ranking.index(form))
   }
 
   def submit = Action {

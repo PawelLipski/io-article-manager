@@ -1,9 +1,9 @@
-@()
+@()(implicit request: Request[AnyContent])
 
 @import helper._
 
 @implicitFieldConstructor = @{
-    FieldConstructor(twitterBootstrapInput.render)
+    FieldConstructor(twitterBootstrapInput.render(_: FieldElements, request))
 }
 
 @main("Consent to publish") {
