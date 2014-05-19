@@ -10,10 +10,11 @@ import models.copyright.{CopyrightTransferRequest, Copyright}
 import scala.slick.driver.MySQLDriver.simple._
 import scala.slick.driver.MySQLDriver
 import play.api.db.DB
-import utils.TokenGenerator
+import utils.{SqlUtils, TokenGenerator}
 import play.api.Play.current
 import com.google.common.base.Optional
 import java.sql.Date
+import scala.slick.lifted
 
 
 object CopyrightTransferOjsDao {
@@ -50,7 +51,10 @@ object CopyrightTransferOjsDao {
           g <- slick.internal.Tables.Copyrighttransfer; if g.linktokenshasum.equals(tokenSHA)
         } yield g.mutate( r => (r.linkconfirmed = true))*/
 
-        slick.internal.Tables.Copyrighttransfer.filter(_.linktokenshasum.equals(tokenSHA)).map(_.linkconfirmed).update(true)
+        val map = slick.internal.Tables.Copyrighttransfer
+          .filter(_.linktokenshasum === tokenSHA)
+          .map(row => (row.datelinkconfirmed , row.linkconfirmed))
+        val l = map.update((SqlUtils.getCurrnetSqlDate() , true))
     }
   }
 }
