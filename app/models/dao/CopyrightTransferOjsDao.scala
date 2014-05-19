@@ -41,6 +41,16 @@ object CopyrightTransferOjsDao {
           new Date(0)
         ))
     }
-    //filledForm.
+  }
+
+  def markTransferAsConfirmed(tokenSHA: String) {
+    Database.forDataSource(DB.getDataSource("internal")).withSession {
+      implicit session =>
+        /*for {
+          g <- slick.internal.Tables.Copyrighttransfer; if g.linktokenshasum.equals(tokenSHA)
+        } yield g.mutate( r => (r.linkconfirmed = true))*/
+
+        slick.internal.Tables.Copyrighttransfer.filter(_.linktokenshasum.equals(tokenSHA)).map(_.linkconfirmed).update(true)
+    }
   }
 }

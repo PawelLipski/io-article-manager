@@ -25,6 +25,7 @@ import play.api.test.Helpers._
 @RunWith(classOf[JUnitRunner])
 class TestCopyrightTransferOjsDao extends Specification{
   "Application" should {
+
     "insert row into CopyrightTransfer table" in new WithApplication {
 
       CopyrightTransferOjsDao.saveTransfer(CopyrightTransferRequest( null,
@@ -36,6 +37,10 @@ class TestCopyrightTransferOjsDao extends Specification{
         DateTime.now(),
         "9.9.9.9",
         CopyrightTransferStatus.UNCONFIRMED ))
+    }
+
+    "update row in CopyrightTransfer table" in new WithApplication {
+      CopyrightTransferOjsDao.markTransferAsConfirmed("294785218e9a4034b6c773d02f86fc50")
     }
   }
 }
