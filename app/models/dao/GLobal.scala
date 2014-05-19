@@ -12,19 +12,19 @@ object Global extends GlobalSettings {
 
 
   override def onStart(app: Application) {
-    /*val slickDriver = "scala.slick.driver.MySQLDriver"
+    val slickDriver = "scala.slick.driver.MySQLDriver"
 
-    val outputFolder = "gen/app/"
+    val outputFolder = "gen/app/internal"
     val pkg = "slick"
 
     val driver: JdbcProfile = currentMirror.reflectModule(
       currentMirror.staticModule(slickDriver)
     ).instance.asInstanceOf[JdbcProfile]
 
-    Database.forDataSource(DB.getDataSource("ojs")) withSession {
+    Database.forDataSource(DB.getDataSource("internal")) withSession {
       implicit session =>
         new SourceCodeGenerator(driver.createModel).writeToFile(slickDriver, outputFolder, pkg)
-    }*/
+    }
   }
 
 }
