@@ -11,6 +11,10 @@ import scala.slick.driver.MySQLDriver.simple._
 import scala.slick.driver.MySQLDriver
 import play.api.db.DB
 import utils.TokenGenerator
+import play.api.Play.current
+import com.google.common.base.Optional
+import java.sql.Date
+
 
 object CopyrightTransferOjsDao {
 
@@ -19,21 +23,23 @@ object CopyrightTransferOjsDao {
 //    Database.forDataSource(DB.getDataSource("internal")).withSession {
 //      implicit session =>
 //    }
+    ""
   }
 
   def saveTransfer(filledForm: CopyrightTransferRequest) {
     Database.forDataSource(DB.getDataSource("internal")).withSession {
       implicit session =>
-        slick.internal.Tables.CopyrighttransferRow += (null, filledForm.copyrightData.ojsId , filledForm.copyrightData.title,
+        slick.internal.Tables.Copyrighttransfer.insert(slick.internal.Tables.CopyrighttransferRow(
+          0, filledForm.copyrightData.ojsId, filledForm.copyrightData.title,
           filledForm.copyrightData.correspondingAuthor.name,
           filledForm.copyrightData.correspondingAuthor.affiliation,
           filledForm.copyrightData.correspondingAuthor.email,
-          filledForm.dateFilled,
+          new Date(filledForm.dateFilled.toDate().getTime()),
           filledForm.ipAddress,
-          filledForm.copyrightData.contribution,
           TokenGenerator.generate(),
-          0,
-          null)
+          false,
+          new Date(0)
+        ))
     }
     //filledForm.
   }

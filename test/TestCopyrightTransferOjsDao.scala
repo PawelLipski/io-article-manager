@@ -11,11 +11,19 @@ import scala.slick.driver.MySQLDriver.simple._
 import scala.slick.driver.MySQLDriver
 import models.dao.CopyrightTransferOjsDao
 
+import org.specs2.mutable._
+import org.specs2.runner._
+import org.junit.runner._
+
+import play.api.test._
+import play.api.test.Helpers._
+
+
 /**
  * Created by slonka on 19.05.14.
  */
 @RunWith(classOf[JUnitRunner])
-class TestCopyrightTransferOjsDao {
+class TestCopyrightTransferOjsDao extends Specification{
   "Application" should {
     "insert row into CopyrightTransfer table" in new WithApplication {
 

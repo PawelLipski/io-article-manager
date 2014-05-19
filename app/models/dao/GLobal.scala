@@ -1,3 +1,5 @@
+import java.io.File
+import java.nio.file.{Paths, Path, Files}
 import play.api.db.DB
 import play.api.GlobalSettings
 import scala.slick.model.codegen.SourceCodeGenerator
@@ -14,17 +16,26 @@ object Global extends GlobalSettings {
   override def onStart(app: Application) {
     val slickDriver = "scala.slick.driver.MySQLDriver"
 
-    val outputFolder = "gen/app/internal"
-    val pkg = "slick"
+    val outputFolder = "gen/app/"
+    var pkg = "slick.ojs"
 
-    val driver: JdbcProfile = currentMirror.reflectModule(
-      currentMirror.staticModule(slickDriver)
-    ).instance.asInstanceOf[JdbcProfile]
+    if (!Files.exists(Paths.get("gen/" , "app"))){
+      val driver: JdbcProfile = currentMirror.reflectModule(
+        currentMirror.staticModule(slickDriver)
+      ).instance.asInstanceOf[JdbcProfile]
 
-    Database.forDataSource(DB.getDataSource("internal")) withSession {
-      implicit session =>
-        new SourceCodeGenerator(driver.createModel).writeToFile(slickDriver, outputFolder, pkg)
+      Database.forDataSource(DB.getDataSource("ojs")) withSession {
+        implicit session =>
+          new SourceCodeGenerator(driver.createModel).writeToFile(slickDriver, outputFolder, pkg)
+      }
+      pkg = "slick.internal"
+
+      Database.forDataSource(DB.getDataSource("internal")) withSession {
+        implicit session =>
+          new SourceCodeGenerator(driver.createModel).writeToFile(slickDriver, outputFolder, pkg)
+      }
     }
+
   }
 
 }

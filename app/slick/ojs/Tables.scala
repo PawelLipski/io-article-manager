@@ -9,8 +9,13 @@ object Tables extends {
 /** Slick data model trait for extension, choice of backend or usage in the cake pattern. (Make sure to initialize this late.) */
 trait Tables {
   val profile: scala.slick.driver.JdbcProfile
+  import profile.simple._
+  import scala.slick.model.ForeignKeyAction
+  import scala.slick.collection.heterogenous._
+  import scala.slick.collection.heterogenous.syntax._
   // NOTE: GetResult mappers for plain SQL are only generated for tables where Slick knows how to map the types of all columns.
-
+  import scala.slick.jdbc.{GetResult => GR}
+  
   /** DDL for all tables. Call .create to execute. */
   lazy val ddl = AccessKeys.ddl ++ Announcements.ddl ++ AnnouncementSettings.ddl ++ AnnouncementTypes.ddl ++ AnnouncementTypeSettings.ddl ++ ArticleComments.ddl ++ ArticleEmailLog.ddl ++ ArticleEventLog.ddl ++ ArticleFiles.ddl ++ ArticleGalleys.ddl ++ ArticleHtmlGalleyImages.ddl ++ ArticleNotes.ddl ++ Articles.ddl ++ ArticleSearchKeywordList.ddl ++ ArticleSearchObjectKeywords.ddl ++ ArticleSearchObjects.ddl ++ ArticleSettings.ddl ++ ArticleSuppFileSettings.ddl ++ ArticleSupplementaryFiles.ddl ++ ArticleXmlGalleys.ddl ++ Authors.ddl ++ AuthorSettings.ddl ++ AuthSources.ddl ++ BooksForReview.ddl ++ BooksForReviewAuthors.ddl ++ BooksForReviewSettings.ddl ++ Captchas.ddl ++ Citations.ddl ++ CitationSettings.ddl ++ Comments.ddl ++ CompletedPayments.ddl ++ ControlledVocabEntries.ddl ++ ControlledVocabEntrySettings.ddl ++ ControlledVocabs.ddl ++ CounterMonthlyLog.ddl ++ CustomIssueOrders.ddl ++ CustomSectionOrders.ddl ++ EditAssignments.ddl ++ EditDecisions.ddl ++ EmailTemplates.ddl ++ EmailTemplatesData.ddl ++ EmailTemplatesDefault.ddl ++ EmailTemplatesDefaultData.ddl ++ ExternalFeeds.ddl ++ ExternalFeedSettings.ddl ++ Filters.ddl ++ FilterSettings.ddl ++ GroupMemberships.ddl ++ Groups.ddl ++ GroupSettings.ddl ++ InstitutionalSubscriptionIp.ddl ++ InstitutionalSubscriptions.ddl ++ Issues.ddl ++ IssueSettings.ddl ++ Journals.ddl ++ JournalSettings.ddl ++ MetadataDescriptions.ddl ++ MetadataDescriptionSettings.ddl ++ Notes.ddl ++ Notifications.ddl ++ NotificationSettings.ddl ++ OaiResumptionTokens.ddl ++ PaypalTransactions.ddl ++ PluginSettings.ddl ++ Processes.ddl ++ PublishedArticles.ddl ++ QueuedPayments.ddl ++ Referrals.ddl ++ ReferralSettings.ddl ++ ReviewAssignments.ddl ++ ReviewFormElements.ddl ++ ReviewFormElementSettings.ddl ++ ReviewFormResponses.ddl ++ ReviewForms.ddl ++ ReviewFormSettings.ddl ++ ReviewRounds.ddl ++ Roles.ddl ++ RtContexts.ddl ++ RtSearches.ddl ++ RtVersions.ddl ++ ScheduledTasks.ddl ++ SectionEditors.ddl ++ Sections.ddl ++ SectionSettings.ddl ++ Sessions.ddl ++ Signoffs.ddl ++ Site.ddl ++ SiteSettings.ddl ++ StaticPages.ddl ++ StaticPageSettings.ddl ++ Subscriptions.ddl ++ SubscriptionTypes.ddl ++ SubscriptionTypeSettings.ddl ++ TemporaryFiles.ddl ++ Theses.ddl ++ UserInterests.ddl ++ Users.ddl ++ UserSettings.ddl ++ Versions.ddl
   
@@ -24,13 +29,14 @@ trait Tables {
   case class AccessKeysRow(accessKeyId: Long, context: String, keyHash: String, userId: Long, assocId: Option[Long], expiryDate: java.sql.Timestamp)
   /** GetResult implicit for fetching AccessKeysRow objects using plain SQL queries */
   implicit def GetResultAccessKeysRow(implicit e0: GR[Long], e1: GR[String], e2: GR[Option[Long]], e3: GR[java.sql.Timestamp]): GR[AccessKeysRow] = GR{
-    prs => AccessKeysRow.tupled((<<[Long], <<[String], <<[String], <<[Long], <<?[Long], <<[java.sql.Timestamp]))
+    prs => import prs._
+    AccessKeysRow.tupled((<<[Long], <<[String], <<[String], <<[Long], <<?[Long], <<[java.sql.Timestamp]))
   }
   /** Table description of table access_keys. Objects of this class serve as prototypes for rows in queries. */
   class AccessKeys(tag: Tag) extends Table[AccessKeysRow](tag, "access_keys") {
     def * = (accessKeyId, context, keyHash, userId, assocId, expiryDate) <> (AccessKeysRow.tupled, AccessKeysRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (accessKeyId.?, context.?, keyHash.?, userId.?, assocId, expiryDate.?).shaped.<>({r=> _1.map(_=> AccessKeysRow.tupled((_1.get, _2.get, _3.get, _4.get, _5, _6.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (accessKeyId.?, context.?, keyHash.?, userId.?, assocId, expiryDate.?).shaped.<>({r=>import r._; _1.map(_=> AccessKeysRow.tupled((_1.get, _2.get, _3.get, _4.get, _5, _6.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column access_key_id AutoInc, PrimaryKey */
     val accessKeyId: Column[Long] = column[Long]("access_key_id", O.AutoInc, O.PrimaryKey)
@@ -61,13 +67,14 @@ trait Tables {
   case class AnnouncementsRow(announcementId: Long, assocType: Option[Short], assocId: Long, typeId: Option[Long], dateExpire: Option[java.sql.Timestamp], datePosted: java.sql.Timestamp)
   /** GetResult implicit for fetching AnnouncementsRow objects using plain SQL queries */
   implicit def GetResultAnnouncementsRow(implicit e0: GR[Long], e1: GR[Option[Short]], e2: GR[Option[Long]], e3: GR[Option[java.sql.Timestamp]], e4: GR[java.sql.Timestamp]): GR[AnnouncementsRow] = GR{
-    prs => AnnouncementsRow.tupled((<<[Long], <<?[Short], <<[Long], <<?[Long], <<?[java.sql.Timestamp], <<[java.sql.Timestamp]))
+    prs => import prs._
+    AnnouncementsRow.tupled((<<[Long], <<?[Short], <<[Long], <<?[Long], <<?[java.sql.Timestamp], <<[java.sql.Timestamp]))
   }
   /** Table description of table announcements. Objects of this class serve as prototypes for rows in queries. */
   class Announcements(tag: Tag) extends Table[AnnouncementsRow](tag, "announcements") {
     def * = (announcementId, assocType, assocId, typeId, dateExpire, datePosted) <> (AnnouncementsRow.tupled, AnnouncementsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (announcementId.?, assocType, assocId.?, typeId, dateExpire, datePosted.?).shaped.<>({r=> _1.map(_=> AnnouncementsRow.tupled((_1.get, _2, _3.get, _4, _5, _6.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (announcementId.?, assocType, assocId.?, typeId, dateExpire, datePosted.?).shaped.<>({r=>import r._; _1.map(_=> AnnouncementsRow.tupled((_1.get, _2, _3.get, _4, _5, _6.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column announcement_id AutoInc, PrimaryKey */
     val announcementId: Column[Long] = column[Long]("announcement_id", O.AutoInc, O.PrimaryKey)
@@ -97,13 +104,14 @@ trait Tables {
   case class AnnouncementSettingsRow(announcementId: Long, locale: String, settingName: String, settingValue: Option[String], settingType: String)
   /** GetResult implicit for fetching AnnouncementSettingsRow objects using plain SQL queries */
   implicit def GetResultAnnouncementSettingsRow(implicit e0: GR[Long], e1: GR[String], e2: GR[Option[String]]): GR[AnnouncementSettingsRow] = GR{
-    prs => AnnouncementSettingsRow.tupled((<<[Long], <<[String], <<[String], <<?[String], <<[String]))
+    prs => import prs._
+    AnnouncementSettingsRow.tupled((<<[Long], <<[String], <<[String], <<?[String], <<[String]))
   }
   /** Table description of table announcement_settings. Objects of this class serve as prototypes for rows in queries. */
   class AnnouncementSettings(tag: Tag) extends Table[AnnouncementSettingsRow](tag, "announcement_settings") {
     def * = (announcementId, locale, settingName, settingValue, settingType) <> (AnnouncementSettingsRow.tupled, AnnouncementSettingsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (announcementId.?, locale.?, settingName.?, settingValue, settingType.?).shaped.<>({r=> _1.map(_=> AnnouncementSettingsRow.tupled((_1.get, _2.get, _3.get, _4, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (announcementId.?, locale.?, settingName.?, settingValue, settingType.?).shaped.<>({r=>import r._; _1.map(_=> AnnouncementSettingsRow.tupled((_1.get, _2.get, _3.get, _4, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column announcement_id  */
     val announcementId: Column[Long] = column[Long]("announcement_id")
@@ -131,13 +139,14 @@ trait Tables {
   case class AnnouncementTypesRow(typeId: Long, assocType: Option[Short], assocId: Long)
   /** GetResult implicit for fetching AnnouncementTypesRow objects using plain SQL queries */
   implicit def GetResultAnnouncementTypesRow(implicit e0: GR[Long], e1: GR[Option[Short]]): GR[AnnouncementTypesRow] = GR{
-    prs => AnnouncementTypesRow.tupled((<<[Long], <<?[Short], <<[Long]))
+    prs => import prs._
+    AnnouncementTypesRow.tupled((<<[Long], <<?[Short], <<[Long]))
   }
   /** Table description of table announcement_types. Objects of this class serve as prototypes for rows in queries. */
   class AnnouncementTypes(tag: Tag) extends Table[AnnouncementTypesRow](tag, "announcement_types") {
     def * = (typeId, assocType, assocId) <> (AnnouncementTypesRow.tupled, AnnouncementTypesRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (typeId.?, assocType, assocId.?).shaped.<>({r=> _1.map(_=> AnnouncementTypesRow.tupled((_1.get, _2, _3.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (typeId.?, assocType, assocId.?).shaped.<>({r=>import r._; _1.map(_=> AnnouncementTypesRow.tupled((_1.get, _2, _3.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column type_id AutoInc, PrimaryKey */
     val typeId: Column[Long] = column[Long]("type_id", O.AutoInc, O.PrimaryKey)
@@ -161,13 +170,14 @@ trait Tables {
   case class AnnouncementTypeSettingsRow(typeId: Long, locale: String, settingName: String, settingValue: Option[String], settingType: String)
   /** GetResult implicit for fetching AnnouncementTypeSettingsRow objects using plain SQL queries */
   implicit def GetResultAnnouncementTypeSettingsRow(implicit e0: GR[Long], e1: GR[String], e2: GR[Option[String]]): GR[AnnouncementTypeSettingsRow] = GR{
-    prs => AnnouncementTypeSettingsRow.tupled((<<[Long], <<[String], <<[String], <<?[String], <<[String]))
+    prs => import prs._
+    AnnouncementTypeSettingsRow.tupled((<<[Long], <<[String], <<[String], <<?[String], <<[String]))
   }
   /** Table description of table announcement_type_settings. Objects of this class serve as prototypes for rows in queries. */
   class AnnouncementTypeSettings(tag: Tag) extends Table[AnnouncementTypeSettingsRow](tag, "announcement_type_settings") {
     def * = (typeId, locale, settingName, settingValue, settingType) <> (AnnouncementTypeSettingsRow.tupled, AnnouncementTypeSettingsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (typeId.?, locale.?, settingName.?, settingValue, settingType.?).shaped.<>({r=> _1.map(_=> AnnouncementTypeSettingsRow.tupled((_1.get, _2.get, _3.get, _4, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (typeId.?, locale.?, settingName.?, settingValue, settingType.?).shaped.<>({r=>import r._; _1.map(_=> AnnouncementTypeSettingsRow.tupled((_1.get, _2.get, _3.get, _4, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column type_id  */
     val typeId: Column[Long] = column[Long]("type_id")
@@ -203,13 +213,14 @@ trait Tables {
   case class ArticleCommentsRow(commentId: Long, commentType: Option[Long], roleId: Long, articleId: Long, assocId: Long, authorId: Long, commentTitle: String, comments: Option[String], datePosted: Option[java.sql.Timestamp], dateModified: Option[java.sql.Timestamp], viewable: Option[Byte])
   /** GetResult implicit for fetching ArticleCommentsRow objects using plain SQL queries */
   implicit def GetResultArticleCommentsRow(implicit e0: GR[Long], e1: GR[Option[Long]], e2: GR[String], e3: GR[Option[String]], e4: GR[Option[java.sql.Timestamp]], e5: GR[Option[Byte]]): GR[ArticleCommentsRow] = GR{
-    prs => ArticleCommentsRow.tupled((<<[Long], <<?[Long], <<[Long], <<[Long], <<[Long], <<[Long], <<[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[Byte]))
+    prs => import prs._
+    ArticleCommentsRow.tupled((<<[Long], <<?[Long], <<[Long], <<[Long], <<[Long], <<[Long], <<[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[Byte]))
   }
   /** Table description of table article_comments. Objects of this class serve as prototypes for rows in queries. */
   class ArticleComments(tag: Tag) extends Table[ArticleCommentsRow](tag, "article_comments") {
     def * = (commentId, commentType, roleId, articleId, assocId, authorId, commentTitle, comments, datePosted, dateModified, viewable) <> (ArticleCommentsRow.tupled, ArticleCommentsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (commentId.?, commentType, roleId.?, articleId.?, assocId.?, authorId.?, commentTitle.?, comments, datePosted, dateModified, viewable).shaped.<>({r=> _1.map(_=> ArticleCommentsRow.tupled((_1.get, _2, _3.get, _4.get, _5.get, _6.get, _7.get, _8, _9, _10, _11)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (commentId.?, commentType, roleId.?, articleId.?, assocId.?, authorId.?, commentTitle.?, comments, datePosted, dateModified, viewable).shaped.<>({r=>import r._; _1.map(_=> ArticleCommentsRow.tupled((_1.get, _2, _3.get, _4.get, _5.get, _6.get, _7.get, _8, _9, _10, _11)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column comment_id AutoInc, PrimaryKey */
     val commentId: Column[Long] = column[Long]("comment_id", O.AutoInc, O.PrimaryKey)
@@ -258,13 +269,14 @@ trait Tables {
   case class ArticleEmailLogRow(logId: Long, articleId: Long, senderId: Long, dateSent: java.sql.Timestamp, ipAddress: Option[String], eventType: Option[Long], assocType: Option[Long], assocId: Option[Long], fromAddress: Option[String], recipients: Option[String], ccRecipients: Option[String], bccRecipients: Option[String], subject: Option[String], body: Option[String])
   /** GetResult implicit for fetching ArticleEmailLogRow objects using plain SQL queries */
   implicit def GetResultArticleEmailLogRow(implicit e0: GR[Long], e1: GR[java.sql.Timestamp], e2: GR[Option[String]], e3: GR[Option[Long]]): GR[ArticleEmailLogRow] = GR{
-    prs => ArticleEmailLogRow.tupled((<<[Long], <<[Long], <<[Long], <<[java.sql.Timestamp], <<?[String], <<?[Long], <<?[Long], <<?[Long], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String]))
+    prs => import prs._
+    ArticleEmailLogRow.tupled((<<[Long], <<[Long], <<[Long], <<[java.sql.Timestamp], <<?[String], <<?[Long], <<?[Long], <<?[Long], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String]))
   }
   /** Table description of table article_email_log. Objects of this class serve as prototypes for rows in queries. */
   class ArticleEmailLog(tag: Tag) extends Table[ArticleEmailLogRow](tag, "article_email_log") {
     def * = (logId, articleId, senderId, dateSent, ipAddress, eventType, assocType, assocId, fromAddress, recipients, ccRecipients, bccRecipients, subject, body) <> (ArticleEmailLogRow.tupled, ArticleEmailLogRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (logId.?, articleId.?, senderId.?, dateSent.?, ipAddress, eventType, assocType, assocId, fromAddress, recipients, ccRecipients, bccRecipients, subject, body).shaped.<>({r=> _1.map(_=> ArticleEmailLogRow.tupled((_1.get, _2.get, _3.get, _4.get, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (logId.?, articleId.?, senderId.?, dateSent.?, ipAddress, eventType, assocType, assocId, fromAddress, recipients, ccRecipients, bccRecipients, subject, body).shaped.<>({r=>import r._; _1.map(_=> ArticleEmailLogRow.tupled((_1.get, _2.get, _3.get, _4.get, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column log_id AutoInc, PrimaryKey */
     val logId: Column[Long] = column[Long]("log_id", O.AutoInc, O.PrimaryKey)
@@ -315,13 +327,14 @@ trait Tables {
   case class ArticleEventLogRow(logId: Long, articleId: Long, userId: Long, dateLogged: java.sql.Timestamp, ipAddress: String, logLevel: Option[String], eventType: Option[Long], assocType: Option[Long], assocId: Option[Long], message: Option[String])
   /** GetResult implicit for fetching ArticleEventLogRow objects using plain SQL queries */
   implicit def GetResultArticleEventLogRow(implicit e0: GR[Long], e1: GR[java.sql.Timestamp], e2: GR[String], e3: GR[Option[String]], e4: GR[Option[Long]]): GR[ArticleEventLogRow] = GR{
-    prs => ArticleEventLogRow.tupled((<<[Long], <<[Long], <<[Long], <<[java.sql.Timestamp], <<[String], <<?[String], <<?[Long], <<?[Long], <<?[Long], <<?[String]))
+    prs => import prs._
+    ArticleEventLogRow.tupled((<<[Long], <<[Long], <<[Long], <<[java.sql.Timestamp], <<[String], <<?[String], <<?[Long], <<?[Long], <<?[Long], <<?[String]))
   }
   /** Table description of table article_event_log. Objects of this class serve as prototypes for rows in queries. */
   class ArticleEventLog(tag: Tag) extends Table[ArticleEventLogRow](tag, "article_event_log") {
     def * = (logId, articleId, userId, dateLogged, ipAddress, logLevel, eventType, assocType, assocId, message) <> (ArticleEventLogRow.tupled, ArticleEventLogRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (logId.?, articleId.?, userId.?, dateLogged.?, ipAddress.?, logLevel, eventType, assocType, assocId, message).shaped.<>({r=> _1.map(_=> ArticleEventLogRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6, _7, _8, _9, _10)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (logId.?, articleId.?, userId.?, dateLogged.?, ipAddress.?, logLevel, eventType, assocType, assocId, message).shaped.<>({r=>import r._; _1.map(_=> ArticleEventLogRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6, _7, _8, _9, _10)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column log_id AutoInc, PrimaryKey */
     val logId: Column[Long] = column[Long]("log_id", O.AutoInc, O.PrimaryKey)
@@ -369,14 +382,15 @@ trait Tables {
   case class ArticleFilesRow(fileId: Long, revision: Long, sourceFileId: Option[Long], sourceRevision: Option[Long], articleId: Long, fileName: String, fileType: String, fileSize: Long, originalFileName: Option[String], `type`: String, viewable: Option[Byte], dateUploaded: java.sql.Timestamp, dateModified: java.sql.Timestamp, round: Byte, assocId: Option[Long])
   /** GetResult implicit for fetching ArticleFilesRow objects using plain SQL queries */
   implicit def GetResultArticleFilesRow(implicit e0: GR[Long], e1: GR[Option[Long]], e2: GR[String], e3: GR[Option[String]], e4: GR[Option[Byte]], e5: GR[java.sql.Timestamp], e6: GR[Byte]): GR[ArticleFilesRow] = GR{
-    prs => ArticleFilesRow.tupled((<<[Long], <<[Long], <<?[Long], <<?[Long], <<[Long], <<[String], <<[String], <<[Long], <<?[String], <<[String], <<?[Byte], <<[java.sql.Timestamp], <<[java.sql.Timestamp], <<[Byte], <<?[Long]))
+    prs => import prs._
+    ArticleFilesRow.tupled((<<[Long], <<[Long], <<?[Long], <<?[Long], <<[Long], <<[String], <<[String], <<[Long], <<?[String], <<[String], <<?[Byte], <<[java.sql.Timestamp], <<[java.sql.Timestamp], <<[Byte], <<?[Long]))
   }
   /** Table description of table article_files. Objects of this class serve as prototypes for rows in queries.
    *  NOTE: The following names collided with Scala keywords and were escaped: type */
   class ArticleFiles(tag: Tag) extends Table[ArticleFilesRow](tag, "article_files") {
     def * = (fileId, revision, sourceFileId, sourceRevision, articleId, fileName, fileType, fileSize, originalFileName, `type`, viewable, dateUploaded, dateModified, round, assocId) <> (ArticleFilesRow.tupled, ArticleFilesRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (fileId.?, revision.?, sourceFileId, sourceRevision, articleId.?, fileName.?, fileType.?, fileSize.?, originalFileName, `type`.?, viewable, dateUploaded.?, dateModified.?, round.?, assocId).shaped.<>({r=> _1.map(_=> ArticleFilesRow.tupled((_1.get, _2.get, _3, _4, _5.get, _6.get, _7.get, _8.get, _9, _10.get, _11, _12.get, _13.get, _14.get, _15)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (fileId.?, revision.?, sourceFileId, sourceRevision, articleId.?, fileName.?, fileType.?, fileSize.?, originalFileName, `type`.?, viewable, dateUploaded.?, dateModified.?, round.?, assocId).shaped.<>({r=>import r._; _1.map(_=> ArticleFilesRow.tupled((_1.get, _2.get, _3, _4, _5.get, _6.get, _7.get, _8.get, _9, _10.get, _11, _12.get, _13.get, _14.get, _15)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column file_id AutoInc */
     val fileId: Column[Long] = column[Long]("file_id", O.AutoInc)
@@ -433,13 +447,14 @@ trait Tables {
   case class ArticleGalleysRow(galleyId: Long, publicGalleyId: Option[String], locale: Option[String], articleId: Long, fileId: Long, label: Option[String], htmlGalley: Byte, styleFileId: Option[Long], seq: Double = 0.0, views: Int = 0)
   /** GetResult implicit for fetching ArticleGalleysRow objects using plain SQL queries */
   implicit def GetResultArticleGalleysRow(implicit e0: GR[Long], e1: GR[Option[String]], e2: GR[Byte], e3: GR[Option[Long]], e4: GR[Double], e5: GR[Int]): GR[ArticleGalleysRow] = GR{
-    prs => ArticleGalleysRow.tupled((<<[Long], <<?[String], <<?[String], <<[Long], <<[Long], <<?[String], <<[Byte], <<?[Long], <<[Double], <<[Int]))
+    prs => import prs._
+    ArticleGalleysRow.tupled((<<[Long], <<?[String], <<?[String], <<[Long], <<[Long], <<?[String], <<[Byte], <<?[Long], <<[Double], <<[Int]))
   }
   /** Table description of table article_galleys. Objects of this class serve as prototypes for rows in queries. */
   class ArticleGalleys(tag: Tag) extends Table[ArticleGalleysRow](tag, "article_galleys") {
     def * = (galleyId, publicGalleyId, locale, articleId, fileId, label, htmlGalley, styleFileId, seq, views) <> (ArticleGalleysRow.tupled, ArticleGalleysRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (galleyId.?, publicGalleyId, locale, articleId.?, fileId.?, label, htmlGalley.?, styleFileId, seq.?, views.?).shaped.<>({r=> _1.map(_=> ArticleGalleysRow.tupled((_1.get, _2, _3, _4.get, _5.get, _6, _7.get, _8, _9.get, _10.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (galleyId.?, publicGalleyId, locale, articleId.?, fileId.?, label, htmlGalley.?, styleFileId, seq.?, views.?).shaped.<>({r=>import r._; _1.map(_=> ArticleGalleysRow.tupled((_1.get, _2, _3, _4.get, _5.get, _6, _7.get, _8, _9.get, _10.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column galley_id AutoInc, PrimaryKey */
     val galleyId: Column[Long] = column[Long]("galley_id", O.AutoInc, O.PrimaryKey)
@@ -476,13 +491,14 @@ trait Tables {
   case class ArticleHtmlGalleyImagesRow(galleyId: Long, fileId: Long)
   /** GetResult implicit for fetching ArticleHtmlGalleyImagesRow objects using plain SQL queries */
   implicit def GetResultArticleHtmlGalleyImagesRow(implicit e0: GR[Long]): GR[ArticleHtmlGalleyImagesRow] = GR{
-    prs => ArticleHtmlGalleyImagesRow.tupled((<<[Long], <<[Long]))
+    prs => import prs._
+    ArticleHtmlGalleyImagesRow.tupled((<<[Long], <<[Long]))
   }
   /** Table description of table article_html_galley_images. Objects of this class serve as prototypes for rows in queries. */
   class ArticleHtmlGalleyImages(tag: Tag) extends Table[ArticleHtmlGalleyImagesRow](tag, "article_html_galley_images") {
     def * = (galleyId, fileId) <> (ArticleHtmlGalleyImagesRow.tupled, ArticleHtmlGalleyImagesRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (galleyId.?, fileId.?).shaped.<>({r=> _1.map(_=> ArticleHtmlGalleyImagesRow.tupled((_1.get, _2.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (galleyId.?, fileId.?).shaped.<>({r=>import r._; _1.map(_=> ArticleHtmlGalleyImagesRow.tupled((_1.get, _2.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column galley_id  */
     val galleyId: Column[Long] = column[Long]("galley_id")
@@ -507,13 +523,14 @@ trait Tables {
   case class ArticleNotesRow(noteId: Long, articleId: Long, userId: Long, dateCreated: java.sql.Timestamp, dateModified: java.sql.Timestamp, title: String, note: Option[String], fileId: Long)
   /** GetResult implicit for fetching ArticleNotesRow objects using plain SQL queries */
   implicit def GetResultArticleNotesRow(implicit e0: GR[Long], e1: GR[java.sql.Timestamp], e2: GR[String], e3: GR[Option[String]]): GR[ArticleNotesRow] = GR{
-    prs => ArticleNotesRow.tupled((<<[Long], <<[Long], <<[Long], <<[java.sql.Timestamp], <<[java.sql.Timestamp], <<[String], <<?[String], <<[Long]))
+    prs => import prs._
+    ArticleNotesRow.tupled((<<[Long], <<[Long], <<[Long], <<[java.sql.Timestamp], <<[java.sql.Timestamp], <<[String], <<?[String], <<[Long]))
   }
   /** Table description of table article_notes. Objects of this class serve as prototypes for rows in queries. */
   class ArticleNotes(tag: Tag) extends Table[ArticleNotesRow](tag, "article_notes") {
     def * = (noteId, articleId, userId, dateCreated, dateModified, title, note, fileId) <> (ArticleNotesRow.tupled, ArticleNotesRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (noteId.?, articleId.?, userId.?, dateCreated.?, dateModified.?, title.?, note, fileId.?).shaped.<>({r=> _1.map(_=> ArticleNotesRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6.get, _7, _8.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (noteId.?, articleId.?, userId.?, dateCreated.?, dateModified.?, title.?, note, fileId.?).shaped.<>({r=>import r._; _1.map(_=> ArticleNotesRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6.get, _7, _8.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column note_id AutoInc, PrimaryKey */
     val noteId: Column[Long] = column[Long]("note_id", O.AutoInc, O.PrimaryKey)
@@ -550,7 +567,8 @@ trait Tables {
   }
   /** GetResult implicit for fetching ArticlesRow objects using plain SQL queries */
   implicit def GetResultArticlesRow(implicit e0: GR[Long], e1: GR[Option[String]], e2: GR[Option[Long]], e3: GR[Option[java.sql.Timestamp]], e4: GR[Byte]): GR[ArticlesRow] = GR{
-    prs => <<[Long] :: <<?[String] :: <<[Long] :: <<[Long] :: <<?[Long] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[java.sql.Timestamp] :: <<?[java.sql.Timestamp] :: <<?[java.sql.Timestamp] :: <<[Byte] :: <<[Byte] :: <<[Byte] :: <<?[Long] :: <<?[Long] :: <<?[Long] :: <<?[Long] :: <<?[String] :: <<?[String] :: <<[Byte] :: <<[Byte] :: <<[Byte] :: HNil
+    prs => import prs._
+    <<[Long] :: <<?[String] :: <<[Long] :: <<[Long] :: <<?[Long] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[java.sql.Timestamp] :: <<?[java.sql.Timestamp] :: <<?[java.sql.Timestamp] :: <<[Byte] :: <<[Byte] :: <<[Byte] :: <<?[Long] :: <<?[Long] :: <<?[Long] :: <<?[Long] :: <<?[String] :: <<?[String] :: <<[Byte] :: <<[Byte] :: <<[Byte] :: HNil
   }
   /** Table description of table articles. Objects of this class serve as prototypes for rows in queries. */
   class Articles(tag: Tag) extends Table[ArticlesRow](tag, "articles") {
@@ -619,13 +637,14 @@ trait Tables {
   case class ArticleSearchKeywordListRow(keywordId: Long, keywordText: String)
   /** GetResult implicit for fetching ArticleSearchKeywordListRow objects using plain SQL queries */
   implicit def GetResultArticleSearchKeywordListRow(implicit e0: GR[Long], e1: GR[String]): GR[ArticleSearchKeywordListRow] = GR{
-    prs => ArticleSearchKeywordListRow.tupled((<<[Long], <<[String]))
+    prs => import prs._
+    ArticleSearchKeywordListRow.tupled((<<[Long], <<[String]))
   }
   /** Table description of table article_search_keyword_list. Objects of this class serve as prototypes for rows in queries. */
   class ArticleSearchKeywordList(tag: Tag) extends Table[ArticleSearchKeywordListRow](tag, "article_search_keyword_list") {
     def * = (keywordId, keywordText) <> (ArticleSearchKeywordListRow.tupled, ArticleSearchKeywordListRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (keywordId.?, keywordText.?).shaped.<>({r=> _1.map(_=> ArticleSearchKeywordListRow.tupled((_1.get, _2.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (keywordId.?, keywordText.?).shaped.<>({r=>import r._; _1.map(_=> ArticleSearchKeywordListRow.tupled((_1.get, _2.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column keyword_id AutoInc, PrimaryKey */
     val keywordId: Column[Long] = column[Long]("keyword_id", O.AutoInc, O.PrimaryKey)
@@ -645,13 +664,14 @@ trait Tables {
   case class ArticleSearchObjectKeywordsRow(objectId: Long, keywordId: Long, pos: Int)
   /** GetResult implicit for fetching ArticleSearchObjectKeywordsRow objects using plain SQL queries */
   implicit def GetResultArticleSearchObjectKeywordsRow(implicit e0: GR[Long], e1: GR[Int]): GR[ArticleSearchObjectKeywordsRow] = GR{
-    prs => ArticleSearchObjectKeywordsRow.tupled((<<[Long], <<[Long], <<[Int]))
+    prs => import prs._
+    ArticleSearchObjectKeywordsRow.tupled((<<[Long], <<[Long], <<[Int]))
   }
   /** Table description of table article_search_object_keywords. Objects of this class serve as prototypes for rows in queries. */
   class ArticleSearchObjectKeywords(tag: Tag) extends Table[ArticleSearchObjectKeywordsRow](tag, "article_search_object_keywords") {
     def * = (objectId, keywordId, pos) <> (ArticleSearchObjectKeywordsRow.tupled, ArticleSearchObjectKeywordsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (objectId.?, keywordId.?, pos.?).shaped.<>({r=> _1.map(_=> ArticleSearchObjectKeywordsRow.tupled((_1.get, _2.get, _3.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (objectId.?, keywordId.?, pos.?).shaped.<>({r=>import r._; _1.map(_=> ArticleSearchObjectKeywordsRow.tupled((_1.get, _2.get, _3.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column object_id  */
     val objectId: Column[Long] = column[Long]("object_id")
@@ -676,14 +696,15 @@ trait Tables {
   case class ArticleSearchObjectsRow(objectId: Long, articleId: Long, `type`: Int, assocId: Option[Long])
   /** GetResult implicit for fetching ArticleSearchObjectsRow objects using plain SQL queries */
   implicit def GetResultArticleSearchObjectsRow(implicit e0: GR[Long], e1: GR[Int], e2: GR[Option[Long]]): GR[ArticleSearchObjectsRow] = GR{
-    prs => ArticleSearchObjectsRow.tupled((<<[Long], <<[Long], <<[Int], <<?[Long]))
+    prs => import prs._
+    ArticleSearchObjectsRow.tupled((<<[Long], <<[Long], <<[Int], <<?[Long]))
   }
   /** Table description of table article_search_objects. Objects of this class serve as prototypes for rows in queries.
    *  NOTE: The following names collided with Scala keywords and were escaped: type */
   class ArticleSearchObjects(tag: Tag) extends Table[ArticleSearchObjectsRow](tag, "article_search_objects") {
     def * = (objectId, articleId, `type`, assocId) <> (ArticleSearchObjectsRow.tupled, ArticleSearchObjectsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (objectId.?, articleId.?, `type`.?, assocId).shaped.<>({r=> _1.map(_=> ArticleSearchObjectsRow.tupled((_1.get, _2.get, _3.get, _4)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (objectId.?, articleId.?, `type`.?, assocId).shaped.<>({r=>import r._; _1.map(_=> ArticleSearchObjectsRow.tupled((_1.get, _2.get, _3.get, _4)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column object_id AutoInc, PrimaryKey */
     val objectId: Column[Long] = column[Long]("object_id", O.AutoInc, O.PrimaryKey)
@@ -707,13 +728,14 @@ trait Tables {
   case class ArticleSettingsRow(articleId: Long, locale: String, settingName: String, settingValue: Option[String], settingType: String)
   /** GetResult implicit for fetching ArticleSettingsRow objects using plain SQL queries */
   implicit def GetResultArticleSettingsRow(implicit e0: GR[Long], e1: GR[String], e2: GR[Option[String]]): GR[ArticleSettingsRow] = GR{
-    prs => ArticleSettingsRow.tupled((<<[Long], <<[String], <<[String], <<?[String], <<[String]))
+    prs => import prs._
+    ArticleSettingsRow.tupled((<<[Long], <<[String], <<[String], <<?[String], <<[String]))
   }
   /** Table description of table article_settings. Objects of this class serve as prototypes for rows in queries. */
   class ArticleSettings(tag: Tag) extends Table[ArticleSettingsRow](tag, "article_settings") {
     def * = (articleId, locale, settingName, settingValue, settingType) <> (ArticleSettingsRow.tupled, ArticleSettingsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (articleId.?, locale.?, settingName.?, settingValue, settingType.?).shaped.<>({r=> _1.map(_=> ArticleSettingsRow.tupled((_1.get, _2.get, _3.get, _4, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (articleId.?, locale.?, settingName.?, settingValue, settingType.?).shaped.<>({r=>import r._; _1.map(_=> ArticleSettingsRow.tupled((_1.get, _2.get, _3.get, _4, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column article_id  */
     val articleId: Column[Long] = column[Long]("article_id")
@@ -743,13 +765,14 @@ trait Tables {
   case class ArticleSuppFileSettingsRow(suppId: Long, locale: String, settingName: String, settingValue: Option[String], settingType: String)
   /** GetResult implicit for fetching ArticleSuppFileSettingsRow objects using plain SQL queries */
   implicit def GetResultArticleSuppFileSettingsRow(implicit e0: GR[Long], e1: GR[String], e2: GR[Option[String]]): GR[ArticleSuppFileSettingsRow] = GR{
-    prs => ArticleSuppFileSettingsRow.tupled((<<[Long], <<[String], <<[String], <<?[String], <<[String]))
+    prs => import prs._
+    ArticleSuppFileSettingsRow.tupled((<<[Long], <<[String], <<[String], <<?[String], <<[String]))
   }
   /** Table description of table article_supp_file_settings. Objects of this class serve as prototypes for rows in queries. */
   class ArticleSuppFileSettings(tag: Tag) extends Table[ArticleSuppFileSettingsRow](tag, "article_supp_file_settings") {
     def * = (suppId, locale, settingName, settingValue, settingType) <> (ArticleSuppFileSettingsRow.tupled, ArticleSuppFileSettingsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (suppId.?, locale.?, settingName.?, settingValue, settingType.?).shaped.<>({r=> _1.map(_=> ArticleSuppFileSettingsRow.tupled((_1.get, _2.get, _3.get, _4, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (suppId.?, locale.?, settingName.?, settingValue, settingType.?).shaped.<>({r=>import r._; _1.map(_=> ArticleSuppFileSettingsRow.tupled((_1.get, _2.get, _3.get, _4, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column supp_id  */
     val suppId: Column[Long] = column[Long]("supp_id")
@@ -784,14 +807,15 @@ trait Tables {
   case class ArticleSupplementaryFilesRow(suppId: Long, fileId: Long, articleId: Long, `type`: Option[String], language: Option[String], publicSuppFileId: Option[String], dateCreated: Option[java.sql.Date], showReviewers: Option[Byte] = None, dateSubmitted: java.sql.Timestamp, seq: Double = 0.0)
   /** GetResult implicit for fetching ArticleSupplementaryFilesRow objects using plain SQL queries */
   implicit def GetResultArticleSupplementaryFilesRow(implicit e0: GR[Long], e1: GR[Option[String]], e2: GR[Option[java.sql.Date]], e3: GR[Option[Byte]], e4: GR[java.sql.Timestamp], e5: GR[Double]): GR[ArticleSupplementaryFilesRow] = GR{
-    prs => ArticleSupplementaryFilesRow.tupled((<<[Long], <<[Long], <<[Long], <<?[String], <<?[String], <<?[String], <<?[java.sql.Date], <<?[Byte], <<[java.sql.Timestamp], <<[Double]))
+    prs => import prs._
+    ArticleSupplementaryFilesRow.tupled((<<[Long], <<[Long], <<[Long], <<?[String], <<?[String], <<?[String], <<?[java.sql.Date], <<?[Byte], <<[java.sql.Timestamp], <<[Double]))
   }
   /** Table description of table article_supplementary_files. Objects of this class serve as prototypes for rows in queries.
    *  NOTE: The following names collided with Scala keywords and were escaped: type */
   class ArticleSupplementaryFiles(tag: Tag) extends Table[ArticleSupplementaryFilesRow](tag, "article_supplementary_files") {
     def * = (suppId, fileId, articleId, `type`, language, publicSuppFileId, dateCreated, showReviewers, dateSubmitted, seq) <> (ArticleSupplementaryFilesRow.tupled, ArticleSupplementaryFilesRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (suppId.?, fileId.?, articleId.?, `type`, language, publicSuppFileId, dateCreated, showReviewers, dateSubmitted.?, seq.?).shaped.<>({r=> _1.map(_=> ArticleSupplementaryFilesRow.tupled((_1.get, _2.get, _3.get, _4, _5, _6, _7, _8, _9.get, _10.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (suppId.?, fileId.?, articleId.?, `type`, language, publicSuppFileId, dateCreated, showReviewers, dateSubmitted.?, seq.?).shaped.<>({r=>import r._; _1.map(_=> ArticleSupplementaryFilesRow.tupled((_1.get, _2.get, _3.get, _4, _5, _6, _7, _8, _9.get, _10.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column supp_id AutoInc, PrimaryKey */
     val suppId: Column[Long] = column[Long]("supp_id", O.AutoInc, O.PrimaryKey)
@@ -835,13 +859,14 @@ trait Tables {
   case class ArticleXmlGalleysRow(xmlGalleyId: Long, galleyId: Long, articleId: Long, label: String, galleyType: String, views: Int = 0)
   /** GetResult implicit for fetching ArticleXmlGalleysRow objects using plain SQL queries */
   implicit def GetResultArticleXmlGalleysRow(implicit e0: GR[Long], e1: GR[String], e2: GR[Int]): GR[ArticleXmlGalleysRow] = GR{
-    prs => ArticleXmlGalleysRow.tupled((<<[Long], <<[Long], <<[Long], <<[String], <<[String], <<[Int]))
+    prs => import prs._
+    ArticleXmlGalleysRow.tupled((<<[Long], <<[Long], <<[Long], <<[String], <<[String], <<[Int]))
   }
   /** Table description of table article_xml_galleys. Objects of this class serve as prototypes for rows in queries. */
   class ArticleXmlGalleys(tag: Tag) extends Table[ArticleXmlGalleysRow](tag, "article_xml_galleys") {
     def * = (xmlGalleyId, galleyId, articleId, label, galleyType, views) <> (ArticleXmlGalleysRow.tupled, ArticleXmlGalleysRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (xmlGalleyId.?, galleyId.?, articleId.?, label.?, galleyType.?, views.?).shaped.<>({r=> _1.map(_=> ArticleXmlGalleysRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (xmlGalleyId.?, galleyId.?, articleId.?, label.?, galleyType.?, views.?).shaped.<>({r=>import r._; _1.map(_=> ArticleXmlGalleysRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column xml_galley_id AutoInc, PrimaryKey */
     val xmlGalleyId: Column[Long] = column[Long]("xml_galley_id", O.AutoInc, O.PrimaryKey)
@@ -874,13 +899,14 @@ trait Tables {
   case class AuthorsRow(authorId: Long, submissionId: Long, primaryContact: Byte, seq: Double = 0.0, firstName: String, middleName: Option[String], lastName: String, country: Option[String], email: String, url: Option[String], userGroupId: Option[Long])
   /** GetResult implicit for fetching AuthorsRow objects using plain SQL queries */
   implicit def GetResultAuthorsRow(implicit e0: GR[Long], e1: GR[Byte], e2: GR[Double], e3: GR[String], e4: GR[Option[String]], e5: GR[Option[Long]]): GR[AuthorsRow] = GR{
-    prs => AuthorsRow.tupled((<<[Long], <<[Long], <<[Byte], <<[Double], <<[String], <<?[String], <<[String], <<?[String], <<[String], <<?[String], <<?[Long]))
+    prs => import prs._
+    AuthorsRow.tupled((<<[Long], <<[Long], <<[Byte], <<[Double], <<[String], <<?[String], <<[String], <<?[String], <<[String], <<?[String], <<?[Long]))
   }
   /** Table description of table authors. Objects of this class serve as prototypes for rows in queries. */
   class Authors(tag: Tag) extends Table[AuthorsRow](tag, "authors") {
     def * = (authorId, submissionId, primaryContact, seq, firstName, middleName, lastName, country, email, url, userGroupId) <> (AuthorsRow.tupled, AuthorsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (authorId.?, submissionId.?, primaryContact.?, seq.?, firstName.?, middleName, lastName.?, country, email.?, url, userGroupId).shaped.<>({r=> _1.map(_=> AuthorsRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6, _7.get, _8, _9.get, _10, _11)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (authorId.?, submissionId.?, primaryContact.?, seq.?, firstName.?, middleName, lastName.?, country, email.?, url, userGroupId).shaped.<>({r=>import r._; _1.map(_=> AuthorsRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6, _7.get, _8, _9.get, _10, _11)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column author_id AutoInc, PrimaryKey */
     val authorId: Column[Long] = column[Long]("author_id", O.AutoInc, O.PrimaryKey)
@@ -920,13 +946,14 @@ trait Tables {
   case class AuthorSettingsRow(authorId: Long, locale: String, settingName: String, settingValue: Option[String], settingType: String)
   /** GetResult implicit for fetching AuthorSettingsRow objects using plain SQL queries */
   implicit def GetResultAuthorSettingsRow(implicit e0: GR[Long], e1: GR[String], e2: GR[Option[String]]): GR[AuthorSettingsRow] = GR{
-    prs => AuthorSettingsRow.tupled((<<[Long], <<[String], <<[String], <<?[String], <<[String]))
+    prs => import prs._
+    AuthorSettingsRow.tupled((<<[Long], <<[String], <<[String], <<?[String], <<[String]))
   }
   /** Table description of table author_settings. Objects of this class serve as prototypes for rows in queries. */
   class AuthorSettings(tag: Tag) extends Table[AuthorSettingsRow](tag, "author_settings") {
     def * = (authorId, locale, settingName, settingValue, settingType) <> (AuthorSettingsRow.tupled, AuthorSettingsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (authorId.?, locale.?, settingName.?, settingValue, settingType.?).shaped.<>({r=> _1.map(_=> AuthorSettingsRow.tupled((_1.get, _2.get, _3.get, _4, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (authorId.?, locale.?, settingName.?, settingValue, settingType.?).shaped.<>({r=>import r._; _1.map(_=> AuthorSettingsRow.tupled((_1.get, _2.get, _3.get, _4, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column author_id  */
     val authorId: Column[Long] = column[Long]("author_id")
@@ -956,13 +983,14 @@ trait Tables {
   case class AuthSourcesRow(authId: Long, title: String, plugin: String, authDefault: Byte, settings: Option[String])
   /** GetResult implicit for fetching AuthSourcesRow objects using plain SQL queries */
   implicit def GetResultAuthSourcesRow(implicit e0: GR[Long], e1: GR[String], e2: GR[Byte], e3: GR[Option[String]]): GR[AuthSourcesRow] = GR{
-    prs => AuthSourcesRow.tupled((<<[Long], <<[String], <<[String], <<[Byte], <<?[String]))
+    prs => import prs._
+    AuthSourcesRow.tupled((<<[Long], <<[String], <<[String], <<[Byte], <<?[String]))
   }
   /** Table description of table auth_sources. Objects of this class serve as prototypes for rows in queries. */
   class AuthSources(tag: Tag) extends Table[AuthSourcesRow](tag, "auth_sources") {
     def * = (authId, title, plugin, authDefault, settings) <> (AuthSourcesRow.tupled, AuthSourcesRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (authId.?, title.?, plugin.?, authDefault.?, settings).shaped.<>({r=> _1.map(_=> AuthSourcesRow.tupled((_1.get, _2.get, _3.get, _4.get, _5)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (authId.?, title.?, plugin.?, authDefault.?, settings).shaped.<>({r=>import r._; _1.map(_=> AuthSourcesRow.tupled((_1.get, _2.get, _3.get, _4.get, _5)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column auth_id AutoInc, PrimaryKey */
     val authId: Column[Long] = column[Long]("auth_id", O.AutoInc, O.PrimaryKey)
@@ -1004,13 +1032,14 @@ trait Tables {
   case class BooksForReviewRow(bookId: Long, journalId: Long, status: Short, authorType: Short, publisher: String, year: Short, language: String, copy: Byte, url: Option[String], edition: Option[Byte], pages: Option[Short], isbn: Option[String], dateCreated: java.sql.Timestamp, dateRequested: Option[java.sql.Timestamp], dateAssigned: Option[java.sql.Timestamp], dateMailed: Option[java.sql.Timestamp], dateDue: Option[java.sql.Timestamp], dateSubmitted: Option[java.sql.Timestamp], userId: Option[Long], editorId: Option[Long], articleId: Option[Long], notes: Option[String])
   /** GetResult implicit for fetching BooksForReviewRow objects using plain SQL queries */
   implicit def GetResultBooksForReviewRow(implicit e0: GR[Long], e1: GR[Short], e2: GR[String], e3: GR[Byte], e4: GR[Option[String]], e5: GR[Option[Byte]], e6: GR[Option[Short]], e7: GR[java.sql.Timestamp], e8: GR[Option[java.sql.Timestamp]], e9: GR[Option[Long]]): GR[BooksForReviewRow] = GR{
-    prs => BooksForReviewRow.tupled((<<[Long], <<[Long], <<[Short], <<[Short], <<[String], <<[Short], <<[String], <<[Byte], <<?[String], <<?[Byte], <<?[Short], <<?[String], <<[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[Long], <<?[Long], <<?[Long], <<?[String]))
+    prs => import prs._
+    BooksForReviewRow.tupled((<<[Long], <<[Long], <<[Short], <<[Short], <<[String], <<[Short], <<[String], <<[Byte], <<?[String], <<?[Byte], <<?[Short], <<?[String], <<[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[Long], <<?[Long], <<?[Long], <<?[String]))
   }
   /** Table description of table books_for_review. Objects of this class serve as prototypes for rows in queries. */
   class BooksForReview(tag: Tag) extends Table[BooksForReviewRow](tag, "books_for_review") {
     def * = (bookId, journalId, status, authorType, publisher, year, language, copy, url, edition, pages, isbn, dateCreated, dateRequested, dateAssigned, dateMailed, dateDue, dateSubmitted, userId, editorId, articleId, notes) <> (BooksForReviewRow.tupled, BooksForReviewRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (bookId.?, journalId.?, status.?, authorType.?, publisher.?, year.?, language.?, copy.?, url, edition, pages, isbn, dateCreated.?, dateRequested, dateAssigned, dateMailed, dateDue, dateSubmitted, userId, editorId, articleId, notes).shaped.<>({r=> _1.map(_=> BooksForReviewRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6.get, _7.get, _8.get, _9, _10, _11, _12, _13.get, _14, _15, _16, _17, _18, _19, _20, _21, _22)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (bookId.?, journalId.?, status.?, authorType.?, publisher.?, year.?, language.?, copy.?, url, edition, pages, isbn, dateCreated.?, dateRequested, dateAssigned, dateMailed, dateDue, dateSubmitted, userId, editorId, articleId, notes).shaped.<>({r=>import r._; _1.map(_=> BooksForReviewRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6.get, _7.get, _8.get, _9, _10, _11, _12, _13.get, _14, _15, _16, _17, _18, _19, _20, _21, _22)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column book_id AutoInc, PrimaryKey */
     val bookId: Column[Long] = column[Long]("book_id", O.AutoInc, O.PrimaryKey)
@@ -1073,13 +1102,14 @@ trait Tables {
   case class BooksForReviewAuthorsRow(authorId: Long, bookId: Long, seq: Double = 0.0, firstName: String, middleName: Option[String], lastName: String)
   /** GetResult implicit for fetching BooksForReviewAuthorsRow objects using plain SQL queries */
   implicit def GetResultBooksForReviewAuthorsRow(implicit e0: GR[Long], e1: GR[Double], e2: GR[String], e3: GR[Option[String]]): GR[BooksForReviewAuthorsRow] = GR{
-    prs => BooksForReviewAuthorsRow.tupled((<<[Long], <<[Long], <<[Double], <<[String], <<?[String], <<[String]))
+    prs => import prs._
+    BooksForReviewAuthorsRow.tupled((<<[Long], <<[Long], <<[Double], <<[String], <<?[String], <<[String]))
   }
   /** Table description of table books_for_review_authors. Objects of this class serve as prototypes for rows in queries. */
   class BooksForReviewAuthors(tag: Tag) extends Table[BooksForReviewAuthorsRow](tag, "books_for_review_authors") {
     def * = (authorId, bookId, seq, firstName, middleName, lastName) <> (BooksForReviewAuthorsRow.tupled, BooksForReviewAuthorsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (authorId.?, bookId.?, seq.?, firstName.?, middleName, lastName.?).shaped.<>({r=> _1.map(_=> BooksForReviewAuthorsRow.tupled((_1.get, _2.get, _3.get, _4.get, _5, _6.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (authorId.?, bookId.?, seq.?, firstName.?, middleName, lastName.?).shaped.<>({r=>import r._; _1.map(_=> BooksForReviewAuthorsRow.tupled((_1.get, _2.get, _3.get, _4.get, _5, _6.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column author_id AutoInc, PrimaryKey */
     val authorId: Column[Long] = column[Long]("author_id", O.AutoInc, O.PrimaryKey)
@@ -1109,13 +1139,14 @@ trait Tables {
   case class BooksForReviewSettingsRow(bookId: Long, locale: String, settingName: String, settingValue: Option[String], settingType: String)
   /** GetResult implicit for fetching BooksForReviewSettingsRow objects using plain SQL queries */
   implicit def GetResultBooksForReviewSettingsRow(implicit e0: GR[Long], e1: GR[String], e2: GR[Option[String]]): GR[BooksForReviewSettingsRow] = GR{
-    prs => BooksForReviewSettingsRow.tupled((<<[Long], <<[String], <<[String], <<?[String], <<[String]))
+    prs => import prs._
+    BooksForReviewSettingsRow.tupled((<<[Long], <<[String], <<[String], <<?[String], <<[String]))
   }
   /** Table description of table books_for_review_settings. Objects of this class serve as prototypes for rows in queries. */
   class BooksForReviewSettings(tag: Tag) extends Table[BooksForReviewSettingsRow](tag, "books_for_review_settings") {
     def * = (bookId, locale, settingName, settingValue, settingType) <> (BooksForReviewSettingsRow.tupled, BooksForReviewSettingsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (bookId.?, locale.?, settingName.?, settingValue, settingType.?).shaped.<>({r=> _1.map(_=> BooksForReviewSettingsRow.tupled((_1.get, _2.get, _3.get, _4, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (bookId.?, locale.?, settingName.?, settingValue, settingType.?).shaped.<>({r=>import r._; _1.map(_=> BooksForReviewSettingsRow.tupled((_1.get, _2.get, _3.get, _4, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column book_id  */
     val bookId: Column[Long] = column[Long]("book_id")
@@ -1144,13 +1175,14 @@ trait Tables {
   case class CaptchasRow(captchaId: Long, sessionId: String, value: String, dateCreated: java.sql.Timestamp)
   /** GetResult implicit for fetching CaptchasRow objects using plain SQL queries */
   implicit def GetResultCaptchasRow(implicit e0: GR[Long], e1: GR[String], e2: GR[java.sql.Timestamp]): GR[CaptchasRow] = GR{
-    prs => CaptchasRow.tupled((<<[Long], <<[String], <<[String], <<[java.sql.Timestamp]))
+    prs => import prs._
+    CaptchasRow.tupled((<<[Long], <<[String], <<[String], <<[java.sql.Timestamp]))
   }
   /** Table description of table captchas. Objects of this class serve as prototypes for rows in queries. */
   class Captchas(tag: Tag) extends Table[CaptchasRow](tag, "captchas") {
     def * = (captchaId, sessionId, value, dateCreated) <> (CaptchasRow.tupled, CaptchasRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (captchaId.?, sessionId.?, value.?, dateCreated.?).shaped.<>({r=> _1.map(_=> CaptchasRow.tupled((_1.get, _2.get, _3.get, _4.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (captchaId.?, sessionId.?, value.?, dateCreated.?).shaped.<>({r=>import r._; _1.map(_=> CaptchasRow.tupled((_1.get, _2.get, _3.get, _4.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column captcha_id AutoInc, PrimaryKey */
     val captchaId: Column[Long] = column[Long]("captcha_id", O.AutoInc, O.PrimaryKey)
@@ -1175,13 +1207,14 @@ trait Tables {
   case class CitationsRow(citationId: Long, assocType: Long = 0L, assocId: Long = 0L, citationState: Long, rawCitation: Option[String], seq: Long = 0L, lockId: Option[String])
   /** GetResult implicit for fetching CitationsRow objects using plain SQL queries */
   implicit def GetResultCitationsRow(implicit e0: GR[Long], e1: GR[Option[String]]): GR[CitationsRow] = GR{
-    prs => CitationsRow.tupled((<<[Long], <<[Long], <<[Long], <<[Long], <<?[String], <<[Long], <<?[String]))
+    prs => import prs._
+    CitationsRow.tupled((<<[Long], <<[Long], <<[Long], <<[Long], <<?[String], <<[Long], <<?[String]))
   }
   /** Table description of table citations. Objects of this class serve as prototypes for rows in queries. */
   class Citations(tag: Tag) extends Table[CitationsRow](tag, "citations") {
     def * = (citationId, assocType, assocId, citationState, rawCitation, seq, lockId) <> (CitationsRow.tupled, CitationsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (citationId.?, assocType.?, assocId.?, citationState.?, rawCitation, seq.?, lockId).shaped.<>({r=> _1.map(_=> CitationsRow.tupled((_1.get, _2.get, _3.get, _4.get, _5, _6.get, _7)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (citationId.?, assocType.?, assocId.?, citationState.?, rawCitation, seq.?, lockId).shaped.<>({r=>import r._; _1.map(_=> CitationsRow.tupled((_1.get, _2.get, _3.get, _4.get, _5, _6.get, _7)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column citation_id AutoInc, PrimaryKey */
     val citationId: Column[Long] = column[Long]("citation_id", O.AutoInc, O.PrimaryKey)
@@ -1215,13 +1248,14 @@ trait Tables {
   case class CitationSettingsRow(citationId: Long, locale: String, settingName: String, settingValue: Option[String], settingType: String)
   /** GetResult implicit for fetching CitationSettingsRow objects using plain SQL queries */
   implicit def GetResultCitationSettingsRow(implicit e0: GR[Long], e1: GR[String], e2: GR[Option[String]]): GR[CitationSettingsRow] = GR{
-    prs => CitationSettingsRow.tupled((<<[Long], <<[String], <<[String], <<?[String], <<[String]))
+    prs => import prs._
+    CitationSettingsRow.tupled((<<[Long], <<[String], <<[String], <<?[String], <<[String]))
   }
   /** Table description of table citation_settings. Objects of this class serve as prototypes for rows in queries. */
   class CitationSettings(tag: Tag) extends Table[CitationSettingsRow](tag, "citation_settings") {
     def * = (citationId, locale, settingName, settingValue, settingType) <> (CitationSettingsRow.tupled, CitationSettingsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (citationId.?, locale.?, settingName.?, settingValue, settingType.?).shaped.<>({r=> _1.map(_=> CitationSettingsRow.tupled((_1.get, _2.get, _3.get, _4, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (citationId.?, locale.?, settingName.?, settingValue, settingType.?).shaped.<>({r=>import r._; _1.map(_=> CitationSettingsRow.tupled((_1.get, _2.get, _3.get, _4, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column citation_id  */
     val citationId: Column[Long] = column[Long]("citation_id")
@@ -1258,13 +1292,14 @@ trait Tables {
   case class CommentsRow(commentId: Long, submissionId: Long, parentCommentId: Option[Long], numChildren: Int = 0, userId: Option[Long], posterIp: String, posterName: Option[String], posterEmail: Option[String], title: String, body: Option[String], datePosted: Option[java.sql.Timestamp], dateModified: Option[java.sql.Timestamp])
   /** GetResult implicit for fetching CommentsRow objects using plain SQL queries */
   implicit def GetResultCommentsRow(implicit e0: GR[Long], e1: GR[Option[Long]], e2: GR[Int], e3: GR[String], e4: GR[Option[String]], e5: GR[Option[java.sql.Timestamp]]): GR[CommentsRow] = GR{
-    prs => CommentsRow.tupled((<<[Long], <<[Long], <<?[Long], <<[Int], <<?[Long], <<[String], <<?[String], <<?[String], <<[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp]))
+    prs => import prs._
+    CommentsRow.tupled((<<[Long], <<[Long], <<?[Long], <<[Int], <<?[Long], <<[String], <<?[String], <<?[String], <<[String], <<?[String], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp]))
   }
   /** Table description of table comments. Objects of this class serve as prototypes for rows in queries. */
   class Comments(tag: Tag) extends Table[CommentsRow](tag, "comments") {
     def * = (commentId, submissionId, parentCommentId, numChildren, userId, posterIp, posterName, posterEmail, title, body, datePosted, dateModified) <> (CommentsRow.tupled, CommentsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (commentId.?, submissionId.?, parentCommentId, numChildren.?, userId, posterIp.?, posterName, posterEmail, title.?, body, datePosted, dateModified).shaped.<>({r=> _1.map(_=> CommentsRow.tupled((_1.get, _2.get, _3, _4.get, _5, _6.get, _7, _8, _9.get, _10, _11, _12)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (commentId.?, submissionId.?, parentCommentId, numChildren.?, userId, posterIp.?, posterName, posterEmail, title.?, body, datePosted, dateModified).shaped.<>({r=>import r._; _1.map(_=> CommentsRow.tupled((_1.get, _2.get, _3, _4.get, _5, _6.get, _7, _8, _9.get, _10, _11, _12)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column comment_id AutoInc, PrimaryKey */
     val commentId: Column[Long] = column[Long]("comment_id", O.AutoInc, O.PrimaryKey)
@@ -1314,13 +1349,14 @@ trait Tables {
   case class CompletedPaymentsRow(completedPaymentId: Long, timestamp: java.sql.Timestamp, paymentType: Long, journalId: Long, userId: Option[Long], assocId: Option[Long], amount: Double, currencyCodeAlpha: Option[String], paymentMethodPluginName: Option[String])
   /** GetResult implicit for fetching CompletedPaymentsRow objects using plain SQL queries */
   implicit def GetResultCompletedPaymentsRow(implicit e0: GR[Long], e1: GR[java.sql.Timestamp], e2: GR[Option[Long]], e3: GR[Double], e4: GR[Option[String]]): GR[CompletedPaymentsRow] = GR{
-    prs => CompletedPaymentsRow.tupled((<<[Long], <<[java.sql.Timestamp], <<[Long], <<[Long], <<?[Long], <<?[Long], <<[Double], <<?[String], <<?[String]))
+    prs => import prs._
+    CompletedPaymentsRow.tupled((<<[Long], <<[java.sql.Timestamp], <<[Long], <<[Long], <<?[Long], <<?[Long], <<[Double], <<?[String], <<?[String]))
   }
   /** Table description of table completed_payments. Objects of this class serve as prototypes for rows in queries. */
   class CompletedPayments(tag: Tag) extends Table[CompletedPaymentsRow](tag, "completed_payments") {
     def * = (completedPaymentId, timestamp, paymentType, journalId, userId, assocId, amount, currencyCodeAlpha, paymentMethodPluginName) <> (CompletedPaymentsRow.tupled, CompletedPaymentsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (completedPaymentId.?, timestamp.?, paymentType.?, journalId.?, userId, assocId, amount.?, currencyCodeAlpha, paymentMethodPluginName).shaped.<>({r=> _1.map(_=> CompletedPaymentsRow.tupled((_1.get, _2.get, _3.get, _4.get, _5, _6, _7.get, _8, _9)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (completedPaymentId.?, timestamp.?, paymentType.?, journalId.?, userId, assocId, amount.?, currencyCodeAlpha, paymentMethodPluginName).shaped.<>({r=>import r._; _1.map(_=> CompletedPaymentsRow.tupled((_1.get, _2.get, _3.get, _4.get, _5, _6, _7.get, _8, _9)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column completed_payment_id AutoInc, PrimaryKey */
     val completedPaymentId: Column[Long] = column[Long]("completed_payment_id", O.AutoInc, O.PrimaryKey)
@@ -1351,13 +1387,14 @@ trait Tables {
   case class ControlledVocabEntriesRow(controlledVocabEntryId: Long, controlledVocabId: Long, seq: Option[Double])
   /** GetResult implicit for fetching ControlledVocabEntriesRow objects using plain SQL queries */
   implicit def GetResultControlledVocabEntriesRow(implicit e0: GR[Long], e1: GR[Option[Double]]): GR[ControlledVocabEntriesRow] = GR{
-    prs => ControlledVocabEntriesRow.tupled((<<[Long], <<[Long], <<?[Double]))
+    prs => import prs._
+    ControlledVocabEntriesRow.tupled((<<[Long], <<[Long], <<?[Double]))
   }
   /** Table description of table controlled_vocab_entries. Objects of this class serve as prototypes for rows in queries. */
   class ControlledVocabEntries(tag: Tag) extends Table[ControlledVocabEntriesRow](tag, "controlled_vocab_entries") {
     def * = (controlledVocabEntryId, controlledVocabId, seq) <> (ControlledVocabEntriesRow.tupled, ControlledVocabEntriesRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (controlledVocabEntryId.?, controlledVocabId.?, seq).shaped.<>({r=> _1.map(_=> ControlledVocabEntriesRow.tupled((_1.get, _2.get, _3)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (controlledVocabEntryId.?, controlledVocabId.?, seq).shaped.<>({r=>import r._; _1.map(_=> ControlledVocabEntriesRow.tupled((_1.get, _2.get, _3)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column controlled_vocab_entry_id AutoInc, PrimaryKey */
     val controlledVocabEntryId: Column[Long] = column[Long]("controlled_vocab_entry_id", O.AutoInc, O.PrimaryKey)
@@ -1381,13 +1418,14 @@ trait Tables {
   case class ControlledVocabEntrySettingsRow(controlledVocabEntryId: Long, locale: String, settingName: String, settingValue: Option[String], settingType: String)
   /** GetResult implicit for fetching ControlledVocabEntrySettingsRow objects using plain SQL queries */
   implicit def GetResultControlledVocabEntrySettingsRow(implicit e0: GR[Long], e1: GR[String], e2: GR[Option[String]]): GR[ControlledVocabEntrySettingsRow] = GR{
-    prs => ControlledVocabEntrySettingsRow.tupled((<<[Long], <<[String], <<[String], <<?[String], <<[String]))
+    prs => import prs._
+    ControlledVocabEntrySettingsRow.tupled((<<[Long], <<[String], <<[String], <<?[String], <<[String]))
   }
   /** Table description of table controlled_vocab_entry_settings. Objects of this class serve as prototypes for rows in queries. */
   class ControlledVocabEntrySettings(tag: Tag) extends Table[ControlledVocabEntrySettingsRow](tag, "controlled_vocab_entry_settings") {
     def * = (controlledVocabEntryId, locale, settingName, settingValue, settingType) <> (ControlledVocabEntrySettingsRow.tupled, ControlledVocabEntrySettingsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (controlledVocabEntryId.?, locale.?, settingName.?, settingValue, settingType.?).shaped.<>({r=> _1.map(_=> ControlledVocabEntrySettingsRow.tupled((_1.get, _2.get, _3.get, _4, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (controlledVocabEntryId.?, locale.?, settingName.?, settingValue, settingType.?).shaped.<>({r=>import r._; _1.map(_=> ControlledVocabEntrySettingsRow.tupled((_1.get, _2.get, _3.get, _4, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column controlled_vocab_entry_id  */
     val controlledVocabEntryId: Column[Long] = column[Long]("controlled_vocab_entry_id")
@@ -1416,13 +1454,14 @@ trait Tables {
   case class ControlledVocabsRow(controlledVocabId: Long, symbolic: String, assocType: Long = 0L, assocId: Long = 0L)
   /** GetResult implicit for fetching ControlledVocabsRow objects using plain SQL queries */
   implicit def GetResultControlledVocabsRow(implicit e0: GR[Long], e1: GR[String]): GR[ControlledVocabsRow] = GR{
-    prs => ControlledVocabsRow.tupled((<<[Long], <<[String], <<[Long], <<[Long]))
+    prs => import prs._
+    ControlledVocabsRow.tupled((<<[Long], <<[String], <<[Long], <<[Long]))
   }
   /** Table description of table controlled_vocabs. Objects of this class serve as prototypes for rows in queries. */
   class ControlledVocabs(tag: Tag) extends Table[ControlledVocabsRow](tag, "controlled_vocabs") {
     def * = (controlledVocabId, symbolic, assocType, assocId) <> (ControlledVocabsRow.tupled, ControlledVocabsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (controlledVocabId.?, symbolic.?, assocType.?, assocId.?).shaped.<>({r=> _1.map(_=> ControlledVocabsRow.tupled((_1.get, _2.get, _3.get, _4.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (controlledVocabId.?, symbolic.?, assocType.?, assocId.?).shaped.<>({r=>import r._; _1.map(_=> ControlledVocabsRow.tupled((_1.get, _2.get, _3.get, _4.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column controlled_vocab_id AutoInc, PrimaryKey */
     val controlledVocabId: Column[Long] = column[Long]("controlled_vocab_id", O.AutoInc, O.PrimaryKey)
@@ -1449,13 +1488,14 @@ trait Tables {
   case class CounterMonthlyLogRow(year: Long, month: Long, journalId: Long, countHtml: Long = 0L, countPdf: Long = 0L, countOther: Long = 0L)
   /** GetResult implicit for fetching CounterMonthlyLogRow objects using plain SQL queries */
   implicit def GetResultCounterMonthlyLogRow(implicit e0: GR[Long]): GR[CounterMonthlyLogRow] = GR{
-    prs => CounterMonthlyLogRow.tupled((<<[Long], <<[Long], <<[Long], <<[Long], <<[Long], <<[Long]))
+    prs => import prs._
+    CounterMonthlyLogRow.tupled((<<[Long], <<[Long], <<[Long], <<[Long], <<[Long], <<[Long]))
   }
   /** Table description of table counter_monthly_log. Objects of this class serve as prototypes for rows in queries. */
   class CounterMonthlyLog(tag: Tag) extends Table[CounterMonthlyLogRow](tag, "counter_monthly_log") {
     def * = (year, month, journalId, countHtml, countPdf, countOther) <> (CounterMonthlyLogRow.tupled, CounterMonthlyLogRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (year.?, month.?, journalId.?, countHtml.?, countPdf.?, countOther.?).shaped.<>({r=> _1.map(_=> CounterMonthlyLogRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (year.?, month.?, journalId.?, countHtml.?, countPdf.?, countOther.?).shaped.<>({r=>import r._; _1.map(_=> CounterMonthlyLogRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column year  */
     val year: Column[Long] = column[Long]("year")
@@ -1483,13 +1523,14 @@ trait Tables {
   case class CustomIssueOrdersRow(issueId: Long, journalId: Long, seq: Double = 0.0)
   /** GetResult implicit for fetching CustomIssueOrdersRow objects using plain SQL queries */
   implicit def GetResultCustomIssueOrdersRow(implicit e0: GR[Long], e1: GR[Double]): GR[CustomIssueOrdersRow] = GR{
-    prs => CustomIssueOrdersRow.tupled((<<[Long], <<[Long], <<[Double]))
+    prs => import prs._
+    CustomIssueOrdersRow.tupled((<<[Long], <<[Long], <<[Double]))
   }
   /** Table description of table custom_issue_orders. Objects of this class serve as prototypes for rows in queries. */
   class CustomIssueOrders(tag: Tag) extends Table[CustomIssueOrdersRow](tag, "custom_issue_orders") {
     def * = (issueId, journalId, seq) <> (CustomIssueOrdersRow.tupled, CustomIssueOrdersRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (issueId.?, journalId.?, seq.?).shaped.<>({r=> _1.map(_=> CustomIssueOrdersRow.tupled((_1.get, _2.get, _3.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (issueId.?, journalId.?, seq.?).shaped.<>({r=>import r._; _1.map(_=> CustomIssueOrdersRow.tupled((_1.get, _2.get, _3.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column issue_id  */
     val issueId: Column[Long] = column[Long]("issue_id")
@@ -1511,13 +1552,14 @@ trait Tables {
   case class CustomSectionOrdersRow(issueId: Long, sectionId: Long, seq: Double = 0.0)
   /** GetResult implicit for fetching CustomSectionOrdersRow objects using plain SQL queries */
   implicit def GetResultCustomSectionOrdersRow(implicit e0: GR[Long], e1: GR[Double]): GR[CustomSectionOrdersRow] = GR{
-    prs => CustomSectionOrdersRow.tupled((<<[Long], <<[Long], <<[Double]))
+    prs => import prs._
+    CustomSectionOrdersRow.tupled((<<[Long], <<[Long], <<[Double]))
   }
   /** Table description of table custom_section_orders. Objects of this class serve as prototypes for rows in queries. */
   class CustomSectionOrders(tag: Tag) extends Table[CustomSectionOrdersRow](tag, "custom_section_orders") {
     def * = (issueId, sectionId, seq) <> (CustomSectionOrdersRow.tupled, CustomSectionOrdersRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (issueId.?, sectionId.?, seq.?).shaped.<>({r=> _1.map(_=> CustomSectionOrdersRow.tupled((_1.get, _2.get, _3.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (issueId.?, sectionId.?, seq.?).shaped.<>({r=>import r._; _1.map(_=> CustomSectionOrdersRow.tupled((_1.get, _2.get, _3.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column issue_id  */
     val issueId: Column[Long] = column[Long]("issue_id")
@@ -1544,13 +1586,14 @@ trait Tables {
   case class EditAssignmentsRow(editId: Long, articleId: Long, editorId: Long, canEdit: Byte, canReview: Byte, dateAssigned: Option[java.sql.Timestamp], dateNotified: Option[java.sql.Timestamp], dateUnderway: Option[java.sql.Timestamp])
   /** GetResult implicit for fetching EditAssignmentsRow objects using plain SQL queries */
   implicit def GetResultEditAssignmentsRow(implicit e0: GR[Long], e1: GR[Byte], e2: GR[Option[java.sql.Timestamp]]): GR[EditAssignmentsRow] = GR{
-    prs => EditAssignmentsRow.tupled((<<[Long], <<[Long], <<[Long], <<[Byte], <<[Byte], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp]))
+    prs => import prs._
+    EditAssignmentsRow.tupled((<<[Long], <<[Long], <<[Long], <<[Byte], <<[Byte], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp]))
   }
   /** Table description of table edit_assignments. Objects of this class serve as prototypes for rows in queries. */
   class EditAssignments(tag: Tag) extends Table[EditAssignmentsRow](tag, "edit_assignments") {
     def * = (editId, articleId, editorId, canEdit, canReview, dateAssigned, dateNotified, dateUnderway) <> (EditAssignmentsRow.tupled, EditAssignmentsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (editId.?, articleId.?, editorId.?, canEdit.?, canReview.?, dateAssigned, dateNotified, dateUnderway).shaped.<>({r=> _1.map(_=> EditAssignmentsRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6, _7, _8)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (editId.?, articleId.?, editorId.?, canEdit.?, canReview.?, dateAssigned, dateNotified, dateUnderway).shaped.<>({r=>import r._; _1.map(_=> EditAssignmentsRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6, _7, _8)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column edit_id AutoInc, PrimaryKey */
     val editId: Column[Long] = column[Long]("edit_id", O.AutoInc, O.PrimaryKey)
@@ -1587,13 +1630,14 @@ trait Tables {
   case class EditDecisionsRow(editDecisionId: Long, articleId: Long, round: Byte, editorId: Long, decision: Byte, dateDecided: java.sql.Timestamp)
   /** GetResult implicit for fetching EditDecisionsRow objects using plain SQL queries */
   implicit def GetResultEditDecisionsRow(implicit e0: GR[Long], e1: GR[Byte], e2: GR[java.sql.Timestamp]): GR[EditDecisionsRow] = GR{
-    prs => EditDecisionsRow.tupled((<<[Long], <<[Long], <<[Byte], <<[Long], <<[Byte], <<[java.sql.Timestamp]))
+    prs => import prs._
+    EditDecisionsRow.tupled((<<[Long], <<[Long], <<[Byte], <<[Long], <<[Byte], <<[java.sql.Timestamp]))
   }
   /** Table description of table edit_decisions. Objects of this class serve as prototypes for rows in queries. */
   class EditDecisions(tag: Tag) extends Table[EditDecisionsRow](tag, "edit_decisions") {
     def * = (editDecisionId, articleId, round, editorId, decision, dateDecided) <> (EditDecisionsRow.tupled, EditDecisionsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (editDecisionId.?, articleId.?, round.?, editorId.?, decision.?, dateDecided.?).shaped.<>({r=> _1.map(_=> EditDecisionsRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (editDecisionId.?, articleId.?, round.?, editorId.?, decision.?, dateDecided.?).shaped.<>({r=>import r._; _1.map(_=> EditDecisionsRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column edit_decision_id AutoInc, PrimaryKey */
     val editDecisionId: Column[Long] = column[Long]("edit_decision_id", O.AutoInc, O.PrimaryKey)
@@ -1625,13 +1669,14 @@ trait Tables {
   case class EmailTemplatesRow(emailId: Long, emailKey: String, assocType: Option[Long] = Some(0L), assocId: Option[Long] = Some(0L), enabled: Byte)
   /** GetResult implicit for fetching EmailTemplatesRow objects using plain SQL queries */
   implicit def GetResultEmailTemplatesRow(implicit e0: GR[Long], e1: GR[String], e2: GR[Option[Long]], e3: GR[Byte]): GR[EmailTemplatesRow] = GR{
-    prs => EmailTemplatesRow.tupled((<<[Long], <<[String], <<?[Long], <<?[Long], <<[Byte]))
+    prs => import prs._
+    EmailTemplatesRow.tupled((<<[Long], <<[String], <<?[Long], <<?[Long], <<[Byte]))
   }
   /** Table description of table email_templates. Objects of this class serve as prototypes for rows in queries. */
   class EmailTemplates(tag: Tag) extends Table[EmailTemplatesRow](tag, "email_templates") {
     def * = (emailId, emailKey, assocType, assocId, enabled) <> (EmailTemplatesRow.tupled, EmailTemplatesRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (emailId.?, emailKey.?, assocType, assocId, enabled.?).shaped.<>({r=> _1.map(_=> EmailTemplatesRow.tupled((_1.get, _2.get, _3, _4, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (emailId.?, emailKey.?, assocType, assocId, enabled.?).shaped.<>({r=>import r._; _1.map(_=> EmailTemplatesRow.tupled((_1.get, _2.get, _3, _4, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column email_id AutoInc, PrimaryKey */
     val emailId: Column[Long] = column[Long]("email_id", O.AutoInc, O.PrimaryKey)
@@ -1662,13 +1707,14 @@ trait Tables {
   case class EmailTemplatesDataRow(emailKey: String, locale: String, assocType: Option[Long] = Some(0L), assocId: Option[Long] = Some(0L), subject: String, body: Option[String])
   /** GetResult implicit for fetching EmailTemplatesDataRow objects using plain SQL queries */
   implicit def GetResultEmailTemplatesDataRow(implicit e0: GR[String], e1: GR[Option[Long]], e2: GR[Option[String]]): GR[EmailTemplatesDataRow] = GR{
-    prs => EmailTemplatesDataRow.tupled((<<[String], <<[String], <<?[Long], <<?[Long], <<[String], <<?[String]))
+    prs => import prs._
+    EmailTemplatesDataRow.tupled((<<[String], <<[String], <<?[Long], <<?[Long], <<[String], <<?[String]))
   }
   /** Table description of table email_templates_data. Objects of this class serve as prototypes for rows in queries. */
   class EmailTemplatesData(tag: Tag) extends Table[EmailTemplatesDataRow](tag, "email_templates_data") {
     def * = (emailKey, locale, assocType, assocId, subject, body) <> (EmailTemplatesDataRow.tupled, EmailTemplatesDataRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (emailKey.?, locale.?, assocType, assocId, subject.?, body).shaped.<>({r=> _1.map(_=> EmailTemplatesDataRow.tupled((_1.get, _2.get, _3, _4, _5.get, _6)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (emailKey.?, locale.?, assocType, assocId, subject.?, body).shaped.<>({r=>import r._; _1.map(_=> EmailTemplatesDataRow.tupled((_1.get, _2.get, _3, _4, _5.get, _6)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column email_key  */
     val emailKey: Column[String] = column[String]("email_key")
@@ -1699,13 +1745,14 @@ trait Tables {
   case class EmailTemplatesDefaultRow(emailId: Long, emailKey: String, canDisable: Byte, canEdit: Byte, fromRoleId: Option[Long], toRoleId: Option[Long])
   /** GetResult implicit for fetching EmailTemplatesDefaultRow objects using plain SQL queries */
   implicit def GetResultEmailTemplatesDefaultRow(implicit e0: GR[Long], e1: GR[String], e2: GR[Byte], e3: GR[Option[Long]]): GR[EmailTemplatesDefaultRow] = GR{
-    prs => EmailTemplatesDefaultRow.tupled((<<[Long], <<[String], <<[Byte], <<[Byte], <<?[Long], <<?[Long]))
+    prs => import prs._
+    EmailTemplatesDefaultRow.tupled((<<[Long], <<[String], <<[Byte], <<[Byte], <<?[Long], <<?[Long]))
   }
   /** Table description of table email_templates_default. Objects of this class serve as prototypes for rows in queries. */
   class EmailTemplatesDefault(tag: Tag) extends Table[EmailTemplatesDefaultRow](tag, "email_templates_default") {
     def * = (emailId, emailKey, canDisable, canEdit, fromRoleId, toRoleId) <> (EmailTemplatesDefaultRow.tupled, EmailTemplatesDefaultRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (emailId.?, emailKey.?, canDisable.?, canEdit.?, fromRoleId, toRoleId).shaped.<>({r=> _1.map(_=> EmailTemplatesDefaultRow.tupled((_1.get, _2.get, _3.get, _4.get, _5, _6)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (emailId.?, emailKey.?, canDisable.?, canEdit.?, fromRoleId, toRoleId).shaped.<>({r=>import r._; _1.map(_=> EmailTemplatesDefaultRow.tupled((_1.get, _2.get, _3.get, _4.get, _5, _6)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column email_id AutoInc, PrimaryKey */
     val emailId: Column[Long] = column[Long]("email_id", O.AutoInc, O.PrimaryKey)
@@ -1735,13 +1782,14 @@ trait Tables {
   case class EmailTemplatesDefaultDataRow(emailKey: String, locale: String, subject: String, body: Option[String], description: Option[String])
   /** GetResult implicit for fetching EmailTemplatesDefaultDataRow objects using plain SQL queries */
   implicit def GetResultEmailTemplatesDefaultDataRow(implicit e0: GR[String], e1: GR[Option[String]]): GR[EmailTemplatesDefaultDataRow] = GR{
-    prs => EmailTemplatesDefaultDataRow.tupled((<<[String], <<[String], <<[String], <<?[String], <<?[String]))
+    prs => import prs._
+    EmailTemplatesDefaultDataRow.tupled((<<[String], <<[String], <<[String], <<?[String], <<?[String]))
   }
   /** Table description of table email_templates_default_data. Objects of this class serve as prototypes for rows in queries. */
   class EmailTemplatesDefaultData(tag: Tag) extends Table[EmailTemplatesDefaultDataRow](tag, "email_templates_default_data") {
     def * = (emailKey, locale, subject, body, description) <> (EmailTemplatesDefaultDataRow.tupled, EmailTemplatesDefaultDataRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (emailKey.?, locale.?, subject.?, body, description).shaped.<>({r=> _1.map(_=> EmailTemplatesDefaultDataRow.tupled((_1.get, _2.get, _3.get, _4, _5)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (emailKey.?, locale.?, subject.?, body, description).shaped.<>({r=>import r._; _1.map(_=> EmailTemplatesDefaultDataRow.tupled((_1.get, _2.get, _3.get, _4, _5)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column email_key  */
     val emailKey: Column[String] = column[String]("email_key")
@@ -1772,13 +1820,14 @@ trait Tables {
   case class ExternalFeedsRow(feedId: Long, journalId: Long, url: String, seq: Double = 0.0, displayHomepage: Byte, displayBlock: Short = 0, limitItems: Option[Byte] = None, recentItems: Option[Short])
   /** GetResult implicit for fetching ExternalFeedsRow objects using plain SQL queries */
   implicit def GetResultExternalFeedsRow(implicit e0: GR[Long], e1: GR[String], e2: GR[Double], e3: GR[Byte], e4: GR[Short], e5: GR[Option[Byte]], e6: GR[Option[Short]]): GR[ExternalFeedsRow] = GR{
-    prs => ExternalFeedsRow.tupled((<<[Long], <<[Long], <<[String], <<[Double], <<[Byte], <<[Short], <<?[Byte], <<?[Short]))
+    prs => import prs._
+    ExternalFeedsRow.tupled((<<[Long], <<[Long], <<[String], <<[Double], <<[Byte], <<[Short], <<?[Byte], <<?[Short]))
   }
   /** Table description of table external_feeds. Objects of this class serve as prototypes for rows in queries. */
   class ExternalFeeds(tag: Tag) extends Table[ExternalFeedsRow](tag, "external_feeds") {
     def * = (feedId, journalId, url, seq, displayHomepage, displayBlock, limitItems, recentItems) <> (ExternalFeedsRow.tupled, ExternalFeedsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (feedId.?, journalId.?, url.?, seq.?, displayHomepage.?, displayBlock.?, limitItems, recentItems).shaped.<>({r=> _1.map(_=> ExternalFeedsRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6.get, _7, _8)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (feedId.?, journalId.?, url.?, seq.?, displayHomepage.?, displayBlock.?, limitItems, recentItems).shaped.<>({r=>import r._; _1.map(_=> ExternalFeedsRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6.get, _7, _8)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column feed_id AutoInc, PrimaryKey */
     val feedId: Column[Long] = column[Long]("feed_id", O.AutoInc, O.PrimaryKey)
@@ -1812,13 +1861,14 @@ trait Tables {
   case class ExternalFeedSettingsRow(feedId: Long, locale: String, settingName: String, settingValue: Option[String], settingType: String)
   /** GetResult implicit for fetching ExternalFeedSettingsRow objects using plain SQL queries */
   implicit def GetResultExternalFeedSettingsRow(implicit e0: GR[Long], e1: GR[String], e2: GR[Option[String]]): GR[ExternalFeedSettingsRow] = GR{
-    prs => ExternalFeedSettingsRow.tupled((<<[Long], <<[String], <<[String], <<?[String], <<[String]))
+    prs => import prs._
+    ExternalFeedSettingsRow.tupled((<<[Long], <<[String], <<[String], <<?[String], <<[String]))
   }
   /** Table description of table external_feed_settings. Objects of this class serve as prototypes for rows in queries. */
   class ExternalFeedSettings(tag: Tag) extends Table[ExternalFeedSettingsRow](tag, "external_feed_settings") {
     def * = (feedId, locale, settingName, settingValue, settingType) <> (ExternalFeedSettingsRow.tupled, ExternalFeedSettingsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (feedId.?, locale.?, settingName.?, settingValue, settingType.?).shaped.<>({r=> _1.map(_=> ExternalFeedSettingsRow.tupled((_1.get, _2.get, _3.get, _4, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (feedId.?, locale.?, settingName.?, settingValue, settingType.?).shaped.<>({r=>import r._; _1.map(_=> ExternalFeedSettingsRow.tupled((_1.get, _2.get, _3.get, _4, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column feed_id  */
     val feedId: Column[Long] = column[Long]("feed_id")
@@ -1850,13 +1900,14 @@ trait Tables {
   case class FiltersRow(filterId: Long, contextId: Long = 0L, displayName: Option[String], className: Option[String], inputType: Option[String], outputType: Option[String], isTemplate: Byte, parentFilterId: Long = 0L, seq: Long = 0L)
   /** GetResult implicit for fetching FiltersRow objects using plain SQL queries */
   implicit def GetResultFiltersRow(implicit e0: GR[Long], e1: GR[Option[String]], e2: GR[Byte]): GR[FiltersRow] = GR{
-    prs => FiltersRow.tupled((<<[Long], <<[Long], <<?[String], <<?[String], <<?[String], <<?[String], <<[Byte], <<[Long], <<[Long]))
+    prs => import prs._
+    FiltersRow.tupled((<<[Long], <<[Long], <<?[String], <<?[String], <<?[String], <<?[String], <<[Byte], <<[Long], <<[Long]))
   }
   /** Table description of table filters. Objects of this class serve as prototypes for rows in queries. */
   class Filters(tag: Tag) extends Table[FiltersRow](tag, "filters") {
     def * = (filterId, contextId, displayName, className, inputType, outputType, isTemplate, parentFilterId, seq) <> (FiltersRow.tupled, FiltersRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (filterId.?, contextId.?, displayName, className, inputType, outputType, isTemplate.?, parentFilterId.?, seq.?).shaped.<>({r=> _1.map(_=> FiltersRow.tupled((_1.get, _2.get, _3, _4, _5, _6, _7.get, _8.get, _9.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (filterId.?, contextId.?, displayName, className, inputType, outputType, isTemplate.?, parentFilterId.?, seq.?).shaped.<>({r=>import r._; _1.map(_=> FiltersRow.tupled((_1.get, _2.get, _3, _4, _5, _6, _7.get, _8.get, _9.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column filter_id AutoInc, PrimaryKey */
     val filterId: Column[Long] = column[Long]("filter_id", O.AutoInc, O.PrimaryKey)
@@ -1889,13 +1940,14 @@ trait Tables {
   case class FilterSettingsRow(filterId: Long, locale: String, settingName: String, settingValue: Option[String], settingType: String)
   /** GetResult implicit for fetching FilterSettingsRow objects using plain SQL queries */
   implicit def GetResultFilterSettingsRow(implicit e0: GR[Long], e1: GR[String], e2: GR[Option[String]]): GR[FilterSettingsRow] = GR{
-    prs => FilterSettingsRow.tupled((<<[Long], <<[String], <<[String], <<?[String], <<[String]))
+    prs => import prs._
+    FilterSettingsRow.tupled((<<[Long], <<[String], <<[String], <<?[String], <<[String]))
   }
   /** Table description of table filter_settings. Objects of this class serve as prototypes for rows in queries. */
   class FilterSettings(tag: Tag) extends Table[FilterSettingsRow](tag, "filter_settings") {
     def * = (filterId, locale, settingName, settingValue, settingType) <> (FilterSettingsRow.tupled, FilterSettingsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (filterId.?, locale.?, settingName.?, settingValue, settingType.?).shaped.<>({r=> _1.map(_=> FilterSettingsRow.tupled((_1.get, _2.get, _3.get, _4, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (filterId.?, locale.?, settingName.?, settingValue, settingType.?).shaped.<>({r=>import r._; _1.map(_=> FilterSettingsRow.tupled((_1.get, _2.get, _3.get, _4, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column filter_id  */
     val filterId: Column[Long] = column[Long]("filter_id")
@@ -1924,13 +1976,14 @@ trait Tables {
   case class GroupMembershipsRow(userId: Long, groupId: Long, aboutDisplayed: Byte, seq: Double = 0.0)
   /** GetResult implicit for fetching GroupMembershipsRow objects using plain SQL queries */
   implicit def GetResultGroupMembershipsRow(implicit e0: GR[Long], e1: GR[Byte], e2: GR[Double]): GR[GroupMembershipsRow] = GR{
-    prs => GroupMembershipsRow.tupled((<<[Long], <<[Long], <<[Byte], <<[Double]))
+    prs => import prs._
+    GroupMembershipsRow.tupled((<<[Long], <<[Long], <<[Byte], <<[Double]))
   }
   /** Table description of table group_memberships. Objects of this class serve as prototypes for rows in queries. */
   class GroupMemberships(tag: Tag) extends Table[GroupMembershipsRow](tag, "group_memberships") {
     def * = (userId, groupId, aboutDisplayed, seq) <> (GroupMembershipsRow.tupled, GroupMembershipsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (userId.?, groupId.?, aboutDisplayed.?, seq.?).shaped.<>({r=> _1.map(_=> GroupMembershipsRow.tupled((_1.get, _2.get, _3.get, _4.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (userId.?, groupId.?, aboutDisplayed.?, seq.?).shaped.<>({r=>import r._; _1.map(_=> GroupMembershipsRow.tupled((_1.get, _2.get, _3.get, _4.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column user_id  */
     val userId: Column[Long] = column[Long]("user_id")
@@ -1958,13 +2011,14 @@ trait Tables {
   case class GroupsRow(groupId: Long, assocType: Option[Short], publishEmail: Option[Short], assocId: Option[Long], context: Option[Long], aboutDisplayed: Byte, seq: Double = 0.0)
   /** GetResult implicit for fetching GroupsRow objects using plain SQL queries */
   implicit def GetResultGroupsRow(implicit e0: GR[Long], e1: GR[Option[Short]], e2: GR[Option[Long]], e3: GR[Byte], e4: GR[Double]): GR[GroupsRow] = GR{
-    prs => GroupsRow.tupled((<<[Long], <<?[Short], <<?[Short], <<?[Long], <<?[Long], <<[Byte], <<[Double]))
+    prs => import prs._
+    GroupsRow.tupled((<<[Long], <<?[Short], <<?[Short], <<?[Long], <<?[Long], <<[Byte], <<[Double]))
   }
   /** Table description of table groups. Objects of this class serve as prototypes for rows in queries. */
   class Groups(tag: Tag) extends Table[GroupsRow](tag, "groups") {
     def * = (groupId, assocType, publishEmail, assocId, context, aboutDisplayed, seq) <> (GroupsRow.tupled, GroupsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (groupId.?, assocType, publishEmail, assocId, context, aboutDisplayed.?, seq.?).shaped.<>({r=> _1.map(_=> GroupsRow.tupled((_1.get, _2, _3, _4, _5, _6.get, _7.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (groupId.?, assocType, publishEmail, assocId, context, aboutDisplayed.?, seq.?).shaped.<>({r=>import r._; _1.map(_=> GroupsRow.tupled((_1.get, _2, _3, _4, _5, _6.get, _7.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column group_id AutoInc, PrimaryKey */
     val groupId: Column[Long] = column[Long]("group_id", O.AutoInc, O.PrimaryKey)
@@ -1996,13 +2050,14 @@ trait Tables {
   case class GroupSettingsRow(groupId: Long, locale: String, settingName: String, settingValue: Option[String], settingType: String)
   /** GetResult implicit for fetching GroupSettingsRow objects using plain SQL queries */
   implicit def GetResultGroupSettingsRow(implicit e0: GR[Long], e1: GR[String], e2: GR[Option[String]]): GR[GroupSettingsRow] = GR{
-    prs => GroupSettingsRow.tupled((<<[Long], <<[String], <<[String], <<?[String], <<[String]))
+    prs => import prs._
+    GroupSettingsRow.tupled((<<[Long], <<[String], <<[String], <<?[String], <<[String]))
   }
   /** Table description of table group_settings. Objects of this class serve as prototypes for rows in queries. */
   class GroupSettings(tag: Tag) extends Table[GroupSettingsRow](tag, "group_settings") {
     def * = (groupId, locale, settingName, settingValue, settingType) <> (GroupSettingsRow.tupled, GroupSettingsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (groupId.?, locale.?, settingName.?, settingValue, settingType.?).shaped.<>({r=> _1.map(_=> GroupSettingsRow.tupled((_1.get, _2.get, _3.get, _4, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (groupId.?, locale.?, settingName.?, settingValue, settingType.?).shaped.<>({r=>import r._; _1.map(_=> GroupSettingsRow.tupled((_1.get, _2.get, _3.get, _4, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column group_id  */
     val groupId: Column[Long] = column[Long]("group_id")
@@ -2032,13 +2087,14 @@ trait Tables {
   case class InstitutionalSubscriptionIpRow(institutionalSubscriptionIpId: Long, subscriptionId: Long, ipString: String, ipStart: Long, ipEnd: Option[Long])
   /** GetResult implicit for fetching InstitutionalSubscriptionIpRow objects using plain SQL queries */
   implicit def GetResultInstitutionalSubscriptionIpRow(implicit e0: GR[Long], e1: GR[String], e2: GR[Option[Long]]): GR[InstitutionalSubscriptionIpRow] = GR{
-    prs => InstitutionalSubscriptionIpRow.tupled((<<[Long], <<[Long], <<[String], <<[Long], <<?[Long]))
+    prs => import prs._
+    InstitutionalSubscriptionIpRow.tupled((<<[Long], <<[Long], <<[String], <<[Long], <<?[Long]))
   }
   /** Table description of table institutional_subscription_ip. Objects of this class serve as prototypes for rows in queries. */
   class InstitutionalSubscriptionIp(tag: Tag) extends Table[InstitutionalSubscriptionIpRow](tag, "institutional_subscription_ip") {
     def * = (institutionalSubscriptionIpId, subscriptionId, ipString, ipStart, ipEnd) <> (InstitutionalSubscriptionIpRow.tupled, InstitutionalSubscriptionIpRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (institutionalSubscriptionIpId.?, subscriptionId.?, ipString.?, ipStart.?, ipEnd).shaped.<>({r=> _1.map(_=> InstitutionalSubscriptionIpRow.tupled((_1.get, _2.get, _3.get, _4.get, _5)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (institutionalSubscriptionIpId.?, subscriptionId.?, ipString.?, ipStart.?, ipEnd).shaped.<>({r=>import r._; _1.map(_=> InstitutionalSubscriptionIpRow.tupled((_1.get, _2.get, _3.get, _4.get, _5)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column institutional_subscription_ip_id AutoInc, PrimaryKey */
     val institutionalSubscriptionIpId: Column[Long] = column[Long]("institutional_subscription_ip_id", O.AutoInc, O.PrimaryKey)
@@ -2070,13 +2126,14 @@ trait Tables {
   case class InstitutionalSubscriptionsRow(institutionalSubscriptionId: Long, subscriptionId: Long, institutionName: String, mailingAddress: Option[String], domain: Option[String])
   /** GetResult implicit for fetching InstitutionalSubscriptionsRow objects using plain SQL queries */
   implicit def GetResultInstitutionalSubscriptionsRow(implicit e0: GR[Long], e1: GR[String], e2: GR[Option[String]]): GR[InstitutionalSubscriptionsRow] = GR{
-    prs => InstitutionalSubscriptionsRow.tupled((<<[Long], <<[Long], <<[String], <<?[String], <<?[String]))
+    prs => import prs._
+    InstitutionalSubscriptionsRow.tupled((<<[Long], <<[Long], <<[String], <<?[String], <<?[String]))
   }
   /** Table description of table institutional_subscriptions. Objects of this class serve as prototypes for rows in queries. */
   class InstitutionalSubscriptions(tag: Tag) extends Table[InstitutionalSubscriptionsRow](tag, "institutional_subscriptions") {
     def * = (institutionalSubscriptionId, subscriptionId, institutionName, mailingAddress, domain) <> (InstitutionalSubscriptionsRow.tupled, InstitutionalSubscriptionsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (institutionalSubscriptionId.?, subscriptionId.?, institutionName.?, mailingAddress, domain).shaped.<>({r=> _1.map(_=> InstitutionalSubscriptionsRow.tupled((_1.get, _2.get, _3.get, _4, _5)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (institutionalSubscriptionId.?, subscriptionId.?, institutionName.?, mailingAddress, domain).shaped.<>({r=>import r._; _1.map(_=> InstitutionalSubscriptionsRow.tupled((_1.get, _2.get, _3.get, _4, _5)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column institutional_subscription_id AutoInc, PrimaryKey */
     val institutionalSubscriptionId: Column[Long] = column[Long]("institutional_subscription_id", O.AutoInc, O.PrimaryKey)
@@ -2119,13 +2176,14 @@ trait Tables {
   case class IssuesRow(issueId: Long, journalId: Long, volume: Option[Short], number: Option[String], year: Option[Short], published: Byte, current: Byte, datePublished: Option[java.sql.Timestamp], dateNotified: Option[java.sql.Timestamp], accessStatus: Byte, openAccessDate: Option[java.sql.Timestamp], publicIssueId: Option[String], showVolume: Byte, showNumber: Byte, showYear: Byte, showTitle: Byte, styleFileName: Option[String], originalStyleFileName: Option[String])
   /** GetResult implicit for fetching IssuesRow objects using plain SQL queries */
   implicit def GetResultIssuesRow(implicit e0: GR[Long], e1: GR[Option[Short]], e2: GR[Option[String]], e3: GR[Byte], e4: GR[Option[java.sql.Timestamp]]): GR[IssuesRow] = GR{
-    prs => IssuesRow.tupled((<<[Long], <<[Long], <<?[Short], <<?[String], <<?[Short], <<[Byte], <<[Byte], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<[Byte], <<?[java.sql.Timestamp], <<?[String], <<[Byte], <<[Byte], <<[Byte], <<[Byte], <<?[String], <<?[String]))
+    prs => import prs._
+    IssuesRow.tupled((<<[Long], <<[Long], <<?[Short], <<?[String], <<?[Short], <<[Byte], <<[Byte], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<[Byte], <<?[java.sql.Timestamp], <<?[String], <<[Byte], <<[Byte], <<[Byte], <<[Byte], <<?[String], <<?[String]))
   }
   /** Table description of table issues. Objects of this class serve as prototypes for rows in queries. */
   class Issues(tag: Tag) extends Table[IssuesRow](tag, "issues") {
     def * = (issueId, journalId, volume, number, year, published, current, datePublished, dateNotified, accessStatus, openAccessDate, publicIssueId, showVolume, showNumber, showYear, showTitle, styleFileName, originalStyleFileName) <> (IssuesRow.tupled, IssuesRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (issueId.?, journalId.?, volume, number, year, published.?, current.?, datePublished, dateNotified, accessStatus.?, openAccessDate, publicIssueId, showVolume.?, showNumber.?, showYear.?, showTitle.?, styleFileName, originalStyleFileName).shaped.<>({r=> _1.map(_=> IssuesRow.tupled((_1.get, _2.get, _3, _4, _5, _6.get, _7.get, _8, _9, _10.get, _11, _12, _13.get, _14.get, _15.get, _16.get, _17, _18)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (issueId.?, journalId.?, volume, number, year, published.?, current.?, datePublished, dateNotified, accessStatus.?, openAccessDate, publicIssueId, showVolume.?, showNumber.?, showYear.?, showTitle.?, styleFileName, originalStyleFileName).shaped.<>({r=>import r._; _1.map(_=> IssuesRow.tupled((_1.get, _2.get, _3, _4, _5, _6.get, _7.get, _8, _9, _10.get, _11, _12, _13.get, _14.get, _15.get, _16.get, _17, _18)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column issue_id AutoInc, PrimaryKey */
     val issueId: Column[Long] = column[Long]("issue_id", O.AutoInc, O.PrimaryKey)
@@ -2181,13 +2239,14 @@ trait Tables {
   case class IssueSettingsRow(issueId: Long, locale: String, settingName: String, settingValue: Option[String], settingType: String)
   /** GetResult implicit for fetching IssueSettingsRow objects using plain SQL queries */
   implicit def GetResultIssueSettingsRow(implicit e0: GR[Long], e1: GR[String], e2: GR[Option[String]]): GR[IssueSettingsRow] = GR{
-    prs => IssueSettingsRow.tupled((<<[Long], <<[String], <<[String], <<?[String], <<[String]))
+    prs => import prs._
+    IssueSettingsRow.tupled((<<[Long], <<[String], <<[String], <<?[String], <<[String]))
   }
   /** Table description of table issue_settings. Objects of this class serve as prototypes for rows in queries. */
   class IssueSettings(tag: Tag) extends Table[IssueSettingsRow](tag, "issue_settings") {
     def * = (issueId, locale, settingName, settingValue, settingType) <> (IssueSettingsRow.tupled, IssueSettingsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (issueId.?, locale.?, settingName.?, settingValue, settingType.?).shaped.<>({r=> _1.map(_=> IssueSettingsRow.tupled((_1.get, _2.get, _3.get, _4, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (issueId.?, locale.?, settingName.?, settingValue, settingType.?).shaped.<>({r=>import r._; _1.map(_=> IssueSettingsRow.tupled((_1.get, _2.get, _3.get, _4, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column issue_id  */
     val issueId: Column[Long] = column[Long]("issue_id")
@@ -2217,13 +2276,14 @@ trait Tables {
   case class JournalsRow(journalId: Long, path: String, seq: Double = 0.0, primaryLocale: String, enabled: Byte)
   /** GetResult implicit for fetching JournalsRow objects using plain SQL queries */
   implicit def GetResultJournalsRow(implicit e0: GR[Long], e1: GR[String], e2: GR[Double], e3: GR[Byte]): GR[JournalsRow] = GR{
-    prs => JournalsRow.tupled((<<[Long], <<[String], <<[Double], <<[String], <<[Byte]))
+    prs => import prs._
+    JournalsRow.tupled((<<[Long], <<[String], <<[Double], <<[String], <<[Byte]))
   }
   /** Table description of table journals. Objects of this class serve as prototypes for rows in queries. */
   class Journals(tag: Tag) extends Table[JournalsRow](tag, "journals") {
     def * = (journalId, path, seq, primaryLocale, enabled) <> (JournalsRow.tupled, JournalsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (journalId.?, path.?, seq.?, primaryLocale.?, enabled.?).shaped.<>({r=> _1.map(_=> JournalsRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (journalId.?, path.?, seq.?, primaryLocale.?, enabled.?).shaped.<>({r=>import r._; _1.map(_=> JournalsRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column journal_id AutoInc, PrimaryKey */
     val journalId: Column[Long] = column[Long]("journal_id", O.AutoInc, O.PrimaryKey)
@@ -2251,13 +2311,14 @@ trait Tables {
   case class JournalSettingsRow(journalId: Long, locale: String, settingName: String, settingValue: Option[String], settingType: String)
   /** GetResult implicit for fetching JournalSettingsRow objects using plain SQL queries */
   implicit def GetResultJournalSettingsRow(implicit e0: GR[Long], e1: GR[String], e2: GR[Option[String]]): GR[JournalSettingsRow] = GR{
-    prs => JournalSettingsRow.tupled((<<[Long], <<[String], <<[String], <<?[String], <<[String]))
+    prs => import prs._
+    JournalSettingsRow.tupled((<<[Long], <<[String], <<[String], <<?[String], <<[String]))
   }
   /** Table description of table journal_settings. Objects of this class serve as prototypes for rows in queries. */
   class JournalSettings(tag: Tag) extends Table[JournalSettingsRow](tag, "journal_settings") {
     def * = (journalId, locale, settingName, settingValue, settingType) <> (JournalSettingsRow.tupled, JournalSettingsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (journalId.?, locale.?, settingName.?, settingValue, settingType.?).shaped.<>({r=> _1.map(_=> JournalSettingsRow.tupled((_1.get, _2.get, _3.get, _4, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (journalId.?, locale.?, settingName.?, settingValue, settingType.?).shaped.<>({r=>import r._; _1.map(_=> JournalSettingsRow.tupled((_1.get, _2.get, _3.get, _4, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column journal_id  */
     val journalId: Column[Long] = column[Long]("journal_id")
@@ -2289,14 +2350,15 @@ trait Tables {
   case class MetadataDescriptionsRow(metadataDescriptionId: Long, assocType: Long = 0L, assocId: Long = 0L, schemaNamespace: String, schemaNameX: String, displayName: Option[String], seq: Long = 0L)
   /** GetResult implicit for fetching MetadataDescriptionsRow objects using plain SQL queries */
   implicit def GetResultMetadataDescriptionsRow(implicit e0: GR[Long], e1: GR[String], e2: GR[Option[String]]): GR[MetadataDescriptionsRow] = GR{
-    prs => MetadataDescriptionsRow.tupled((<<[Long], <<[Long], <<[Long], <<[String], <<[String], <<?[String], <<[Long]))
+    prs => import prs._
+    MetadataDescriptionsRow.tupled((<<[Long], <<[Long], <<[Long], <<[String], <<[String], <<?[String], <<[Long]))
   }
   /** Table description of table metadata_descriptions. Objects of this class serve as prototypes for rows in queries.
    *  NOTE: The following names collided with Scala method names and were disambiguated: schemaName */
   class MetadataDescriptions(tag: Tag) extends Table[MetadataDescriptionsRow](tag, "metadata_descriptions") {
     def * = (metadataDescriptionId, assocType, assocId, schemaNamespace, schemaNameX, displayName, seq) <> (MetadataDescriptionsRow.tupled, MetadataDescriptionsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (metadataDescriptionId.?, assocType.?, assocId.?, schemaNamespace.?, schemaNameX.?, displayName, seq.?).shaped.<>({r=> _1.map(_=> MetadataDescriptionsRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6, _7.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (metadataDescriptionId.?, assocType.?, assocId.?, schemaNamespace.?, schemaNameX.?, displayName, seq.?).shaped.<>({r=>import r._; _1.map(_=> MetadataDescriptionsRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6, _7.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column metadata_description_id AutoInc, PrimaryKey */
     val metadataDescriptionId: Column[Long] = column[Long]("metadata_description_id", O.AutoInc, O.PrimaryKey)
@@ -2329,13 +2391,14 @@ trait Tables {
   case class MetadataDescriptionSettingsRow(metadataDescriptionId: Long, locale: String, settingName: String, settingValue: Option[String], settingType: String)
   /** GetResult implicit for fetching MetadataDescriptionSettingsRow objects using plain SQL queries */
   implicit def GetResultMetadataDescriptionSettingsRow(implicit e0: GR[Long], e1: GR[String], e2: GR[Option[String]]): GR[MetadataDescriptionSettingsRow] = GR{
-    prs => MetadataDescriptionSettingsRow.tupled((<<[Long], <<[String], <<[String], <<?[String], <<[String]))
+    prs => import prs._
+    MetadataDescriptionSettingsRow.tupled((<<[Long], <<[String], <<[String], <<?[String], <<[String]))
   }
   /** Table description of table metadata_description_settings. Objects of this class serve as prototypes for rows in queries. */
   class MetadataDescriptionSettings(tag: Tag) extends Table[MetadataDescriptionSettingsRow](tag, "metadata_description_settings") {
     def * = (metadataDescriptionId, locale, settingName, settingValue, settingType) <> (MetadataDescriptionSettingsRow.tupled, MetadataDescriptionSettingsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (metadataDescriptionId.?, locale.?, settingName.?, settingValue, settingType.?).shaped.<>({r=> _1.map(_=> MetadataDescriptionSettingsRow.tupled((_1.get, _2.get, _3.get, _4, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (metadataDescriptionId.?, locale.?, settingName.?, settingValue, settingType.?).shaped.<>({r=>import r._; _1.map(_=> MetadataDescriptionSettingsRow.tupled((_1.get, _2.get, _3.get, _4, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column metadata_description_id  */
     val metadataDescriptionId: Column[Long] = column[Long]("metadata_description_id")
@@ -2370,13 +2433,14 @@ trait Tables {
   case class NotesRow(noteId: Long, assocType: Option[Short], assocId: Option[Long], userId: Long, dateCreated: java.sql.Timestamp, dateModified: Option[java.sql.Timestamp], title: Option[String], fileId: Option[Long], contextId: Option[Long], contents: Option[String])
   /** GetResult implicit for fetching NotesRow objects using plain SQL queries */
   implicit def GetResultNotesRow(implicit e0: GR[Long], e1: GR[Option[Short]], e2: GR[Option[Long]], e3: GR[java.sql.Timestamp], e4: GR[Option[java.sql.Timestamp]], e5: GR[Option[String]]): GR[NotesRow] = GR{
-    prs => NotesRow.tupled((<<[Long], <<?[Short], <<?[Long], <<[Long], <<[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[Long], <<?[Long], <<?[String]))
+    prs => import prs._
+    NotesRow.tupled((<<[Long], <<?[Short], <<?[Long], <<[Long], <<[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[Long], <<?[Long], <<?[String]))
   }
   /** Table description of table notes. Objects of this class serve as prototypes for rows in queries. */
   class Notes(tag: Tag) extends Table[NotesRow](tag, "notes") {
     def * = (noteId, assocType, assocId, userId, dateCreated, dateModified, title, fileId, contextId, contents) <> (NotesRow.tupled, NotesRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (noteId.?, assocType, assocId, userId.?, dateCreated.?, dateModified, title, fileId, contextId, contents).shaped.<>({r=> _1.map(_=> NotesRow.tupled((_1.get, _2, _3, _4.get, _5.get, _6, _7, _8, _9, _10)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (noteId.?, assocType, assocId, userId.?, dateCreated.?, dateModified, title, fileId, contextId, contents).shaped.<>({r=>import r._; _1.map(_=> NotesRow.tupled((_1.get, _2, _3, _4.get, _5.get, _6, _7, _8, _9, _10)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column note_id AutoInc, PrimaryKey */
     val noteId: Column[Long] = column[Long]("note_id", O.AutoInc, O.PrimaryKey)
@@ -2422,13 +2486,14 @@ trait Tables {
   case class NotificationsRow(notificationId: Long, userId: Long, level: Option[Long], dateCreated: java.sql.Timestamp, dateRead: Option[java.sql.Timestamp], title: Option[String], contents: Option[String], param: Option[String], location: Option[String], isLocalized: Byte, product: Option[String], context: Long, assocType: Long)
   /** GetResult implicit for fetching NotificationsRow objects using plain SQL queries */
   implicit def GetResultNotificationsRow(implicit e0: GR[Long], e1: GR[Option[Long]], e2: GR[java.sql.Timestamp], e3: GR[Option[java.sql.Timestamp]], e4: GR[Option[String]], e5: GR[Byte]): GR[NotificationsRow] = GR{
-    prs => NotificationsRow.tupled((<<[Long], <<[Long], <<?[Long], <<[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[String], <<?[String], <<?[String], <<[Byte], <<?[String], <<[Long], <<[Long]))
+    prs => import prs._
+    NotificationsRow.tupled((<<[Long], <<[Long], <<?[Long], <<[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[String], <<?[String], <<?[String], <<?[String], <<[Byte], <<?[String], <<[Long], <<[Long]))
   }
   /** Table description of table notifications. Objects of this class serve as prototypes for rows in queries. */
   class Notifications(tag: Tag) extends Table[NotificationsRow](tag, "notifications") {
     def * = (notificationId, userId, level, dateCreated, dateRead, title, contents, param, location, isLocalized, product, context, assocType) <> (NotificationsRow.tupled, NotificationsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (notificationId.?, userId.?, level, dateCreated.?, dateRead, title, contents, param, location, isLocalized.?, product, context.?, assocType.?).shaped.<>({r=> _1.map(_=> NotificationsRow.tupled((_1.get, _2.get, _3, _4.get, _5, _6, _7, _8, _9, _10.get, _11, _12.get, _13.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (notificationId.?, userId.?, level, dateCreated.?, dateRead, title, contents, param, location, isLocalized.?, product, context.?, assocType.?).shaped.<>({r=>import r._; _1.map(_=> NotificationsRow.tupled((_1.get, _2.get, _3, _4.get, _5, _6, _7, _8, _9, _10.get, _11, _12.get, _13.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column notification_id AutoInc, PrimaryKey */
     val notificationId: Column[Long] = column[Long]("notification_id", O.AutoInc, O.PrimaryKey)
@@ -2473,13 +2538,14 @@ trait Tables {
   case class NotificationSettingsRow(settingId: Long, settingName: String, settingValue: Option[String], userId: Long, product: Option[String], context: Long)
   /** GetResult implicit for fetching NotificationSettingsRow objects using plain SQL queries */
   implicit def GetResultNotificationSettingsRow(implicit e0: GR[Long], e1: GR[String], e2: GR[Option[String]]): GR[NotificationSettingsRow] = GR{
-    prs => NotificationSettingsRow.tupled((<<[Long], <<[String], <<?[String], <<[Long], <<?[String], <<[Long]))
+    prs => import prs._
+    NotificationSettingsRow.tupled((<<[Long], <<[String], <<?[String], <<[Long], <<?[String], <<[Long]))
   }
   /** Table description of table notification_settings. Objects of this class serve as prototypes for rows in queries. */
   class NotificationSettings(tag: Tag) extends Table[NotificationSettingsRow](tag, "notification_settings") {
     def * = (settingId, settingName, settingValue, userId, product, context) <> (NotificationSettingsRow.tupled, NotificationSettingsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (settingId.?, settingName.?, settingValue, userId.?, product, context.?).shaped.<>({r=> _1.map(_=> NotificationSettingsRow.tupled((_1.get, _2.get, _3, _4.get, _5, _6.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (settingId.?, settingName.?, settingValue, userId.?, product, context.?).shaped.<>({r=>import r._; _1.map(_=> NotificationSettingsRow.tupled((_1.get, _2.get, _3, _4.get, _5, _6.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column setting_id AutoInc, PrimaryKey */
     val settingId: Column[Long] = column[Long]("setting_id", O.AutoInc, O.PrimaryKey)
@@ -2505,13 +2571,14 @@ trait Tables {
   case class OaiResumptionTokensRow(token: String, expire: Long, recordOffset: Int, params: Option[String])
   /** GetResult implicit for fetching OaiResumptionTokensRow objects using plain SQL queries */
   implicit def GetResultOaiResumptionTokensRow(implicit e0: GR[String], e1: GR[Long], e2: GR[Int], e3: GR[Option[String]]): GR[OaiResumptionTokensRow] = GR{
-    prs => OaiResumptionTokensRow.tupled((<<[String], <<[Long], <<[Int], <<?[String]))
+    prs => import prs._
+    OaiResumptionTokensRow.tupled((<<[String], <<[Long], <<[Int], <<?[String]))
   }
   /** Table description of table oai_resumption_tokens. Objects of this class serve as prototypes for rows in queries. */
   class OaiResumptionTokens(tag: Tag) extends Table[OaiResumptionTokensRow](tag, "oai_resumption_tokens") {
     def * = (token, expire, recordOffset, params) <> (OaiResumptionTokensRow.tupled, OaiResumptionTokensRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (token.?, expire.?, recordOffset.?, params).shaped.<>({r=> _1.map(_=> OaiResumptionTokensRow.tupled((_1.get, _2.get, _3.get, _4)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (token.?, expire.?, recordOffset.?, params).shaped.<>({r=>import r._; _1.map(_=> OaiResumptionTokensRow.tupled((_1.get, _2.get, _3.get, _4)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column token  */
     val token: Column[String] = column[String]("token")
@@ -2540,13 +2607,14 @@ trait Tables {
   case class PaypalTransactionsRow(txnId: String, txnType: Option[String], payerEmail: Option[String], receiverEmail: Option[String], itemNumber: Option[String], paymentDate: Option[String], payerId: Option[String], receiverId: Option[String])
   /** GetResult implicit for fetching PaypalTransactionsRow objects using plain SQL queries */
   implicit def GetResultPaypalTransactionsRow(implicit e0: GR[String], e1: GR[Option[String]]): GR[PaypalTransactionsRow] = GR{
-    prs => PaypalTransactionsRow.tupled((<<[String], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String]))
+    prs => import prs._
+    PaypalTransactionsRow.tupled((<<[String], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String], <<?[String]))
   }
   /** Table description of table paypal_transactions. Objects of this class serve as prototypes for rows in queries. */
   class PaypalTransactions(tag: Tag) extends Table[PaypalTransactionsRow](tag, "paypal_transactions") {
     def * = (txnId, txnType, payerEmail, receiverEmail, itemNumber, paymentDate, payerId, receiverId) <> (PaypalTransactionsRow.tupled, PaypalTransactionsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (txnId.?, txnType, payerEmail, receiverEmail, itemNumber, paymentDate, payerId, receiverId).shaped.<>({r=> _1.map(_=> PaypalTransactionsRow.tupled((_1.get, _2, _3, _4, _5, _6, _7, _8)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (txnId.?, txnType, payerEmail, receiverEmail, itemNumber, paymentDate, payerId, receiverId).shaped.<>({r=>import r._; _1.map(_=> PaypalTransactionsRow.tupled((_1.get, _2, _3, _4, _5, _6, _7, _8)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column txn_id PrimaryKey */
     val txnId: Column[String] = column[String]("txn_id", O.PrimaryKey)
@@ -2578,13 +2646,14 @@ trait Tables {
   case class PluginSettingsRow(pluginName: String, locale: String, journalId: Long, settingName: String, settingValue: Option[String], settingType: String)
   /** GetResult implicit for fetching PluginSettingsRow objects using plain SQL queries */
   implicit def GetResultPluginSettingsRow(implicit e0: GR[String], e1: GR[Long], e2: GR[Option[String]]): GR[PluginSettingsRow] = GR{
-    prs => PluginSettingsRow.tupled((<<[String], <<[String], <<[Long], <<[String], <<?[String], <<[String]))
+    prs => import prs._
+    PluginSettingsRow.tupled((<<[String], <<[String], <<[Long], <<[String], <<?[String], <<[String]))
   }
   /** Table description of table plugin_settings. Objects of this class serve as prototypes for rows in queries. */
   class PluginSettings(tag: Tag) extends Table[PluginSettingsRow](tag, "plugin_settings") {
     def * = (pluginName, locale, journalId, settingName, settingValue, settingType) <> (PluginSettingsRow.tupled, PluginSettingsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (pluginName.?, locale.?, journalId.?, settingName.?, settingValue, settingType.?).shaped.<>({r=> _1.map(_=> PluginSettingsRow.tupled((_1.get, _2.get, _3.get, _4.get, _5, _6.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (pluginName.?, locale.?, journalId.?, settingName.?, settingValue, settingType.?).shaped.<>({r=>import r._; _1.map(_=> PluginSettingsRow.tupled((_1.get, _2.get, _3.get, _4.get, _5, _6.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column plugin_name  */
     val pluginName: Column[String] = column[String]("plugin_name")
@@ -2615,13 +2684,14 @@ trait Tables {
   case class ProcessesRow(processId: String, processType: Byte, timeStarted: Long, obliterated: Byte)
   /** GetResult implicit for fetching ProcessesRow objects using plain SQL queries */
   implicit def GetResultProcessesRow(implicit e0: GR[String], e1: GR[Byte], e2: GR[Long]): GR[ProcessesRow] = GR{
-    prs => ProcessesRow.tupled((<<[String], <<[Byte], <<[Long], <<[Byte]))
+    prs => import prs._
+    ProcessesRow.tupled((<<[String], <<[Byte], <<[Long], <<[Byte]))
   }
   /** Table description of table processes. Objects of this class serve as prototypes for rows in queries. */
   class Processes(tag: Tag) extends Table[ProcessesRow](tag, "processes") {
     def * = (processId, processType, timeStarted, obliterated) <> (ProcessesRow.tupled, ProcessesRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (processId.?, processType.?, timeStarted.?, obliterated.?).shaped.<>({r=> _1.map(_=> ProcessesRow.tupled((_1.get, _2.get, _3.get, _4.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (processId.?, processType.?, timeStarted.?, obliterated.?).shaped.<>({r=>import r._; _1.map(_=> ProcessesRow.tupled((_1.get, _2.get, _3.get, _4.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column process_id  */
     val processId: Column[String] = column[String]("process_id")
@@ -2650,13 +2720,14 @@ trait Tables {
   case class PublishedArticlesRow(pubId: Long, articleId: Long, issueId: Long, datePublished: Option[java.sql.Timestamp], seq: Double = 0.0, views: Int = 0, accessStatus: Byte, publicArticleId: Option[String])
   /** GetResult implicit for fetching PublishedArticlesRow objects using plain SQL queries */
   implicit def GetResultPublishedArticlesRow(implicit e0: GR[Long], e1: GR[Option[java.sql.Timestamp]], e2: GR[Double], e3: GR[Int], e4: GR[Byte], e5: GR[Option[String]]): GR[PublishedArticlesRow] = GR{
-    prs => PublishedArticlesRow.tupled((<<[Long], <<[Long], <<[Long], <<?[java.sql.Timestamp], <<[Double], <<[Int], <<[Byte], <<?[String]))
+    prs => import prs._
+    PublishedArticlesRow.tupled((<<[Long], <<[Long], <<[Long], <<?[java.sql.Timestamp], <<[Double], <<[Int], <<[Byte], <<?[String]))
   }
   /** Table description of table published_articles. Objects of this class serve as prototypes for rows in queries. */
   class PublishedArticles(tag: Tag) extends Table[PublishedArticlesRow](tag, "published_articles") {
     def * = (pubId, articleId, issueId, datePublished, seq, views, accessStatus, publicArticleId) <> (PublishedArticlesRow.tupled, PublishedArticlesRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (pubId.?, articleId.?, issueId.?, datePublished, seq.?, views.?, accessStatus.?, publicArticleId).shaped.<>({r=> _1.map(_=> PublishedArticlesRow.tupled((_1.get, _2.get, _3.get, _4, _5.get, _6.get, _7.get, _8)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (pubId.?, articleId.?, issueId.?, datePublished, seq.?, views.?, accessStatus.?, publicArticleId).shaped.<>({r=>import r._; _1.map(_=> PublishedArticlesRow.tupled((_1.get, _2.get, _3.get, _4, _5.get, _6.get, _7.get, _8)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column pub_id AutoInc, PrimaryKey */
     val pubId: Column[Long] = column[Long]("pub_id", O.AutoInc, O.PrimaryKey)
@@ -2694,13 +2765,14 @@ trait Tables {
   case class QueuedPaymentsRow(queuedPaymentId: Long, dateCreated: java.sql.Timestamp, dateModified: java.sql.Timestamp, expiryDate: Option[java.sql.Date], paymentData: Option[String])
   /** GetResult implicit for fetching QueuedPaymentsRow objects using plain SQL queries */
   implicit def GetResultQueuedPaymentsRow(implicit e0: GR[Long], e1: GR[java.sql.Timestamp], e2: GR[Option[java.sql.Date]], e3: GR[Option[String]]): GR[QueuedPaymentsRow] = GR{
-    prs => QueuedPaymentsRow.tupled((<<[Long], <<[java.sql.Timestamp], <<[java.sql.Timestamp], <<?[java.sql.Date], <<?[String]))
+    prs => import prs._
+    QueuedPaymentsRow.tupled((<<[Long], <<[java.sql.Timestamp], <<[java.sql.Timestamp], <<?[java.sql.Date], <<?[String]))
   }
   /** Table description of table queued_payments. Objects of this class serve as prototypes for rows in queries. */
   class QueuedPayments(tag: Tag) extends Table[QueuedPaymentsRow](tag, "queued_payments") {
     def * = (queuedPaymentId, dateCreated, dateModified, expiryDate, paymentData) <> (QueuedPaymentsRow.tupled, QueuedPaymentsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (queuedPaymentId.?, dateCreated.?, dateModified.?, expiryDate, paymentData).shaped.<>({r=> _1.map(_=> QueuedPaymentsRow.tupled((_1.get, _2.get, _3.get, _4, _5)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (queuedPaymentId.?, dateCreated.?, dateModified.?, expiryDate, paymentData).shaped.<>({r=>import r._; _1.map(_=> QueuedPaymentsRow.tupled((_1.get, _2.get, _3.get, _4, _5)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column queued_payment_id AutoInc, PrimaryKey */
     val queuedPaymentId: Column[Long] = column[Long]("queued_payment_id", O.AutoInc, O.PrimaryKey)
@@ -2726,13 +2798,14 @@ trait Tables {
   case class ReferralsRow(referralId: Long, articleId: Long, status: Short, url: String, dateAdded: java.sql.Timestamp, linkCount: Long)
   /** GetResult implicit for fetching ReferralsRow objects using plain SQL queries */
   implicit def GetResultReferralsRow(implicit e0: GR[Long], e1: GR[Short], e2: GR[String], e3: GR[java.sql.Timestamp]): GR[ReferralsRow] = GR{
-    prs => ReferralsRow.tupled((<<[Long], <<[Long], <<[Short], <<[String], <<[java.sql.Timestamp], <<[Long]))
+    prs => import prs._
+    ReferralsRow.tupled((<<[Long], <<[Long], <<[Short], <<[String], <<[java.sql.Timestamp], <<[Long]))
   }
   /** Table description of table referrals. Objects of this class serve as prototypes for rows in queries. */
   class Referrals(tag: Tag) extends Table[ReferralsRow](tag, "referrals") {
     def * = (referralId, articleId, status, url, dateAdded, linkCount) <> (ReferralsRow.tupled, ReferralsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (referralId.?, articleId.?, status.?, url.?, dateAdded.?, linkCount.?).shaped.<>({r=> _1.map(_=> ReferralsRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (referralId.?, articleId.?, status.?, url.?, dateAdded.?, linkCount.?).shaped.<>({r=>import r._; _1.map(_=> ReferralsRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column referral_id AutoInc, PrimaryKey */
     val referralId: Column[Long] = column[Long]("referral_id", O.AutoInc, O.PrimaryKey)
@@ -2762,13 +2835,14 @@ trait Tables {
   case class ReferralSettingsRow(referralId: Long, locale: String, settingName: String, settingValue: Option[String], settingType: String)
   /** GetResult implicit for fetching ReferralSettingsRow objects using plain SQL queries */
   implicit def GetResultReferralSettingsRow(implicit e0: GR[Long], e1: GR[String], e2: GR[Option[String]]): GR[ReferralSettingsRow] = GR{
-    prs => ReferralSettingsRow.tupled((<<[Long], <<[String], <<[String], <<?[String], <<[String]))
+    prs => import prs._
+    ReferralSettingsRow.tupled((<<[Long], <<[String], <<[String], <<?[String], <<[String]))
   }
   /** Table description of table referral_settings. Objects of this class serve as prototypes for rows in queries. */
   class ReferralSettings(tag: Tag) extends Table[ReferralSettingsRow](tag, "referral_settings") {
     def * = (referralId, locale, settingName, settingValue, settingType) <> (ReferralSettingsRow.tupled, ReferralSettingsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (referralId.?, locale.?, settingName.?, settingValue, settingType.?).shaped.<>({r=> _1.map(_=> ReferralSettingsRow.tupled((_1.get, _2.get, _3.get, _4, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (referralId.?, locale.?, settingName.?, settingValue, settingType.?).shaped.<>({r=>import r._; _1.map(_=> ReferralSettingsRow.tupled((_1.get, _2.get, _3.get, _4, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column referral_id  */
     val referralId: Column[Long] = column[Long]("referral_id")
@@ -2797,7 +2871,8 @@ trait Tables {
   }
   /** GetResult implicit for fetching ReviewAssignmentsRow objects using plain SQL queries */
   implicit def GetResultReviewAssignmentsRow(implicit e0: GR[Long], e1: GR[Option[String]], e2: GR[Option[Byte]], e3: GR[Option[java.sql.Timestamp]], e4: GR[Byte], e5: GR[Option[Long]]): GR[ReviewAssignmentsRow] = GR{
-    prs => <<[Long] :: <<[Long] :: <<[Long] :: <<?[String] :: <<?[String] :: <<?[Byte] :: <<?[java.sql.Timestamp] :: <<?[java.sql.Timestamp] :: <<?[java.sql.Timestamp] :: <<?[java.sql.Timestamp] :: <<?[java.sql.Timestamp] :: <<?[java.sql.Timestamp] :: <<?[java.sql.Timestamp] :: <<?[java.sql.Timestamp] :: <<[Byte] :: <<[Byte] :: <<[Byte] :: <<[Byte] :: <<?[Long] :: <<?[java.sql.Timestamp] :: <<?[java.sql.Timestamp] :: <<?[Byte] :: <<[Byte] :: <<[Byte] :: <<[Byte] :: <<[Byte] :: <<?[Long] :: HNil
+    prs => import prs._
+    <<[Long] :: <<[Long] :: <<[Long] :: <<?[String] :: <<?[String] :: <<?[Byte] :: <<?[java.sql.Timestamp] :: <<?[java.sql.Timestamp] :: <<?[java.sql.Timestamp] :: <<?[java.sql.Timestamp] :: <<?[java.sql.Timestamp] :: <<?[java.sql.Timestamp] :: <<?[java.sql.Timestamp] :: <<?[java.sql.Timestamp] :: <<[Byte] :: <<[Byte] :: <<[Byte] :: <<[Byte] :: <<?[Long] :: <<?[java.sql.Timestamp] :: <<?[java.sql.Timestamp] :: <<?[Byte] :: <<[Byte] :: <<[Byte] :: <<[Byte] :: <<[Byte] :: <<?[Long] :: HNil
   }
   /** Table description of table review_assignments. Objects of this class serve as prototypes for rows in queries. */
   class ReviewAssignments(tag: Tag) extends Table[ReviewAssignmentsRow](tag, "review_assignments") {
@@ -2878,13 +2953,14 @@ trait Tables {
   case class ReviewFormElementsRow(reviewFormElementId: Long, reviewFormId: Long, seq: Option[Double], elementType: Option[Long], required: Option[Byte], included: Option[Byte])
   /** GetResult implicit for fetching ReviewFormElementsRow objects using plain SQL queries */
   implicit def GetResultReviewFormElementsRow(implicit e0: GR[Long], e1: GR[Option[Double]], e2: GR[Option[Long]], e3: GR[Option[Byte]]): GR[ReviewFormElementsRow] = GR{
-    prs => ReviewFormElementsRow.tupled((<<[Long], <<[Long], <<?[Double], <<?[Long], <<?[Byte], <<?[Byte]))
+    prs => import prs._
+    ReviewFormElementsRow.tupled((<<[Long], <<[Long], <<?[Double], <<?[Long], <<?[Byte], <<?[Byte]))
   }
   /** Table description of table review_form_elements. Objects of this class serve as prototypes for rows in queries. */
   class ReviewFormElements(tag: Tag) extends Table[ReviewFormElementsRow](tag, "review_form_elements") {
     def * = (reviewFormElementId, reviewFormId, seq, elementType, required, included) <> (ReviewFormElementsRow.tupled, ReviewFormElementsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (reviewFormElementId.?, reviewFormId.?, seq, elementType, required, included).shaped.<>({r=> _1.map(_=> ReviewFormElementsRow.tupled((_1.get, _2.get, _3, _4, _5, _6)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (reviewFormElementId.?, reviewFormId.?, seq, elementType, required, included).shaped.<>({r=>import r._; _1.map(_=> ReviewFormElementsRow.tupled((_1.get, _2.get, _3, _4, _5, _6)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column review_form_element_id AutoInc, PrimaryKey */
     val reviewFormElementId: Column[Long] = column[Long]("review_form_element_id", O.AutoInc, O.PrimaryKey)
@@ -2914,13 +2990,14 @@ trait Tables {
   case class ReviewFormElementSettingsRow(reviewFormElementId: Long, locale: String, settingName: String, settingValue: Option[String], settingType: String)
   /** GetResult implicit for fetching ReviewFormElementSettingsRow objects using plain SQL queries */
   implicit def GetResultReviewFormElementSettingsRow(implicit e0: GR[Long], e1: GR[String], e2: GR[Option[String]]): GR[ReviewFormElementSettingsRow] = GR{
-    prs => ReviewFormElementSettingsRow.tupled((<<[Long], <<[String], <<[String], <<?[String], <<[String]))
+    prs => import prs._
+    ReviewFormElementSettingsRow.tupled((<<[Long], <<[String], <<[String], <<?[String], <<[String]))
   }
   /** Table description of table review_form_element_settings. Objects of this class serve as prototypes for rows in queries. */
   class ReviewFormElementSettings(tag: Tag) extends Table[ReviewFormElementSettingsRow](tag, "review_form_element_settings") {
     def * = (reviewFormElementId, locale, settingName, settingValue, settingType) <> (ReviewFormElementSettingsRow.tupled, ReviewFormElementSettingsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (reviewFormElementId.?, locale.?, settingName.?, settingValue, settingType.?).shaped.<>({r=> _1.map(_=> ReviewFormElementSettingsRow.tupled((_1.get, _2.get, _3.get, _4, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (reviewFormElementId.?, locale.?, settingName.?, settingValue, settingType.?).shaped.<>({r=>import r._; _1.map(_=> ReviewFormElementSettingsRow.tupled((_1.get, _2.get, _3.get, _4, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column review_form_element_id  */
     val reviewFormElementId: Column[Long] = column[Long]("review_form_element_id")
@@ -2949,13 +3026,14 @@ trait Tables {
   case class ReviewFormResponsesRow(reviewFormElementId: Long, reviewId: Long, responseType: Option[String], responseValue: Option[String])
   /** GetResult implicit for fetching ReviewFormResponsesRow objects using plain SQL queries */
   implicit def GetResultReviewFormResponsesRow(implicit e0: GR[Long], e1: GR[Option[String]]): GR[ReviewFormResponsesRow] = GR{
-    prs => ReviewFormResponsesRow.tupled((<<[Long], <<[Long], <<?[String], <<?[String]))
+    prs => import prs._
+    ReviewFormResponsesRow.tupled((<<[Long], <<[Long], <<?[String], <<?[String]))
   }
   /** Table description of table review_form_responses. Objects of this class serve as prototypes for rows in queries. */
   class ReviewFormResponses(tag: Tag) extends Table[ReviewFormResponsesRow](tag, "review_form_responses") {
     def * = (reviewFormElementId, reviewId, responseType, responseValue) <> (ReviewFormResponsesRow.tupled, ReviewFormResponsesRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (reviewFormElementId.?, reviewId.?, responseType, responseValue).shaped.<>({r=> _1.map(_=> ReviewFormResponsesRow.tupled((_1.get, _2.get, _3, _4)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (reviewFormElementId.?, reviewId.?, responseType, responseValue).shaped.<>({r=>import r._; _1.map(_=> ReviewFormResponsesRow.tupled((_1.get, _2.get, _3, _4)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column review_form_element_id  */
     val reviewFormElementId: Column[Long] = column[Long]("review_form_element_id")
@@ -2981,13 +3059,14 @@ trait Tables {
   case class ReviewFormsRow(reviewFormId: Long, assocType: Option[Long], assocId: Option[Long], seq: Option[Double], isActive: Option[Byte])
   /** GetResult implicit for fetching ReviewFormsRow objects using plain SQL queries */
   implicit def GetResultReviewFormsRow(implicit e0: GR[Long], e1: GR[Option[Long]], e2: GR[Option[Double]], e3: GR[Option[Byte]]): GR[ReviewFormsRow] = GR{
-    prs => ReviewFormsRow.tupled((<<[Long], <<?[Long], <<?[Long], <<?[Double], <<?[Byte]))
+    prs => import prs._
+    ReviewFormsRow.tupled((<<[Long], <<?[Long], <<?[Long], <<?[Double], <<?[Byte]))
   }
   /** Table description of table review_forms. Objects of this class serve as prototypes for rows in queries. */
   class ReviewForms(tag: Tag) extends Table[ReviewFormsRow](tag, "review_forms") {
     def * = (reviewFormId, assocType, assocId, seq, isActive) <> (ReviewFormsRow.tupled, ReviewFormsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (reviewFormId.?, assocType, assocId, seq, isActive).shaped.<>({r=> _1.map(_=> ReviewFormsRow.tupled((_1.get, _2, _3, _4, _5)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (reviewFormId.?, assocType, assocId, seq, isActive).shaped.<>({r=>import r._; _1.map(_=> ReviewFormsRow.tupled((_1.get, _2, _3, _4, _5)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column review_form_id AutoInc, PrimaryKey */
     val reviewFormId: Column[Long] = column[Long]("review_form_id", O.AutoInc, O.PrimaryKey)
@@ -3012,13 +3091,14 @@ trait Tables {
   case class ReviewFormSettingsRow(reviewFormId: Long, locale: String, settingName: String, settingValue: Option[String], settingType: String)
   /** GetResult implicit for fetching ReviewFormSettingsRow objects using plain SQL queries */
   implicit def GetResultReviewFormSettingsRow(implicit e0: GR[Long], e1: GR[String], e2: GR[Option[String]]): GR[ReviewFormSettingsRow] = GR{
-    prs => ReviewFormSettingsRow.tupled((<<[Long], <<[String], <<[String], <<?[String], <<[String]))
+    prs => import prs._
+    ReviewFormSettingsRow.tupled((<<[Long], <<[String], <<[String], <<?[String], <<[String]))
   }
   /** Table description of table review_form_settings. Objects of this class serve as prototypes for rows in queries. */
   class ReviewFormSettings(tag: Tag) extends Table[ReviewFormSettingsRow](tag, "review_form_settings") {
     def * = (reviewFormId, locale, settingName, settingValue, settingType) <> (ReviewFormSettingsRow.tupled, ReviewFormSettingsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (reviewFormId.?, locale.?, settingName.?, settingValue, settingType.?).shaped.<>({r=> _1.map(_=> ReviewFormSettingsRow.tupled((_1.get, _2.get, _3.get, _4, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (reviewFormId.?, locale.?, settingName.?, settingValue, settingType.?).shaped.<>({r=>import r._; _1.map(_=> ReviewFormSettingsRow.tupled((_1.get, _2.get, _3.get, _4, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column review_form_id  */
     val reviewFormId: Column[Long] = column[Long]("review_form_id")
@@ -3048,13 +3128,14 @@ trait Tables {
   case class ReviewRoundsRow(submissionId: Long, round: Byte, reviewRevision: Option[Long], reviewType: Option[Long], status: Option[Long])
   /** GetResult implicit for fetching ReviewRoundsRow objects using plain SQL queries */
   implicit def GetResultReviewRoundsRow(implicit e0: GR[Long], e1: GR[Byte], e2: GR[Option[Long]]): GR[ReviewRoundsRow] = GR{
-    prs => ReviewRoundsRow.tupled((<<[Long], <<[Byte], <<?[Long], <<?[Long], <<?[Long]))
+    prs => import prs._
+    ReviewRoundsRow.tupled((<<[Long], <<[Byte], <<?[Long], <<?[Long], <<?[Long]))
   }
   /** Table description of table review_rounds. Objects of this class serve as prototypes for rows in queries. */
   class ReviewRounds(tag: Tag) extends Table[ReviewRoundsRow](tag, "review_rounds") {
     def * = (submissionId, round, reviewRevision, reviewType, status) <> (ReviewRoundsRow.tupled, ReviewRoundsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (submissionId.?, round.?, reviewRevision, reviewType, status).shaped.<>({r=> _1.map(_=> ReviewRoundsRow.tupled((_1.get, _2.get, _3, _4, _5)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (submissionId.?, round.?, reviewRevision, reviewType, status).shaped.<>({r=>import r._; _1.map(_=> ReviewRoundsRow.tupled((_1.get, _2.get, _3, _4, _5)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column submission_id  */
     val submissionId: Column[Long] = column[Long]("submission_id")
@@ -3082,13 +3163,14 @@ trait Tables {
   case class RolesRow(journalId: Long, userId: Long, roleId: Long)
   /** GetResult implicit for fetching RolesRow objects using plain SQL queries */
   implicit def GetResultRolesRow(implicit e0: GR[Long]): GR[RolesRow] = GR{
-    prs => RolesRow.tupled((<<[Long], <<[Long], <<[Long]))
+    prs => import prs._
+    RolesRow.tupled((<<[Long], <<[Long], <<[Long]))
   }
   /** Table description of table roles. Objects of this class serve as prototypes for rows in queries. */
   class Roles(tag: Tag) extends Table[RolesRow](tag, "roles") {
     def * = (journalId, userId, roleId) <> (RolesRow.tupled, RolesRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (journalId.?, userId.?, roleId.?).shaped.<>({r=> _1.map(_=> RolesRow.tupled((_1.get, _2.get, _3.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (journalId.?, userId.?, roleId.?).shaped.<>({r=>import r._; _1.map(_=> RolesRow.tupled((_1.get, _2.get, _3.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column journal_id  */
     val journalId: Column[Long] = column[Long]("journal_id")
@@ -3123,13 +3205,14 @@ trait Tables {
   case class RtContextsRow(contextId: Long, versionId: Long, title: String, abbrev: String, description: Option[String], citedBy: Byte, authorTerms: Byte, defineTerms: Byte, geoTerms: Byte, seq: Double = 0.0)
   /** GetResult implicit for fetching RtContextsRow objects using plain SQL queries */
   implicit def GetResultRtContextsRow(implicit e0: GR[Long], e1: GR[String], e2: GR[Option[String]], e3: GR[Byte], e4: GR[Double]): GR[RtContextsRow] = GR{
-    prs => RtContextsRow.tupled((<<[Long], <<[Long], <<[String], <<[String], <<?[String], <<[Byte], <<[Byte], <<[Byte], <<[Byte], <<[Double]))
+    prs => import prs._
+    RtContextsRow.tupled((<<[Long], <<[Long], <<[String], <<[String], <<?[String], <<[Byte], <<[Byte], <<[Byte], <<[Byte], <<[Double]))
   }
   /** Table description of table rt_contexts. Objects of this class serve as prototypes for rows in queries. */
   class RtContexts(tag: Tag) extends Table[RtContextsRow](tag, "rt_contexts") {
     def * = (contextId, versionId, title, abbrev, description, citedBy, authorTerms, defineTerms, geoTerms, seq) <> (RtContextsRow.tupled, RtContextsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (contextId.?, versionId.?, title.?, abbrev.?, description, citedBy.?, authorTerms.?, defineTerms.?, geoTerms.?, seq.?).shaped.<>({r=> _1.map(_=> RtContextsRow.tupled((_1.get, _2.get, _3.get, _4.get, _5, _6.get, _7.get, _8.get, _9.get, _10.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (contextId.?, versionId.?, title.?, abbrev.?, description, citedBy.?, authorTerms.?, defineTerms.?, geoTerms.?, seq.?).shaped.<>({r=>import r._; _1.map(_=> RtContextsRow.tupled((_1.get, _2.get, _3.get, _4.get, _5, _6.get, _7.get, _8.get, _9.get, _10.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column context_id AutoInc, PrimaryKey */
     val contextId: Column[Long] = column[Long]("context_id", O.AutoInc, O.PrimaryKey)
@@ -3170,13 +3253,14 @@ trait Tables {
   case class RtSearchesRow(searchId: Long, contextId: Long, title: String, description: Option[String], url: Option[String], searchUrl: Option[String], searchPost: Option[String], seq: Double = 0.0)
   /** GetResult implicit for fetching RtSearchesRow objects using plain SQL queries */
   implicit def GetResultRtSearchesRow(implicit e0: GR[Long], e1: GR[String], e2: GR[Option[String]], e3: GR[Double]): GR[RtSearchesRow] = GR{
-    prs => RtSearchesRow.tupled((<<[Long], <<[Long], <<[String], <<?[String], <<?[String], <<?[String], <<?[String], <<[Double]))
+    prs => import prs._
+    RtSearchesRow.tupled((<<[Long], <<[Long], <<[String], <<?[String], <<?[String], <<?[String], <<?[String], <<[Double]))
   }
   /** Table description of table rt_searches. Objects of this class serve as prototypes for rows in queries. */
   class RtSearches(tag: Tag) extends Table[RtSearchesRow](tag, "rt_searches") {
     def * = (searchId, contextId, title, description, url, searchUrl, searchPost, seq) <> (RtSearchesRow.tupled, RtSearchesRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (searchId.?, contextId.?, title.?, description, url, searchUrl, searchPost, seq.?).shaped.<>({r=> _1.map(_=> RtSearchesRow.tupled((_1.get, _2.get, _3.get, _4, _5, _6, _7, _8.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (searchId.?, contextId.?, title.?, description, url, searchUrl, searchPost, seq.?).shaped.<>({r=>import r._; _1.map(_=> RtSearchesRow.tupled((_1.get, _2.get, _3.get, _4, _5, _6, _7, _8.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column search_id AutoInc, PrimaryKey */
     val searchId: Column[Long] = column[Long]("search_id", O.AutoInc, O.PrimaryKey)
@@ -3211,13 +3295,14 @@ trait Tables {
   case class RtVersionsRow(versionId: Long, journalId: Long, versionKey: String, locale: Option[String] = None, title: String, description: Option[String])
   /** GetResult implicit for fetching RtVersionsRow objects using plain SQL queries */
   implicit def GetResultRtVersionsRow(implicit e0: GR[Long], e1: GR[String], e2: GR[Option[String]]): GR[RtVersionsRow] = GR{
-    prs => RtVersionsRow.tupled((<<[Long], <<[Long], <<[String], <<?[String], <<[String], <<?[String]))
+    prs => import prs._
+    RtVersionsRow.tupled((<<[Long], <<[Long], <<[String], <<?[String], <<[String], <<?[String]))
   }
   /** Table description of table rt_versions. Objects of this class serve as prototypes for rows in queries. */
   class RtVersions(tag: Tag) extends Table[RtVersionsRow](tag, "rt_versions") {
     def * = (versionId, journalId, versionKey, locale, title, description) <> (RtVersionsRow.tupled, RtVersionsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (versionId.?, journalId.?, versionKey.?, locale, title.?, description).shaped.<>({r=> _1.map(_=> RtVersionsRow.tupled((_1.get, _2.get, _3.get, _4, _5.get, _6)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (versionId.?, journalId.?, versionKey.?, locale, title.?, description).shaped.<>({r=>import r._; _1.map(_=> RtVersionsRow.tupled((_1.get, _2.get, _3.get, _4, _5.get, _6)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column version_id AutoInc, PrimaryKey */
     val versionId: Column[Long] = column[Long]("version_id", O.AutoInc, O.PrimaryKey)
@@ -3246,13 +3331,14 @@ trait Tables {
   case class ScheduledTasksRow(className: String, lastRun: Option[java.sql.Timestamp])
   /** GetResult implicit for fetching ScheduledTasksRow objects using plain SQL queries */
   implicit def GetResultScheduledTasksRow(implicit e0: GR[String], e1: GR[Option[java.sql.Timestamp]]): GR[ScheduledTasksRow] = GR{
-    prs => ScheduledTasksRow.tupled((<<[String], <<?[java.sql.Timestamp]))
+    prs => import prs._
+    ScheduledTasksRow.tupled((<<[String], <<?[java.sql.Timestamp]))
   }
   /** Table description of table scheduled_tasks. Objects of this class serve as prototypes for rows in queries. */
   class ScheduledTasks(tag: Tag) extends Table[ScheduledTasksRow](tag, "scheduled_tasks") {
     def * = (className, lastRun) <> (ScheduledTasksRow.tupled, ScheduledTasksRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (className.?, lastRun).shaped.<>({r=> _1.map(_=> ScheduledTasksRow.tupled((_1.get, _2)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (className.?, lastRun).shaped.<>({r=>import r._; _1.map(_=> ScheduledTasksRow.tupled((_1.get, _2)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column class_name  */
     val className: Column[String] = column[String]("class_name")
@@ -3274,13 +3360,14 @@ trait Tables {
   case class SectionEditorsRow(journalId: Long, sectionId: Long, userId: Long, canEdit: Byte, canReview: Byte)
   /** GetResult implicit for fetching SectionEditorsRow objects using plain SQL queries */
   implicit def GetResultSectionEditorsRow(implicit e0: GR[Long], e1: GR[Byte]): GR[SectionEditorsRow] = GR{
-    prs => SectionEditorsRow.tupled((<<[Long], <<[Long], <<[Long], <<[Byte], <<[Byte]))
+    prs => import prs._
+    SectionEditorsRow.tupled((<<[Long], <<[Long], <<[Long], <<[Byte], <<[Byte]))
   }
   /** Table description of table section_editors. Objects of this class serve as prototypes for rows in queries. */
   class SectionEditors(tag: Tag) extends Table[SectionEditorsRow](tag, "section_editors") {
     def * = (journalId, sectionId, userId, canEdit, canReview) <> (SectionEditorsRow.tupled, SectionEditorsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (journalId.?, sectionId.?, userId.?, canEdit.?, canReview.?).shaped.<>({r=> _1.map(_=> SectionEditorsRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (journalId.?, sectionId.?, userId.?, canEdit.?, canReview.?).shaped.<>({r=>import r._; _1.map(_=> SectionEditorsRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column journal_id  */
     val journalId: Column[Long] = column[Long]("journal_id")
@@ -3322,13 +3409,14 @@ trait Tables {
   case class SectionsRow(sectionId: Long, journalId: Long, reviewFormId: Option[Long], seq: Double = 0.0, editorRestricted: Byte, metaIndexed: Byte, metaReviewed: Byte, abstractsNotRequired: Byte, hideTitle: Byte, hideAuthor: Byte, hideAbout: Byte, disableComments: Byte, abstractWordCount: Option[Long])
   /** GetResult implicit for fetching SectionsRow objects using plain SQL queries */
   implicit def GetResultSectionsRow(implicit e0: GR[Long], e1: GR[Option[Long]], e2: GR[Double], e3: GR[Byte]): GR[SectionsRow] = GR{
-    prs => SectionsRow.tupled((<<[Long], <<[Long], <<?[Long], <<[Double], <<[Byte], <<[Byte], <<[Byte], <<[Byte], <<[Byte], <<[Byte], <<[Byte], <<[Byte], <<?[Long]))
+    prs => import prs._
+    SectionsRow.tupled((<<[Long], <<[Long], <<?[Long], <<[Double], <<[Byte], <<[Byte], <<[Byte], <<[Byte], <<[Byte], <<[Byte], <<[Byte], <<[Byte], <<?[Long]))
   }
   /** Table description of table sections. Objects of this class serve as prototypes for rows in queries. */
   class Sections(tag: Tag) extends Table[SectionsRow](tag, "sections") {
     def * = (sectionId, journalId, reviewFormId, seq, editorRestricted, metaIndexed, metaReviewed, abstractsNotRequired, hideTitle, hideAuthor, hideAbout, disableComments, abstractWordCount) <> (SectionsRow.tupled, SectionsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (sectionId.?, journalId.?, reviewFormId, seq.?, editorRestricted.?, metaIndexed.?, metaReviewed.?, abstractsNotRequired.?, hideTitle.?, hideAuthor.?, hideAbout.?, disableComments.?, abstractWordCount).shaped.<>({r=> _1.map(_=> SectionsRow.tupled((_1.get, _2.get, _3, _4.get, _5.get, _6.get, _7.get, _8.get, _9.get, _10.get, _11.get, _12.get, _13)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (sectionId.?, journalId.?, reviewFormId, seq.?, editorRestricted.?, metaIndexed.?, metaReviewed.?, abstractsNotRequired.?, hideTitle.?, hideAuthor.?, hideAbout.?, disableComments.?, abstractWordCount).shaped.<>({r=>import r._; _1.map(_=> SectionsRow.tupled((_1.get, _2.get, _3, _4.get, _5.get, _6.get, _7.get, _8.get, _9.get, _10.get, _11.get, _12.get, _13)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column section_id AutoInc, PrimaryKey */
     val sectionId: Column[Long] = column[Long]("section_id", O.AutoInc, O.PrimaryKey)
@@ -3372,13 +3460,14 @@ trait Tables {
   case class SectionSettingsRow(sectionId: Long, locale: String, settingName: String, settingValue: Option[String], settingType: String)
   /** GetResult implicit for fetching SectionSettingsRow objects using plain SQL queries */
   implicit def GetResultSectionSettingsRow(implicit e0: GR[Long], e1: GR[String], e2: GR[Option[String]]): GR[SectionSettingsRow] = GR{
-    prs => SectionSettingsRow.tupled((<<[Long], <<[String], <<[String], <<?[String], <<[String]))
+    prs => import prs._
+    SectionSettingsRow.tupled((<<[Long], <<[String], <<[String], <<?[String], <<[String]))
   }
   /** Table description of table section_settings. Objects of this class serve as prototypes for rows in queries. */
   class SectionSettings(tag: Tag) extends Table[SectionSettingsRow](tag, "section_settings") {
     def * = (sectionId, locale, settingName, settingValue, settingType) <> (SectionSettingsRow.tupled, SectionSettingsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (sectionId.?, locale.?, settingName.?, settingValue, settingType.?).shaped.<>({r=> _1.map(_=> SectionSettingsRow.tupled((_1.get, _2.get, _3.get, _4, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (sectionId.?, locale.?, settingName.?, settingValue, settingType.?).shaped.<>({r=>import r._; _1.map(_=> SectionSettingsRow.tupled((_1.get, _2.get, _3.get, _4, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column section_id  */
     val sectionId: Column[Long] = column[Long]("section_id")
@@ -3412,13 +3501,14 @@ trait Tables {
   case class SessionsRow(sessionId: String, userId: Option[Long], ipAddress: String, userAgent: Option[String], created: Long = 0L, lastUsed: Long = 0L, remember: Byte, data: Option[String], actingAs: Long = 0L)
   /** GetResult implicit for fetching SessionsRow objects using plain SQL queries */
   implicit def GetResultSessionsRow(implicit e0: GR[String], e1: GR[Option[Long]], e2: GR[Option[String]], e3: GR[Long], e4: GR[Byte]): GR[SessionsRow] = GR{
-    prs => SessionsRow.tupled((<<[String], <<?[Long], <<[String], <<?[String], <<[Long], <<[Long], <<[Byte], <<?[String], <<[Long]))
+    prs => import prs._
+    SessionsRow.tupled((<<[String], <<?[Long], <<[String], <<?[String], <<[Long], <<[Long], <<[Byte], <<?[String], <<[Long]))
   }
   /** Table description of table sessions. Objects of this class serve as prototypes for rows in queries. */
   class Sessions(tag: Tag) extends Table[SessionsRow](tag, "sessions") {
     def * = (sessionId, userId, ipAddress, userAgent, created, lastUsed, remember, data, actingAs) <> (SessionsRow.tupled, SessionsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (sessionId.?, userId, ipAddress.?, userAgent, created.?, lastUsed.?, remember.?, data, actingAs.?).shaped.<>({r=> _1.map(_=> SessionsRow.tupled((_1.get, _2, _3.get, _4, _5.get, _6.get, _7.get, _8, _9.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (sessionId.?, userId, ipAddress.?, userAgent, created.?, lastUsed.?, remember.?, data, actingAs.?).shaped.<>({r=>import r._; _1.map(_=> SessionsRow.tupled((_1.get, _2, _3.get, _4, _5.get, _6.get, _7.get, _8, _9.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column session_id  */
     val sessionId: Column[String] = column[String]("session_id")
@@ -3464,13 +3554,14 @@ trait Tables {
   case class SignoffsRow(signoffId: Long, symbolic: String, assocType: Long = 0L, assocId: Long = 0L, userId: Long, fileId: Option[Long], fileRevision: Option[Long], dateNotified: Option[java.sql.Timestamp], dateUnderway: Option[java.sql.Timestamp], dateCompleted: Option[java.sql.Timestamp], dateAcknowledged: Option[java.sql.Timestamp], stageId: Option[Long], userGroupId: Option[Long])
   /** GetResult implicit for fetching SignoffsRow objects using plain SQL queries */
   implicit def GetResultSignoffsRow(implicit e0: GR[Long], e1: GR[String], e2: GR[Option[Long]], e3: GR[Option[java.sql.Timestamp]]): GR[SignoffsRow] = GR{
-    prs => SignoffsRow.tupled((<<[Long], <<[String], <<[Long], <<[Long], <<[Long], <<?[Long], <<?[Long], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[Long], <<?[Long]))
+    prs => import prs._
+    SignoffsRow.tupled((<<[Long], <<[String], <<[Long], <<[Long], <<[Long], <<?[Long], <<?[Long], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[java.sql.Timestamp], <<?[Long], <<?[Long]))
   }
   /** Table description of table signoffs. Objects of this class serve as prototypes for rows in queries. */
   class Signoffs(tag: Tag) extends Table[SignoffsRow](tag, "signoffs") {
     def * = (signoffId, symbolic, assocType, assocId, userId, fileId, fileRevision, dateNotified, dateUnderway, dateCompleted, dateAcknowledged, stageId, userGroupId) <> (SignoffsRow.tupled, SignoffsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (signoffId.?, symbolic.?, assocType.?, assocId.?, userId.?, fileId, fileRevision, dateNotified, dateUnderway, dateCompleted, dateAcknowledged, stageId, userGroupId).shaped.<>({r=> _1.map(_=> SignoffsRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6, _7, _8, _9, _10, _11, _12, _13)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (signoffId.?, symbolic.?, assocType.?, assocId.?, userId.?, fileId, fileRevision, dateNotified, dateUnderway, dateCompleted, dateAcknowledged, stageId, userGroupId).shaped.<>({r=>import r._; _1.map(_=> SignoffsRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6, _7, _8, _9, _10, _11, _12, _13)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column signoff_id AutoInc, PrimaryKey */
     val signoffId: Column[Long] = column[Long]("signoff_id", O.AutoInc, O.PrimaryKey)
@@ -3515,13 +3606,14 @@ trait Tables {
   case class SiteRow(redirect: Long = 0L, primaryLocale: String, minPasswordLength: Byte, installedLocales: String, supportedLocales: Option[String], originalStyleFileName: Option[String])
   /** GetResult implicit for fetching SiteRow objects using plain SQL queries */
   implicit def GetResultSiteRow(implicit e0: GR[Long], e1: GR[String], e2: GR[Byte], e3: GR[Option[String]]): GR[SiteRow] = GR{
-    prs => SiteRow.tupled((<<[Long], <<[String], <<[Byte], <<[String], <<?[String], <<?[String]))
+    prs => import prs._
+    SiteRow.tupled((<<[Long], <<[String], <<[Byte], <<[String], <<?[String], <<?[String]))
   }
   /** Table description of table site. Objects of this class serve as prototypes for rows in queries. */
   class Site(tag: Tag) extends Table[SiteRow](tag, "site") {
     def * = (redirect, primaryLocale, minPasswordLength, installedLocales, supportedLocales, originalStyleFileName) <> (SiteRow.tupled, SiteRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (redirect.?, primaryLocale.?, minPasswordLength.?, installedLocales.?, supportedLocales, originalStyleFileName).shaped.<>({r=> _1.map(_=> SiteRow.tupled((_1.get, _2.get, _3.get, _4.get, _5, _6)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (redirect.?, primaryLocale.?, minPasswordLength.?, installedLocales.?, supportedLocales, originalStyleFileName).shaped.<>({r=>import r._; _1.map(_=> SiteRow.tupled((_1.get, _2.get, _3.get, _4.get, _5, _6)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column redirect Default(0) */
     val redirect: Column[Long] = column[Long]("redirect", O.Default(0L))
@@ -3547,13 +3639,14 @@ trait Tables {
   case class SiteSettingsRow(settingName: String, locale: String, settingValue: Option[String], settingType: String)
   /** GetResult implicit for fetching SiteSettingsRow objects using plain SQL queries */
   implicit def GetResultSiteSettingsRow(implicit e0: GR[String], e1: GR[Option[String]]): GR[SiteSettingsRow] = GR{
-    prs => SiteSettingsRow.tupled((<<[String], <<[String], <<?[String], <<[String]))
+    prs => import prs._
+    SiteSettingsRow.tupled((<<[String], <<[String], <<?[String], <<[String]))
   }
   /** Table description of table site_settings. Objects of this class serve as prototypes for rows in queries. */
   class SiteSettings(tag: Tag) extends Table[SiteSettingsRow](tag, "site_settings") {
     def * = (settingName, locale, settingValue, settingType) <> (SiteSettingsRow.tupled, SiteSettingsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (settingName.?, locale.?, settingValue, settingType.?).shaped.<>({r=> _1.map(_=> SiteSettingsRow.tupled((_1.get, _2.get, _3, _4.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (settingName.?, locale.?, settingValue, settingType.?).shaped.<>({r=>import r._; _1.map(_=> SiteSettingsRow.tupled((_1.get, _2.get, _3, _4.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column setting_name  */
     val settingName: Column[String] = column[String]("setting_name")
@@ -3577,13 +3670,14 @@ trait Tables {
   case class StaticPagesRow(staticPageId: Long, path: String, journalId: Long)
   /** GetResult implicit for fetching StaticPagesRow objects using plain SQL queries */
   implicit def GetResultStaticPagesRow(implicit e0: GR[Long], e1: GR[String]): GR[StaticPagesRow] = GR{
-    prs => StaticPagesRow.tupled((<<[Long], <<[String], <<[Long]))
+    prs => import prs._
+    StaticPagesRow.tupled((<<[Long], <<[String], <<[Long]))
   }
   /** Table description of table static_pages. Objects of this class serve as prototypes for rows in queries. */
   class StaticPages(tag: Tag) extends Table[StaticPagesRow](tag, "static_pages") {
     def * = (staticPageId, path, journalId) <> (StaticPagesRow.tupled, StaticPagesRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (staticPageId.?, path.?, journalId.?).shaped.<>({r=> _1.map(_=> StaticPagesRow.tupled((_1.get, _2.get, _3.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (staticPageId.?, path.?, journalId.?).shaped.<>({r=>import r._; _1.map(_=> StaticPagesRow.tupled((_1.get, _2.get, _3.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column static_page_id AutoInc, PrimaryKey */
     val staticPageId: Column[Long] = column[Long]("static_page_id", O.AutoInc, O.PrimaryKey)
@@ -3604,13 +3698,14 @@ trait Tables {
   case class StaticPageSettingsRow(staticPageId: Long, locale: String, settingName: String, settingValue: Option[String], settingType: String)
   /** GetResult implicit for fetching StaticPageSettingsRow objects using plain SQL queries */
   implicit def GetResultStaticPageSettingsRow(implicit e0: GR[Long], e1: GR[String], e2: GR[Option[String]]): GR[StaticPageSettingsRow] = GR{
-    prs => StaticPageSettingsRow.tupled((<<[Long], <<[String], <<[String], <<?[String], <<[String]))
+    prs => import prs._
+    StaticPageSettingsRow.tupled((<<[Long], <<[String], <<[String], <<?[String], <<[String]))
   }
   /** Table description of table static_page_settings. Objects of this class serve as prototypes for rows in queries. */
   class StaticPageSettings(tag: Tag) extends Table[StaticPageSettingsRow](tag, "static_page_settings") {
     def * = (staticPageId, locale, settingName, settingValue, settingType) <> (StaticPageSettingsRow.tupled, StaticPageSettingsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (staticPageId.?, locale.?, settingName.?, settingValue, settingType.?).shaped.<>({r=> _1.map(_=> StaticPageSettingsRow.tupled((_1.get, _2.get, _3.get, _4, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (staticPageId.?, locale.?, settingName.?, settingValue, settingType.?).shaped.<>({r=>import r._; _1.map(_=> StaticPageSettingsRow.tupled((_1.get, _2.get, _3.get, _4, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column static_page_id  */
     val staticPageId: Column[Long] = column[Long]("static_page_id")
@@ -3645,13 +3740,14 @@ trait Tables {
   case class SubscriptionsRow(subscriptionId: Long, journalId: Long, userId: Long, typeId: Long, dateStart: Option[java.sql.Date], dateEnd: Option[java.sql.Timestamp], status: Byte, membership: Option[String], referenceNumber: Option[String], notes: Option[String])
   /** GetResult implicit for fetching SubscriptionsRow objects using plain SQL queries */
   implicit def GetResultSubscriptionsRow(implicit e0: GR[Long], e1: GR[Option[java.sql.Date]], e2: GR[Option[java.sql.Timestamp]], e3: GR[Byte], e4: GR[Option[String]]): GR[SubscriptionsRow] = GR{
-    prs => SubscriptionsRow.tupled((<<[Long], <<[Long], <<[Long], <<[Long], <<?[java.sql.Date], <<?[java.sql.Timestamp], <<[Byte], <<?[String], <<?[String], <<?[String]))
+    prs => import prs._
+    SubscriptionsRow.tupled((<<[Long], <<[Long], <<[Long], <<[Long], <<?[java.sql.Date], <<?[java.sql.Timestamp], <<[Byte], <<?[String], <<?[String], <<?[String]))
   }
   /** Table description of table subscriptions. Objects of this class serve as prototypes for rows in queries. */
   class Subscriptions(tag: Tag) extends Table[SubscriptionsRow](tag, "subscriptions") {
     def * = (subscriptionId, journalId, userId, typeId, dateStart, dateEnd, status, membership, referenceNumber, notes) <> (SubscriptionsRow.tupled, SubscriptionsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (subscriptionId.?, journalId.?, userId.?, typeId.?, dateStart, dateEnd, status.?, membership, referenceNumber, notes).shaped.<>({r=> _1.map(_=> SubscriptionsRow.tupled((_1.get, _2.get, _3.get, _4.get, _5, _6, _7.get, _8, _9, _10)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (subscriptionId.?, journalId.?, userId.?, typeId.?, dateStart, dateEnd, status.?, membership, referenceNumber, notes).shaped.<>({r=>import r._; _1.map(_=> SubscriptionsRow.tupled((_1.get, _2.get, _3.get, _4.get, _5, _6, _7.get, _8, _9, _10)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column subscription_id AutoInc, PrimaryKey */
     val subscriptionId: Column[Long] = column[Long]("subscription_id", O.AutoInc, O.PrimaryKey)
@@ -3692,13 +3788,14 @@ trait Tables {
   case class SubscriptionTypesRow(typeId: Long, journalId: Long, cost: Double, currencyCodeAlpha: String, nonExpiring: Byte, duration: Option[Short], format: Short, institutional: Byte, membership: Byte, disablePublicDisplay: Byte, seq: Double)
   /** GetResult implicit for fetching SubscriptionTypesRow objects using plain SQL queries */
   implicit def GetResultSubscriptionTypesRow(implicit e0: GR[Long], e1: GR[Double], e2: GR[String], e3: GR[Byte], e4: GR[Option[Short]], e5: GR[Short]): GR[SubscriptionTypesRow] = GR{
-    prs => SubscriptionTypesRow.tupled((<<[Long], <<[Long], <<[Double], <<[String], <<[Byte], <<?[Short], <<[Short], <<[Byte], <<[Byte], <<[Byte], <<[Double]))
+    prs => import prs._
+    SubscriptionTypesRow.tupled((<<[Long], <<[Long], <<[Double], <<[String], <<[Byte], <<?[Short], <<[Short], <<[Byte], <<[Byte], <<[Byte], <<[Double]))
   }
   /** Table description of table subscription_types. Objects of this class serve as prototypes for rows in queries. */
   class SubscriptionTypes(tag: Tag) extends Table[SubscriptionTypesRow](tag, "subscription_types") {
     def * = (typeId, journalId, cost, currencyCodeAlpha, nonExpiring, duration, format, institutional, membership, disablePublicDisplay, seq) <> (SubscriptionTypesRow.tupled, SubscriptionTypesRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (typeId.?, journalId.?, cost.?, currencyCodeAlpha.?, nonExpiring.?, duration, format.?, institutional.?, membership.?, disablePublicDisplay.?, seq.?).shaped.<>({r=> _1.map(_=> SubscriptionTypesRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6, _7.get, _8.get, _9.get, _10.get, _11.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (typeId.?, journalId.?, cost.?, currencyCodeAlpha.?, nonExpiring.?, duration, format.?, institutional.?, membership.?, disablePublicDisplay.?, seq.?).shaped.<>({r=>import r._; _1.map(_=> SubscriptionTypesRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6, _7.get, _8.get, _9.get, _10.get, _11.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column type_id AutoInc, PrimaryKey */
     val typeId: Column[Long] = column[Long]("type_id", O.AutoInc, O.PrimaryKey)
@@ -3735,13 +3832,14 @@ trait Tables {
   case class SubscriptionTypeSettingsRow(typeId: Long, locale: String, settingName: String, settingValue: Option[String], settingType: String)
   /** GetResult implicit for fetching SubscriptionTypeSettingsRow objects using plain SQL queries */
   implicit def GetResultSubscriptionTypeSettingsRow(implicit e0: GR[Long], e1: GR[String], e2: GR[Option[String]]): GR[SubscriptionTypeSettingsRow] = GR{
-    prs => SubscriptionTypeSettingsRow.tupled((<<[Long], <<[String], <<[String], <<?[String], <<[String]))
+    prs => import prs._
+    SubscriptionTypeSettingsRow.tupled((<<[Long], <<[String], <<[String], <<?[String], <<[String]))
   }
   /** Table description of table subscription_type_settings. Objects of this class serve as prototypes for rows in queries. */
   class SubscriptionTypeSettings(tag: Tag) extends Table[SubscriptionTypeSettingsRow](tag, "subscription_type_settings") {
     def * = (typeId, locale, settingName, settingValue, settingType) <> (SubscriptionTypeSettingsRow.tupled, SubscriptionTypeSettingsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (typeId.?, locale.?, settingName.?, settingValue, settingType.?).shaped.<>({r=> _1.map(_=> SubscriptionTypeSettingsRow.tupled((_1.get, _2.get, _3.get, _4, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (typeId.?, locale.?, settingName.?, settingValue, settingType.?).shaped.<>({r=>import r._; _1.map(_=> SubscriptionTypeSettingsRow.tupled((_1.get, _2.get, _3.get, _4, _5.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column type_id  */
     val typeId: Column[Long] = column[Long]("type_id")
@@ -3773,13 +3871,14 @@ trait Tables {
   case class TemporaryFilesRow(fileId: Long, userId: Long, fileName: String, fileType: Option[String], fileSize: Long, originalFileName: Option[String], dateUploaded: java.sql.Timestamp)
   /** GetResult implicit for fetching TemporaryFilesRow objects using plain SQL queries */
   implicit def GetResultTemporaryFilesRow(implicit e0: GR[Long], e1: GR[String], e2: GR[Option[String]], e3: GR[java.sql.Timestamp]): GR[TemporaryFilesRow] = GR{
-    prs => TemporaryFilesRow.tupled((<<[Long], <<[Long], <<[String], <<?[String], <<[Long], <<?[String], <<[java.sql.Timestamp]))
+    prs => import prs._
+    TemporaryFilesRow.tupled((<<[Long], <<[Long], <<[String], <<?[String], <<[Long], <<?[String], <<[java.sql.Timestamp]))
   }
   /** Table description of table temporary_files. Objects of this class serve as prototypes for rows in queries. */
   class TemporaryFiles(tag: Tag) extends Table[TemporaryFilesRow](tag, "temporary_files") {
     def * = (fileId, userId, fileName, fileType, fileSize, originalFileName, dateUploaded) <> (TemporaryFilesRow.tupled, TemporaryFilesRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (fileId.?, userId.?, fileName.?, fileType, fileSize.?, originalFileName, dateUploaded.?).shaped.<>({r=> _1.map(_=> TemporaryFilesRow.tupled((_1.get, _2.get, _3.get, _4, _5.get, _6, _7.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (fileId.?, userId.?, fileName.?, fileType, fileSize.?, originalFileName, dateUploaded.?).shaped.<>({r=>import r._; _1.map(_=> TemporaryFilesRow.tupled((_1.get, _2.get, _3.get, _4, _5.get, _6, _7.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column file_id AutoInc, PrimaryKey */
     val fileId: Column[Long] = column[Long]("file_id", O.AutoInc, O.PrimaryKey)
@@ -3810,7 +3909,8 @@ trait Tables {
   }
   /** GetResult implicit for fetching ThesesRow objects using plain SQL queries */
   implicit def GetResultThesesRow(implicit e0: GR[Long], e1: GR[Short], e2: GR[Option[String]], e3: GR[String], e4: GR[java.sql.Timestamp], e5: GR[Option[Byte]]): GR[ThesesRow] = GR{
-    prs => <<[Long] :: <<[Long] :: <<[Short] :: <<[Short] :: <<?[String] :: <<[String] :: <<[String] :: <<[java.sql.Timestamp] :: <<[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<[String] :: <<?[String] :: <<[String] :: <<[String] :: <<?[Byte] :: <<?[String] :: <<[String] :: <<?[String] :: <<[String] :: <<[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<[java.sql.Timestamp] :: HNil
+    prs => import prs._
+    <<[Long] :: <<[Long] :: <<[Short] :: <<[Short] :: <<?[String] :: <<[String] :: <<[String] :: <<[java.sql.Timestamp] :: <<[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<[String] :: <<?[String] :: <<[String] :: <<[String] :: <<?[Byte] :: <<?[String] :: <<[String] :: <<?[String] :: <<[String] :: <<[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<[java.sql.Timestamp] :: HNil
   }
   /** Table description of table theses. Objects of this class serve as prototypes for rows in queries.
    *  NOTE: The following names collided with Scala keywords and were escaped: abstract */
@@ -3893,13 +3993,14 @@ trait Tables {
   case class UserInterestsRow(userId: Long, controlledVocabEntryId: Long)
   /** GetResult implicit for fetching UserInterestsRow objects using plain SQL queries */
   implicit def GetResultUserInterestsRow(implicit e0: GR[Long]): GR[UserInterestsRow] = GR{
-    prs => UserInterestsRow.tupled((<<[Long], <<[Long]))
+    prs => import prs._
+    UserInterestsRow.tupled((<<[Long], <<[Long]))
   }
   /** Table description of table user_interests. Objects of this class serve as prototypes for rows in queries. */
   class UserInterests(tag: Tag) extends Table[UserInterestsRow](tag, "user_interests") {
     def * = (userId, controlledVocabEntryId) <> (UserInterestsRow.tupled, UserInterestsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (userId.?, controlledVocabEntryId.?).shaped.<>({r=> _1.map(_=> UserInterestsRow.tupled((_1.get, _2.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (userId.?, controlledVocabEntryId.?).shaped.<>({r=>import r._; _1.map(_=> UserInterestsRow.tupled((_1.get, _2.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column user_id  */
     val userId: Column[Long] = column[Long]("user_id")
@@ -3920,7 +4021,8 @@ trait Tables {
   }
   /** GetResult implicit for fetching UsersRow objects using plain SQL queries */
   implicit def GetResultUsersRow(implicit e0: GR[Long], e1: GR[String], e2: GR[Option[String]], e3: GR[Option[java.sql.Timestamp]], e4: GR[java.sql.Timestamp], e5: GR[Option[Byte]], e6: GR[Option[Long]], e7: GR[Byte]): GR[UsersRow] = GR{
-    prs => <<[Long] :: <<[String] :: <<[String] :: <<?[String] :: <<[String] :: <<?[String] :: <<[String] :: <<?[String] :: <<?[String] :: <<[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[java.sql.Timestamp] :: <<[java.sql.Timestamp] :: <<?[java.sql.Timestamp] :: <<[java.sql.Timestamp] :: <<?[Byte] :: <<?[Long] :: <<?[String] :: <<[Byte] :: <<?[String] :: HNil
+    prs => import prs._
+    <<[Long] :: <<[String] :: <<[String] :: <<?[String] :: <<[String] :: <<?[String] :: <<[String] :: <<?[String] :: <<?[String] :: <<[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[String] :: <<?[java.sql.Timestamp] :: <<[java.sql.Timestamp] :: <<?[java.sql.Timestamp] :: <<[java.sql.Timestamp] :: <<?[Byte] :: <<?[Long] :: <<?[String] :: <<[Byte] :: <<?[String] :: HNil
   }
   /** Table description of table users. Objects of this class serve as prototypes for rows in queries. */
   class Users(tag: Tag) extends Table[UsersRow](tag, "users") {
@@ -3996,13 +4098,14 @@ trait Tables {
   case class UserSettingsRow(userId: Long, locale: String, settingName: String, assocType: Option[Long] = Some(0L), assocId: Option[Long] = Some(0L), settingValue: Option[String], settingType: String)
   /** GetResult implicit for fetching UserSettingsRow objects using plain SQL queries */
   implicit def GetResultUserSettingsRow(implicit e0: GR[Long], e1: GR[String], e2: GR[Option[Long]], e3: GR[Option[String]]): GR[UserSettingsRow] = GR{
-    prs => UserSettingsRow.tupled((<<[Long], <<[String], <<[String], <<?[Long], <<?[Long], <<?[String], <<[String]))
+    prs => import prs._
+    UserSettingsRow.tupled((<<[Long], <<[String], <<[String], <<?[Long], <<?[Long], <<?[String], <<[String]))
   }
   /** Table description of table user_settings. Objects of this class serve as prototypes for rows in queries. */
   class UserSettings(tag: Tag) extends Table[UserSettingsRow](tag, "user_settings") {
     def * = (userId, locale, settingName, assocType, assocId, settingValue, settingType) <> (UserSettingsRow.tupled, UserSettingsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (userId.?, locale.?, settingName.?, assocType, assocId, settingValue, settingType.?).shaped.<>({r=> _1.map(_=> UserSettingsRow.tupled((_1.get, _2.get, _3.get, _4, _5, _6, _7.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (userId.?, locale.?, settingName.?, assocType, assocId, settingValue, settingType.?).shaped.<>({r=>import r._; _1.map(_=> UserSettingsRow.tupled((_1.get, _2.get, _3.get, _4, _5, _6, _7.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column user_id  */
     val userId: Column[Long] = column[Long]("user_id")
@@ -4042,13 +4145,14 @@ trait Tables {
   case class VersionsRow(major: Int = 0, minor: Int = 0, revision: Int = 0, build: Int = 0, dateInstalled: java.sql.Timestamp, current: Byte, productType: Option[String], product: Option[String], productClassName: Option[String], lazyLoad: Byte, sitewide: Byte)
   /** GetResult implicit for fetching VersionsRow objects using plain SQL queries */
   implicit def GetResultVersionsRow(implicit e0: GR[Int], e1: GR[java.sql.Timestamp], e2: GR[Byte], e3: GR[Option[String]]): GR[VersionsRow] = GR{
-    prs => VersionsRow.tupled((<<[Int], <<[Int], <<[Int], <<[Int], <<[java.sql.Timestamp], <<[Byte], <<?[String], <<?[String], <<?[String], <<[Byte], <<[Byte]))
+    prs => import prs._
+    VersionsRow.tupled((<<[Int], <<[Int], <<[Int], <<[Int], <<[java.sql.Timestamp], <<[Byte], <<?[String], <<?[String], <<?[String], <<[Byte], <<[Byte]))
   }
   /** Table description of table versions. Objects of this class serve as prototypes for rows in queries. */
   class Versions(tag: Tag) extends Table[VersionsRow](tag, "versions") {
     def * = (major, minor, revision, build, dateInstalled, current, productType, product, productClassName, lazyLoad, sitewide) <> (VersionsRow.tupled, VersionsRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (major.?, minor.?, revision.?, build.?, dateInstalled.?, current.?, productType, product, productClassName, lazyLoad.?, sitewide.?).shaped.<>({r=> _1.map(_=> VersionsRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6.get, _7, _8, _9, _10.get, _11.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (major.?, minor.?, revision.?, build.?, dateInstalled.?, current.?, productType, product, productClassName, lazyLoad.?, sitewide.?).shaped.<>({r=>import r._; _1.map(_=> VersionsRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6.get, _7, _8, _9, _10.get, _11.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column major Default(0) */
     val major: Column[Int] = column[Int]("major", O.Default(0))
