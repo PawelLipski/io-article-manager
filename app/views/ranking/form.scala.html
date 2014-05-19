@@ -1,8 +1,8 @@
-@(reportForm: Form[models.reports.Report])
+@(reportForm: Form[models.reports.Report])(implicit request: Request[AnyContent])
 
 @import helper._
     @implicitFieldConstructor = @{
-        FieldConstructor(twitterBootstrapInput.render)
+        FieldConstructor(twitterBootstrapInput.render(_: FieldElements, request))
     }
 @import views.html.helper.inputText
 

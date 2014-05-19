@@ -1,9 +1,9 @@
-@(userForm: Form[Author])
+@(userForm: Form[Author])(implicit request: Request[AnyContent])
 
 @import helper._
 @import models.Author
 
-@main("Add a new User") {
+@main("Add a new user") {
     <h1>Add a new User</h1>
     @form(routes.Authors.save()) {
         @inputText(userForm("papertitle"))

@@ -9,6 +9,12 @@ GET         /                                       controllers.Application.inde
 GET         /assets/*file                           controllers.Assets.at(path="/public", file)
 
 
+# log in/log out
+GET         /login                                  controllers.Authentication.login
+POST        /login                                  controllers.Authentication.doLogin
+GET         /logout                                 controllers.Authentication.logout
+
+# consent to publish
 GET         /consent_to_publish/index               controllers.CopyrightTransfer.index
 POST        /consent_to_publish                     controllers.CopyrightTransfer.consent
 POST        /consent_to_publish/submit              controllers.CopyrightTransfer.submit

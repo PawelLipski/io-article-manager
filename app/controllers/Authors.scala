@@ -7,7 +7,7 @@ import play.api.data.validation._
 import models.Author
 import scala.collection.mutable.HashMap
 
-object Authors extends Controller {
+object Authors extends Controller with Secured {
 
   val authors: scala.collection.mutable.Map[Int, Author] = new HashMap
 
@@ -23,36 +23,40 @@ object Authors extends Controller {
       (Author.apply)(Author.unapply)
   )
 
-  def add = Action {
-    Ok(views.html.authors.add(form))
+  def add = withAuth {
+    user => implicit request =>
+      Ok(views.html.authors.add(form))
   }
 
-  def save = Action {
-    implicit request =>
+  def save = withAuth {
+    user => implicit request =>
       val user = form.bindFromRequest.get
       authors.put(user.id, user)
       Redirect(routes.Authors.list)
   }
 
-  def list = Action {
-    Ok(views.html.authors.list(authors.values))
+  def list = withAuth {
+    user => implicit request =>
+      Ok(views.html.authors.list(authors.values))
   }
 
-  def edit(id: Int) = Action {
-    val bindedForm = form.fill(authors.get(id).get)
-    Ok(views.html.authors.edit(bindedForm))
+  def edit(id: Int) = withAuth {
+    user => implicit request =>
+      val bindedForm = form.fill(authors.get(id).get)
+      Ok(views.html.authors.edit(bindedForm))
   }
 
-  def update(id: Int) = Action {
-    implicit request =>
+  def update(id: Int) = withAuth {
+    user => implicit request =>
       val user = form.bindFromRequest.get
       user.id = id
       authors.put(id, user)
       Redirect(routes.Authors.list)
   }
 
-  def delete(id: Int) = Action {
-    authors.remove(id)
-    Redirect(routes.Authors.list)
+  def delete(id: Int) = withAuth {
+    user => implicit request =>
+      authors.remove(id)
+      Redirect(routes.Authors.list)
   }
 }

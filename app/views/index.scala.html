@@ -1,21 +1,30 @@
+@()(implicit request: Request[AnyContent])
+
 @main("IO Article Manager") {
 
     <div class="container-fluid">
 
-        <h3>The following features are implemented up to now:</h3>
+        <h3>The features implemented up to now are listed below.</h3>
+
+        <b>To see any of them (apart from the copyright transfer), please <a href="@routes.Authentication.login()">log in</a></b>.
+
         <ul>
-            <li>Copyright transfer <br>
-                Please click the "Consent to publish" button above and fill in the form. A message with an attached PDF and confirmation link will be sent to the specified email. Follow the link to confirm.
+            <li><a href="@routes.CopyrightTransfer.index()">Copyright transfer</a><br>
+                Please fill in the form.
+                A message with an attached PDF and confirmation link will be sent to the specified email.
+                Follow the link to confirm the transfer.<br>
             </li>
 
-            <li>Copyright transfer admin panel <br>
-                Please click "Manage consents" button above.
+            <li><a href="@routes.Authors.list()">Copyright transfer admin panel</a><br></li>
+
+            <li><a href="@routes.ReportGenerator.index()">Ranking data extractor</a><br>
+                Type 2013 in the Year field and press Generate.<br>
+                There is still no underlying database (to be implemented in the 3rd sprint soon), all these features work on mock data.<br>
             </li>
 
-            <li>Ranking data extractor <br>
-                Please click "Journal rankings" button above, type 2013 in the Year field and press Generate.<br>
-                There is still no underlying database (to be implemented in the 3rd sprint soon), all these features work on mock data.
-            </li>
+            <li><a href="@routes.Lists.index()">List of authors</a><br></li>
+
+            <li><a href="@routes.Lists.reviewers()">List of reviewers</a><br></li>
         </ul>
 
     </div>

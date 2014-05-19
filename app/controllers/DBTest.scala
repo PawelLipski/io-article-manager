@@ -49,7 +49,8 @@ object DbTest extends Controller {
   }
 
   def index = Action {
-    Ok(views.html.debug.dbtest(testOjsDbConnection, testInternalDbConnection))
+    implicit request =>
+      Ok(views.html.debug.dbtest(testOjsDbConnection, testInternalDbConnection))
   }
 
 }
