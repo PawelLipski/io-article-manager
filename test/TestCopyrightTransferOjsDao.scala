@@ -42,5 +42,13 @@ class TestCopyrightTransferOjsDao extends Specification{
     "update row in CopyrightTransfer table" in new WithApplication {
       CopyrightTransferOjsDao.markTransferAsConfirmed("294785218e9a4034b6c773d02f86fc50")
     }
+
+    "delte row in CopyrightTransger table" in new WithApplication {
+      CopyrightTransferOjsDao.removeTransfer(21)
+    }
+    "select listTransfer in both database" in new WithApplication {
+      org.junit.Assert.assertEquals(2, CopyrightTransferOjsDao.listTransfer(3, 2014, 0).length)
+
+    }
   }
 }

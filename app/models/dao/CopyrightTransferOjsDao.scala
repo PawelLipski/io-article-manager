@@ -15,15 +15,17 @@ import play.api.Play.current
 import com.google.common.base.Optional
 import java.sql.Date
 import scala.slick.lifted
+import slick.ojs.Tables
+import slick.ojs
 
 
 object CopyrightTransferOjsDao {
 
-  def getAuthorsForArticle(ojsArticleId: Int):String = {
+  def getAuthorsForArticle(ojsArticleId: Int): String = {
 
-//    Database.forDataSource(DB.getDataSource("internal")).withSession {
-//      implicit session =>
-//    }
+    //    Database.forDataSource(DB.getDataSource("internal")).withSession {
+    //      implicit session =>
+    //    }
     ""
   }
 
@@ -39,7 +41,7 @@ object CopyrightTransferOjsDao {
           filledForm.ipAddress,
           TokenGenerator.generate(),
           false,
-          new Date(0)
+          Option[Date](new Date(0))
         ))
     }
   }
@@ -47,14 +49,43 @@ object CopyrightTransferOjsDao {
   def markTransferAsConfirmed(tokenSHA: String) {
     Database.forDataSource(DB.getDataSource("internal")).withSession {
       implicit session =>
-        /*for {
-          g <- slick.internal.Tables.Copyrighttransfer; if g.linktokenshasum.equals(tokenSHA)
-        } yield g.mutate( r => (r.linkconfirmed = true))*/
+      /*for {
+        g <- slick.internal.Tables.Copyrighttransfer; if g.linktokenshasum.equals(tokenSHA)
+      } yield g.mutate( r => (r.linkconfirmed = true))*/
 
         val map = slick.internal.Tables.Copyrighttransfer
           .filter(_.linktokenshasum === tokenSHA)
-          .map(row => (row.datelinkconfirmed , row.linkconfirmed))
-        val l = map.update((SqlUtils.getCurrnetSqlDate() , true))
+          .map(row => (row.datelinkconfirmed, row.linkconfirmed))
+        val l = map.update((Option[Date](SqlUtils.getCurrnetSqlDate()), true))
     }
+  }
+
+  def removeTransfer(id: Int) = {
+    Database.forDataSource(DB.getDataSource("internal")).withSession {
+      implicit session =>
+        slick.internal.Tables.Copyrighttransfer
+          .filter(_.id === id)
+          .mutate(_.delete())
+    }
+  }
+
+  val yearFn = SimpleFunction[Int]("year")
+
+  def listTransfer(ojsJournalId:Long, year:Int, volumeId: Int):Seq[slick.internal.Tables.CopyrighttransferRow] = {
+    var articleIds:Seq[Long] = Seq(0, 1)
+    Database.forDataSource(DB.getDataSource("ojs")).withSession {
+      implicit session =>
+        articleIds = (for {
+          article <- ojs.Tables.Articles if article.journalId === ojsJournalId && yearFn(Seq(article.lastModified)) === year
+        } yield article.articleId).run
+    }
+
+    Database.forDataSource(DB.getDataSource("internal")).withSession {
+      implicit session =>
+        return (for {
+          transfer <- slick.internal.Tables.Copyrighttransfer if transfer.ojsarticleid inSetBind articleIds.map(_.toInt)
+        } yield transfer).list
+    }
+
   }
 }

@@ -87,17 +87,17 @@ trait Tables {
    *  @param linktokenshasum Database column linkTokenSHASum 
    *  @param linkconfirmed Database column linkConfirmed 
    *  @param datelinkconfirmed Database column dateLinkConfirmed  */
-  case class CopyrighttransferRow(id: Int, ojsarticleid: Int, title: String, correspondingname: String, correspondingaffiliation: String, correspondingemail: String, dateformfilled: java.sql.Date, filleripaddress: String, linktokenshasum: String, linkconfirmed: Boolean, datelinkconfirmed: java.sql.Date)
+  case class CopyrighttransferRow(id: Int, ojsarticleid: Int, title: String, correspondingname: String, correspondingaffiliation: String, correspondingemail: String, dateformfilled: java.sql.Date, filleripaddress: String, linktokenshasum: String, linkconfirmed: Boolean, datelinkconfirmed: Option[java.sql.Date])
   /** GetResult implicit for fetching CopyrighttransferRow objects using plain SQL queries */
-  implicit def GetResultCopyrighttransferRow(implicit e0: GR[Int], e1: GR[String], e2: GR[java.sql.Date], e3: GR[Boolean]): GR[CopyrighttransferRow] = GR{
+  implicit def GetResultCopyrighttransferRow(implicit e0: GR[Int], e1: GR[String], e2: GR[java.sql.Date], e3: GR[Boolean], e4: GR[Option[java.sql.Date]]): GR[CopyrighttransferRow] = GR{
     prs => import prs._
-    CopyrighttransferRow.tupled((<<[Int], <<[Int], <<[String], <<[String], <<[String], <<[String], <<[java.sql.Date], <<[String], <<[String], <<[Boolean], <<[java.sql.Date]))
+    CopyrighttransferRow.tupled((<<[Int], <<[Int], <<[String], <<[String], <<[String], <<[String], <<[java.sql.Date], <<[String], <<[String], <<[Boolean], <<?[java.sql.Date]))
   }
   /** Table description of table CopyrightTransfer. Objects of this class serve as prototypes for rows in queries. */
   class Copyrighttransfer(tag: Tag) extends Table[CopyrighttransferRow](tag, "CopyrightTransfer") {
     def * = (id, ojsarticleid, title, correspondingname, correspondingaffiliation, correspondingemail, dateformfilled, filleripaddress, linktokenshasum, linkconfirmed, datelinkconfirmed) <> (CopyrighttransferRow.tupled, CopyrighttransferRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (id.?, ojsarticleid.?, title.?, correspondingname.?, correspondingaffiliation.?, correspondingemail.?, dateformfilled.?, filleripaddress.?, linktokenshasum.?, linkconfirmed.?, datelinkconfirmed.?).shaped.<>({r=>import r._; _1.map(_=> CopyrighttransferRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6.get, _7.get, _8.get, _9.get, _10.get, _11.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (id.?, ojsarticleid.?, title.?, correspondingname.?, correspondingaffiliation.?, correspondingemail.?, dateformfilled.?, filleripaddress.?, linktokenshasum.?, linkconfirmed.?, datelinkconfirmed).shaped.<>({r=>import r._; _1.map(_=> CopyrighttransferRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6.get, _7.get, _8.get, _9.get, _10.get, _11)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column id AutoInc, PrimaryKey */
     val id: Column[Int] = column[Int]("id", O.AutoInc, O.PrimaryKey)
@@ -120,7 +120,10 @@ trait Tables {
     /** Database column linkConfirmed  */
     val linkconfirmed: Column[Boolean] = column[Boolean]("linkConfirmed")
     /** Database column dateLinkConfirmed  */
-    val datelinkconfirmed: Column[java.sql.Date] = column[java.sql.Date]("dateLinkConfirmed")
+    val datelinkconfirmed: Column[Option[java.sql.Date]] = column[Option[java.sql.Date]]("dateLinkConfirmed")
+    
+    /** Uniqueness Index over (ojsarticleid) (database name ojsArticleID) */
+    val index1 = index("ojsArticleID", ojsarticleid, unique=true)
   }
   /** Collection-like TableQuery object for table Copyrighttransfer */
   lazy val Copyrighttransfer = new TableQuery(tag => new Copyrighttransfer(tag))
