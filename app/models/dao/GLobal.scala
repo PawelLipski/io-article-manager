@@ -12,7 +12,7 @@ object Global extends GlobalSettings {
 
 
   override def onStart(app: Application) {
-    val slickDriver = "scala.slick.driver.MySQLDriver"
+    /*val slickDriver = "scala.slick.driver.MySQLDriver"
 
     val outputFolder = "gen/app/"
     val pkg = "slick"
@@ -24,7 +24,7 @@ object Global extends GlobalSettings {
     Database.forDataSource(DB.getDataSource("ojs")) withSession {
       implicit session =>
         new SourceCodeGenerator(driver.createModel).writeToFile(slickDriver, outputFolder, pkg)
-    }
+    }*/
   }
 
 }

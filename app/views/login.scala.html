@@ -1,0 +1,26 @@
+@(loginForm: Form[(String, String)], loginRoute: Call)(implicit request: Request[AnyContent], flash: Flash)
+
+@main("Log in") {
+
+    <h1>Please log in</h1>
+
+    <p>Use "admin" and "ala123" (without the quotes)</p>
+
+    @{
+        loginForm.globalError.map {
+            error =>
+                <span class="error">{error.message}</span>
+        }
+    }
+
+    @flash.get("success").map { message =>
+        <span class="success">@message</span>
+    }
+
+    @helper.form(loginRoute) {
+        @helper.inputText(field = loginForm("user"), args = 'placeholder -> "User", '_showConstraints -> false, '_label -> "")
+        @helper.inputPassword(field = loginForm("password"), args = 'placeholder -> "Password", '_showConstraints -> false, '_label -> "")
+        <button type="submit">Login</button>
+    }
+
+}

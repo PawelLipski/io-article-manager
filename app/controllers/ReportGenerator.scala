@@ -11,7 +11,7 @@ import views.html.helper.options
 import views.html
 import models.{RankingDataExtractorOjsDao, Author}
 
-object ReportGenerator extends Controller {
+object ReportGenerator extends Controller with Secured {
   val form: Form[Report] = Form(
     mapping(
       "journal" -> mapping(
@@ -21,12 +21,13 @@ object ReportGenerator extends Controller {
     )(Report.apply)(Report.unapply)
   )
 
-  def index = Action {
-    Ok(html.ranking.index(form))
+  def index = withAuth {
+    user => implicit request =>
+      Ok(html.ranking.index(form))
   }
 
-  def submit = Action {
-    implicit request =>
+  def submit = withAuth {
+    user => implicit request =>
       form.bindFromRequest.fold(
         errors => BadRequest("Unspecified error occurred, nobody knows what happened yet. Try again.\n"+errors.errors),
         ranking => {

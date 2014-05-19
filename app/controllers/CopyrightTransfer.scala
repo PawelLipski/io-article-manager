@@ -40,7 +40,8 @@ object CopyrightTransfer extends Controller {
   )
 
   def index = Action {
-    Ok(html.copyright.index())
+    implicit request =>
+      Ok(html.copyright.index())
   }
 
   def consent = Action {
@@ -72,7 +73,7 @@ object CopyrightTransfer extends Controller {
       )
   }
 
-  def confirm = Action { request =>
+  def confirm = Action { implicit request =>
     val pdfFile = java.io.File.createTempFile("CopyrightTransferForm", ".pdf")
     val toEmail = copyrightTransferRequest.copyrightData.correspondingAuthor.email
     PdfGenerator.generate(copyrightTransferRequest, pdfFile)
