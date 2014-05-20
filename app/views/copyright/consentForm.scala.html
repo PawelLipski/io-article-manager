@@ -12,45 +12,37 @@
         #author-template {
             display: none;
         }
-        #remove-author {
-            display:none;
-        }
     </style>
-
-    @* this is hidden *@
-    <button type="button" class="btn btn-default" id="remove-author">
-        Remove last author
-    </button>
 
     @* this is hidden *@
     <div id="author-template">
         <h4>Author <span class="author-nr">@transferFormData.contribution.length</span>:</h4>
         @inputText(
             transferForm("authorName"),
-            '_label -> "Author name: ",
+            '_label -> "Author name",
             'size -> 30,
             'class -> "form-control"
         )
 
         @inputText(
             transferForm("affiliation"),
-            '_label -> "Affiliation: ",
+            '_label -> "Affiliation",
             'size -> 30,
             'class -> "form-control"
         )
 
         @textarea(
             transferForm("contribution"),
-            '_label -> "Contribution: ",
+            '_label -> "Contribution",
             'size -> 30,
             'class -> "form-control"
         )
 
         @inputText(
             transferForm("percent"),
-            '_label -> "Percent: ",
+            '_label -> "Percent",
             'size -> 30,
-            'class -> "form-control"
+            'class -> "form-control percent"
         )
     </div>
 
@@ -71,41 +63,47 @@
                 transferForm("ojsId"),
                 '_label -> "ID",
                 'size -> 8,
-                'class -> "form-control"
+                'class -> "form-control",
+                'readonly -> "readonly",
+                'required -> "required"
             )
 
             @inputText(
                 transferForm("title"),
                 'size -> 80,
                 'class -> "form-control",
-                '_label -> ""
+                '_label -> "Title",
+                'required -> "required"
             )
 
             <h4>Corresponding author</h4><br>
             @inputText(
                 transferForm("correspondingAuthor.name"),
-                '_label -> "Name: ",
+                '_label -> "Name",
                 'size -> 30,
-                'class -> "form-control"
+                'class -> "form-control",
+                'required -> "required"
             )
 
             @inputText(
                 transferForm("correspondingAuthor.affiliation"),
-                '_label -> "Affiliation: ",
+                '_label -> "Affiliation",
                 'size -> 30,
-                'class -> "form-control"
+                'class -> "form-control",
+                'required -> "required"
             )
 
             @inputText(
                 transferForm("correspondingAuthor.email"),
-                '_label -> "E-mail: ",
+                '_label -> "E-mail",
                 'size -> 30,
-                'class -> "form-control"
+                'class -> "form-control",
+                'required -> "required"
             )
         </fieldset>
 
         <fieldset>
-            <legend>Contribution to paper</legend>
+            <legend class="error-display-place">Contribution to paper</legend>
             @*create default authors forms based on information from database*@
             @for((item, index) <- transferFormData.contribution.zipWithIndex) {
 
@@ -113,64 +111,77 @@
 
                 @inputText(
                     transferForm("contribution[" + index + "].authorName"),
-                    '_label -> "Author name: ",
+                    '_label -> "Author name",
                     'size -> 30,
-                    'class -> "form-control"
+                    'class -> "form-control",
+                    'required -> "required"
                 )
 
                 @inputText(
                     transferForm("contribution[" + index + "].affiliation"),
-                    '_label -> "Affiliation: ",
+                    '_label -> "Affiliation",
                     'size -> 30,
-                    'class -> "form-control"
+                    'class -> "form-control",
+                    'required -> "required"
                 )
 
                 @textarea(
                     transferForm("contribution[" + index + "].contribution"),
-                    '_label -> "Contribution: ",
+                    '_label -> "Contribution",
                     'size -> 30,
-                    'class -> "form-control"
+                    'class -> "form-control",
+                    'required -> "required"
                 )
 
                 @inputText(
                     transferForm("contribution[" + index + "].percent"),
-                    '_label -> "Percent: ",
+                    '_label -> "Percent",
                     'size -> 30,
-                    'class -> "form-control"
+                    'class -> "form-control percent",
+                    'required -> "required"
                 )
             }
 
-            <button type="button" class="btn btn-default" id="add-new-author">
-                Add new author
-            </button>
+            <div id="buttons">
+                @* it's impossible to add tooltip to disabled button, widely used solution *@
+                @* is wrapping button with span/div and adding tooltip to span/div instead *@
+                <span id="span-remove-author">
+                    <button type="button" class="btn btn-default" id="remove-author">
+                        Remove last author
+                    </button>
+                </span>
+
+                <button type="button" class="btn btn-default" id="add-new-author">
+                    Add new author
+                </button>
+
+            </div>
 
             <script type="text/javascript">
 
                 function removeAuthorAction() {
                     $('#author-'+author_nr).remove();
                     author_nr--;
-                    if (author_nr != 1) { // we need to always have one author
-                        var $button = createRemoveAuthorButton();
-                        $button.appendTo($('#author-'+author_nr));
+                    var x = $('#author-template' ).find ('.author-nr' ).html( )
+                    if (author_nr == parseInt(x)) {
+                        $('#remove-author').prop('disabled', true);
+                        $('#hax-remove-author').removeAttr('title')
                     }
                 }
 
-                function createRemoveAuthorButton() {
-                    var $button = $('#remove-author').clone().removeAttr('id');
-                    $button.attr('display', 'block');
-                    $button.attr('id', 'remove-author-button');
-                    $button.click(removeAuthorAction);
-                    return $button;
-                }
-
                 var author_nr = new Number ($('#author-template' ).find ('.author-nr' ).html( ));
-                $(document ).ready(function() {
+
+                $(function() {
+
+                    $('#remove-author').click(removeAuthorAction);
+                    $('#remove-author' ).prop('disabled', true);
+                    $('#span-remove-author' ).attr('title', "You can't remove authors already related to this paper.")
 
                     $('#add-new-author').click(function() {
                         // clone the template and remove id
                         var $newAuthor = $('#author-template').clone().removeAttr('id' );
                         // loop over every element and add name attribute
-                        $newAuthor.find("input, textarea" ).each(function() {
+                        $newAuthor.find('input, textarea' ).each(function() {
                             $(this).attr('name', 'contribution['+author_nr+'].'+$(this).attr('name'));
                         });
                         // unhide it
@@ -179,31 +190,54 @@
                         $newAuthor.find('.author-nr').html(author_nr + 1);
 
                         // insert where it should be
-                        $newAuthor.insertBefore("#add-new-author");
+                        $newAuthor.insertBefore('#buttons');
 
-                        if (author_nr != 0) {
-                            // remove existing button and append new to just created div
-                            $('#remove-author-button' ).remove();
-                            var $button = createRemoveAuthorButton();
-                            $newAuthor.append($button);
-                        }
+                        // remove-author button should be available to use now
+                        $('#remove-author' ).prop('disabled', false)
+                        $('#span-remove-author' ).removeAttr('title')
                         author_nr++;
                     });
+
+                    $('#consentForm-form').submit(function() {
+                        var list = $(this ).find(".percent")
+                        var sum = 0;
+                        for(var i=0; i< list.length; i++){
+                            sum+= parseInt(list.eq(i ).val())
+                        }
+
+                        if (sum != 100) {
+                            // display information about invalid values
+                            $("<p style='color:red'>Percent of contribution must sum up to 100%. Current value is "+sum+".</p>" ).insertAfter(".error-display-place" )
+                            list.parent( ).parent( ).addClass("has-error")
+                        }
+
+                        return sum == 100
+                    });
+
                 });
             </script>
 
             <br><br>
 
-            <legend>Financial disclosure</legend><br>
+            <legend>Financial disclosure</legend>
+            <h4>Example:</h4>
+            <p>
+                The research presented in this paper was partially funded by the Ministry of Grants, United States of Utopia under the project no. 38492-KHW-3381/2011.
+                The research presented in this paper was partially supported by the Quickly Growing Company under the Scholarship for Gifted Computer Scientists for 2011 year.
+                The research presented here was partially funded by the statutory funds of the Great University, Big Country.
+
+            </p>
 
             @textarea(
                 transferForm("financial"),
                 '_label -> "",
-                'class ->"form-control"
+                'class ->"form-control",
+                'required -> "required",
+                'rows -> 5
             )
 
         </fieldset>
-        <input id="consentForm-form-send" type="submit" class="btn btn-primary" value="Send">
+        <input id="consentForm-form-send" type="submit" class="btn btn-primary error-display-place" value="Send">
     }
 
 }
