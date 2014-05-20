@@ -27,6 +27,7 @@ POST        /authors                                controllers.Authors.save
 GET         /authors/:id/edit                       controllers.Authors.edit(id: Int)
 POST        /authors/:id                            controllers.Authors.update(id: Int)
 POST        /authors/:id/delete                     controllers.Authors.delete(id: Int)
+POST        /authors/generate                       controllers.Authors.generateReport
 
 #ranking
 GET         /ranking                                controllers.ReportGenerator.index

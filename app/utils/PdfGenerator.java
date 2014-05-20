@@ -17,25 +17,35 @@ import java.nio.charset.Charset;
  */
 public class PdfGenerator {
 
-    public static void generate(CopyrightTransferRequest request, File file) throws DocumentException, IOException {
+    public static void generate(List<CopyrightTransferRequest> requests, File file) throws DocumentException, IOException {
         FileOutputStream outputStream = new FileOutputStream(file);
-        generate(request, outputStream);
+        generate(requests, outputStream);
+        outputStream.close();
     }
 
-    public static byte[] generate(CopyrightTransferRequest request) throws DocumentException, IOException {
+    public static byte[] generate(List<CopyrightTransferRequest> requests) throws DocumentException, IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        generate(request, outputStream);
+        generate(requests, outputStream);
+        outputStream.close();
         return outputStream.toByteArray();
     }
 
-    private static void generate(CopyrightTransferRequest request, OutputStream outputStream) throws DocumentException, IOException {
-        String[] list = getConsentToPublishText();
-
+    private static void generate(List<CopyrightTransferRequest> requests, OutputStream outputStream) throws DocumentException, IOException {
         Document document = new Document();
         PdfWriter.getInstance(document, outputStream);
         document.open();
+        Iterator<CopyrightTransferRequest> requestIterator = requests.iterator();
+        for (CopyrightTransferRequest request = requestIterator.next(); requestIterator.hasNext(); request = requestIterator.next()) {
+            addRequestToDocument(request, document);
+        }
+        document.close();
+    }
+
+    private static void addRequestToDocument(CopyrightTransferRequest request, Document document) throws DocumentException, IOException {
+        document.newPage();
         document.add(getJournalLogo(document));
         document.add(new Paragraph("Consent to Publish\n"));
+        String[] list = getConsentToPublishText();
         for (int i = 0; i < list.length; i++) {
             String line = list[i];
             Paragraph consentParagraph = new Paragraph((i+1)+":\t\t" + line);
@@ -51,8 +61,6 @@ public class PdfGenerator {
         document.add(createParagraph("\nContribution of authors", ""));
         document.add(createContributionTable(request.copyrightData().contribution()));
         document.add(createParagraph("\nFinancial disclosure", request.copyrightData().financialDisclosure()));
-        document.close();
-        outputStream.close();
     }
 
     private static Image getJournalLogo(Document document) throws BadElementException, IOException {

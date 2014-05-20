@@ -6,6 +6,7 @@ import play.api.data.Forms._
 import play.api.data.validation._
 import models.Author
 import scala.collection.mutable.HashMap
+import utils.PdfGenerator
 
 object Authors extends Controller with Secured {
 
@@ -58,5 +59,15 @@ object Authors extends Controller with Secured {
     user => implicit request =>
       authors.remove(id)
       Redirect(routes.Authors.list)
+  }
+
+  // TODO authentication
+  def generateReport = Action(parse.json) { request =>
+    (request.body).asOpt[List[Int]].map { ctrIds =>
+      Ok(PdfGenerator.generate(ctrIds.map(id => ))).as("application/pdf")
+      //Ok("Hello " + ctrIds)
+    }.getOrElse {
+      BadRequest("Bad request IDs!")
+    }
   }
 }

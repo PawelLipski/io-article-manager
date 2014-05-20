@@ -76,7 +76,7 @@ object CopyrightTransfer extends Controller {
   def confirm = Action { implicit request =>
     val pdfFile = java.io.File.createTempFile("CopyrightTransferForm", ".pdf")
     val toEmail = copyrightTransferRequest.copyrightData.correspondingAuthor.email
-    PdfGenerator.generate(copyrightTransferRequest, pdfFile)
+    PdfGenerator.generate(List(copyrightTransferRequest), pdfFile)
     send a new Mail(
       from = ("test@slonka.udl.pl", "Journal Manager"),
       to = List(toEmail),
