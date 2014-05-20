@@ -1,31 +1,25 @@
-import play.api.db.DB
 import play.api.GlobalSettings
-import scala.slick.model.codegen.SourceCodeGenerator
-import scala.slick.driver.MySQLDriver.simple._
+import play.api.mvc.RequestHeader
+import play.api.mvc.Results._
+import scala.concurrent._
 import scala.slick.driver.{JdbcProfile, MySQLDriver}
-import scala.reflect.runtime.currentMirror
-import play.api.Play.current
-
-import play.api.Application
+import ExecutionContext.Implicits.global
 
 object Global extends GlobalSettings {
 
+  // called when a route is found, but it was not possible to bind the request parameters
+  override def onBadRequest(request: RequestHeader, error: String) = future {
+    BadRequest("Bad Request: " + error)
+  }
 
-  override def onStart(app: Application) {
-    /*val slickDriver = "scala.slick.driver.MySQLDriver"
+  // 500 - internal server error
+  override def onError(request: RequestHeader, throwable: Throwable) = future {
+    InternalServerError(views.html.errors.onError(throwable))
+  }
 
-    val outputFolder = "gen/app/"
-    val pkg = "slick"
-
-    val driver: JdbcProfile = currentMirror.reflectModule(
-      currentMirror.staticModule(slickDriver)
-    ).instance.asInstanceOf[JdbcProfile]
-
-    Database.forDataSource(DB.getDataSource("ojs")) withSession {
-      implicit session =>
-        new SourceCodeGenerator(driver.createModel).writeToFile(slickDriver, outputFolder, pkg)
-    }*/
+  // 404 - page not found error
+  override def onHandlerNotFound(request: RequestHeader) = future {
+    NotFound(views.html.errors.onHandlerNotFound(request))
   }
 
 }
-
