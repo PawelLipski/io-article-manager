@@ -21,20 +21,4 @@ import org.h2.engine.Database
  */
 object CopyrightTransferOjsDao {
 
-  /*
-  def getAuthorsForArticle(ojsArticleId: Int): CopyrightTransferRequest = {
-    var authors :Seq[AuthorsRow] = Seq(0, 1)
-
-    Database.forDataSource(DB.getDataSource("ojs")).withSession {
-      implicit session =>
-
-        (for{
-          author <- slick.ojs.Tables.Authors if author.submissionId === ojsArticleId.asLong
-          title <- slick.ojs.Tables.ArticleSettings if title.settingName === "title" && title.articleId === ojsArticleId.asLong
-          affiliation <- slick.ojs.Tables.ArticleSettings if affiliation.settingName === "affiliation" && affiliation.articleId === ojsArticleId.asLong
-
-        } yield (author, title, affiliation)).list.map()
-    }
-  }
-  */
 }
