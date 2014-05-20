@@ -15,7 +15,7 @@ import models.copyright.Copyright
 import models.copyright.Contribution
 import models.copyright.CopyrightTransferRequest
 import models.copyright.CorrespondingAuthor
-import models.dao.CopyrightTransferInternalDao
+import models.dao.{CopyrightTransferOjsDao, CopyrightTransferInternalDao}
 
 object CopyrightTransfer extends Controller {
 
@@ -55,12 +55,7 @@ object CopyrightTransfer extends Controller {
   }
 
   def getPaperDataById(id: Int) : Copyright = {
-    val correspondingAuthor = new CorrespondingAuthor("John Smith", "AGH", "john@agh.edu.pl")
-    val financialDisclosure = "The research presented in this paper was partially funded by the ... under the project ... . " +
-      "The research presented in this paper was partially supported by ... . The research presented here was partially funded by the statutory funds of the ... ."
-    val authors = List(new Contribution("author1", "AGH", "Lorem Ipsum", 0), new Contribution("author2", "AGH2", "Lorem Ipsum2", 0))
-    val copyright = new Copyright(id, "Great theory of multitudes", correspondingAuthor, authors, financialDisclosure)
-    return copyright
+    CopyrightTransferOjsDao.getAuthorsForArticle(id)
   }
 
   def submit = Action {
