@@ -146,10 +146,8 @@ $(document).ready(function () {
         }
     });
 
-    $('#year-select').change(function () {
-
-
-        alert($( this ).text());
+    $('#year-select, #journal-select, #year-select').change(function () {
+        window.location.replace("/authors/" + $("#journal-select").val() + "/"+ $('#year-select').val() + "/" + $("#volume-select").val() )
     });
 
     $('#generate-report').click(function() {
