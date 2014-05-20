@@ -1,4 +1,4 @@
-@(authors: Iterable[models.reports.ArticleAuthor], authorListForm: Form[models.reports.AuthorList], topic: String, target: Call)(implicit request: Request[AnyContent])
+@(params, authors: Iterable[models.reports.ArticleAuthor], authorListForm: Form[models.reports.AuthorList], topic: String, target: Call)(implicit request: Request[AnyContent])
 
 @main(topic) {
     <h1>@topic</h1>

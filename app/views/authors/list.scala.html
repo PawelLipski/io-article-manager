@@ -1,4 +1,4 @@
-@(authors: Iterable[slick.internal.Tables.CopyrighttransferRow])(implicit request: Request[AnyContent])
+@( (id: Int, year: Int, volume_id: Int), authors: Iterable[slick.internal.Tables.CopyrighttransferRow], journals: models.reports.Journal)(implicit request: Request[AnyContent])
 
 @main("All authors") {
     <h1>Journal manager</h1>
@@ -29,19 +29,24 @@
         <div>
             <form id="table-filter" class="form-inline">
                 <div class="form-group">
-                    <span>Journal</span>
+                    <span>Journal @request.getQueryString("id") </span>
                     <select id="journal-select" class="form-control gap-sides">
-                        <option value="1">Biologist</option>
-                        <option value="2">New scientist</option>
-                        <option value="3">Computer science</option>
+                        @for(journal <- journals) {
+                            <option value=" @journal.id ">
+                                @journal.title
+                            </option>
+                        }
+
+                        <option @if(request.getQueryString("id") == "2") { selected } value="2">New scientist</option>
+                        <option @if(request.getQueryString("id") == "3") { selected } value="3">Computer science</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <span>Year</span>
+                    <span>Year @request.getQueryString("year") </span>
                     <select id="year-select" class="form-control gap-sides">
-                        <option>2012</option>
-                        <option>2013</option>
-                        <option>2014</option>
+                        <option @if(request.getQueryString("year") == "2014") { selected }>2014</option>
+                        <option @if(request.getQueryString("year") == "2013") { selected }>2013</option>
+                        <option @if(request.getQueryString("year") == "2012") { selected }>2012</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -67,7 +72,7 @@
                     <th>Confirmed</th>
                     <th>Corresp. author</th>
                     <th>Affiliation</th>
-                    <th>E-mail addres</th>
+                    <th>E-mail address</th>
                     <th>Date filled</th>
                     <th>IP address</th>
                 </tr>
