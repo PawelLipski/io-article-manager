@@ -3,6 +3,7 @@ import models.copyright.Copyright
 import models.copyright.CopyrightTransferRequest
 import models.copyright.CorrespondingAuthor
 import org.joda.time.DateTime
+import org.junit.Ignore
 import org.junit.runner.RunWith
 import org.specs2.runner.JUnitRunner
 import play.api.db.DB
@@ -23,6 +24,7 @@ import play.api.test.Helpers._
  * Created by slonka on 19.05.14.
  */
 @RunWith(classOf[JUnitRunner])
+@Ignore
 class TestCopyrightTransferInternalDao extends Specification{
   "Application" should {
 

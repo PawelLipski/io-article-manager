@@ -163,11 +163,12 @@ $(document).ready(function () {
             }
         });
 
-        // jQuery POST call
-        console.log(authorsIds);
         $.post({
-            url: '/costam',
-            data: JSON.stringify(authorsIds)
-        })
+            url: '/authors/generate',
+            data: JSON.stringify(authorsIds),
+            success: function(data) {
+                
+            }
+        });
     });
 });

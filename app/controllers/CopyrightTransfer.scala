@@ -70,6 +70,15 @@ object CopyrightTransfer extends Controller {
       )
   }
 
+  def verify(token : String) = Action {
+    implicit request => {
+      val tokenSHA = TokenGenerator.toSHA(token)
+      val verificationResult = CopyrightTransferInternalDao.markTransferAsConfirmed(tokenSHA) != 0
+      Ok(html.copyright.verify(verificationResult))
+    }
+
+  }
+
   def confirm = Action { implicit request =>
     val pdfFile = java.io.File.createTempFile("CopyrightTransferForm", ".pdf")
     val toEmail = copyrightTransferRequest.copyrightData.correspondingAuthor.email
