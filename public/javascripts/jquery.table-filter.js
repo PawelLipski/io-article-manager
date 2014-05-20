@@ -146,6 +146,10 @@ $(document).ready(function () {
         }
     });
 
+    $('#year-select, #journal-select, #year-select').change(function () {
+        window.location.replace("/authors/" + $("#journal-select").val() + "/"+ $('#year-select').val() + "/" + $("#volume-select").val() )
+    });
+
     $('#generate-report').click(function() {
         var authorsIds = [];
 
@@ -159,7 +163,12 @@ $(document).ready(function () {
             }
         });
 
-        // jQuery POST call
-        console.log(authorsIds);
+        $.post({
+            url: '/authors/generate',
+            data: JSON.stringify(authorsIds),
+            success: function(data) {
+                
+            }
+        });
     });
 });
