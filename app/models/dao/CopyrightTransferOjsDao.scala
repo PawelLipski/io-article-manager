@@ -21,7 +21,7 @@ import org.h2.engine.Database
  */
 object CopyrightTransferOjsDao {
 
-
+  /*
   def getAuthorsForArticle(ojsArticleId: Int): CopyrightTransferRequest = {
     var authors :Seq[AuthorsRow] = Seq(0, 1)
 
@@ -36,4 +36,5 @@ object CopyrightTransferOjsDao {
         } yield (author, title, affiliation)).list.map()
     }
   }
+  */
 }
