@@ -7,6 +7,8 @@ import scala.slick.driver.MySQLDriver.simple._
 import scala.slick.driver.MySQLDriver
 import play.api.db.DB
 import play.api.Play.current
+import slick.ojs.Tables
+import slick.ojs
 
 /**
  * Author: Mateusz Pszczółka <mateusz.pszczolka@gmail.com>
@@ -18,8 +20,8 @@ object RankingDataExtractorOjsDao {
     Database.forDataSource(DB.getDataSource("ojs")).withSession {
       implicit session =>
         val authors = for {
-          author <- slick.Tables.Authors //it is really
-          article <- slick.Tables.Articles if author.submissionId === article.articleId && article.journalId === ojsJournalId.asInstanceOf[Long]
+          author <- Tables.Authors //it is really
+          article <- ojs.Tables.Articles if author.submissionId === article.articleId && article.journalId === ojsJournalId.asInstanceOf[Long]
         } yield author.country
         val authorsAll = authors.length.run
         val foreignAuthors = authors.filterNot(_ === "poland").length.run
@@ -86,7 +88,7 @@ object RankingDataExtractorOjsDao {
   def getListOfJournals = {
     Database.forDataSource(DB.getDataSource("ojs")).withSession {
       implicit session =>
-        slick.Tables.Journals.list.map(a=> models.reports.Journal(a.journalId.asInstanceOf[Int], a.path))
+        ojs.Tables.Journals.list.map(a=> models.reports.Journal(a.journalId.asInstanceOf[Int], a.path))
     }
   }
 

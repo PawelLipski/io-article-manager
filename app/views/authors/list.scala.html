@@ -1,4 +1,4 @@
-@(authors: Iterable[models.Author])(implicit request: Request[AnyContent])
+@(authors: Iterable[slick.internal.Tables.CopyrighttransferRow])(implicit request: Request[AnyContent])
 
 @main("All authors") {
     <h1>Journal manager</h1>
@@ -30,27 +30,27 @@
             <form id="table-filter" class="form-inline">
                 <div class="form-group">
                     <span>Journal</span>
-                    <select class="form-control gap-sides">
-                        <option>Computer science</option>
-                        <option>New scientist</option>
-                        <option>Biologist</option>
+                    <select id="journal-select" class="form-control gap-sides">
+                        <option value="1">Biologist</option>
+                        <option value="2">New scientist</option>
+                        <option value="3">Computer science</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <span>Year</span>
-                    <select class="form-control gap-sides">
-                        <option>2014</option>
-                        <option>2013</option>
+                    <select id="year-select" class="form-control gap-sides">
                         <option>2012</option>
+                        <option>2013</option>
+                        <option>2014</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <span>Volume</span>
-                    <select class="form-control gap-sides">
-                        <option>Vol 13, No 4</option>
-                        <option>Vol 13, No 3</option>
-                        <option>Vol 13, No 2</option>
-                        <option>Vol 13, No 1</option>
+                    <select id="volume-select" class="form-control gap-sides">
+                        <option value="3">Vol 13, No 1</option>
+                        <option value="2">Vol 13, No 2</option>
+                        <option value="1">Vol 13, No 3</option>
+                        <option value="0">Vol 13, No 4</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -69,88 +69,26 @@
                     <th>Affiliation</th>
                     <th>E-mail addres</th>
                     <th>Date filled</th>
-                    <th>Details</th>
+                    <th>IP address</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td><input class="selected-author" type="checkbox" data-author-id="1" name="people[]"></td>
-                    <td>Artificial Intelligence</td>
-                    <td><i class="glyphicon glyphicon-ok green"></i></td>
-                    <td>John, Towards Lorem Ipsum</td>
-                    <td>UC Berkeley</td>
-                    <td>john.doe&#64;berkeley.edu</td>
-                    <td>10-10-2014 12:30</td>
-                    <td>
-                        <i class="glyphicon glyphicon-info-sign"></i>
-                    </td>
-                </tr>
-                <tr>
-                    <td><input class="selected-author" type="checkbox" data-author-id="2" name="people[]"></td>
-                    <td>IEEE Transactions on Computers</td>
-                    <td><i class="glyphicon glyphicon-remove red"></i></td>
-                    <td>John, Towards Lorem Ipsum</td>
-                    <td>UC Berkeley</td>
-                    <td>john.doe&#64;berkeley.edu</td>
-                    <td>10-10-2014 12:30</td>
-                    <td>
-                        <i class="glyphicon glyphicon-info-sign"></i>
-                    </td>
-                </tr>
-                <tr>
-                    <td><input class="selected-author" type="checkbox" data-author-id="3" name="people[]"></td>
-                    <td>Chemical Engineering Science</td>
-                    <td><i class="glyphicon glyphicon-ok green"></i></td>
-                    <td>John, Towards Lorem Ipsum</td>
-                    <td>UC Berkeley</td>
-                    <td>john.doe&#64;berkeley.edu</td>
-                    <td>10-10-2014 12:30</td>
-                    <td>
-                        <i class="glyphicon glyphicon-info-sign"></i>
-                    </td>
-                </tr>
-                <tr>
-                    <td><input class="selected-author" type="checkbox" data-author-id="4" name="people[]"></td>
-                    <td>NASA Tech Briefs</td>
-                    <td><i class="glyphicon glyphicon-remove red"></i></td>
-                    <td>John, Towards Lorem Ipsum</td>
-                    <td>UC Berkeley</td>
-                    <td>john.doe&#64;berkeley.edu</td>
-                    <td>10-10-2014 12:30</td>
-                    <td>
-                        <i class="glyphicon glyphicon-info-sign"></i>
-                    </td>
-                </tr>
-                <tr>
-                    <td><input class="selected-author" type="checkbox" data-author-id="5" name="people[]"></td>
-                    <td>Annals of Mathematics</td>
-                    <td><i class="glyphicon glyphicon-ok green"></i></td>
-                    <td>John, Towards Lorem Ipsum</td>
-                    <td>UC Berkeley</td>
-                    <td>john.doe&#64;berkeley.edu</td>
-                    <td>10-10-2014 12:30</td>
-                    <td>
-                        <i class="glyphicon glyphicon-info-sign"></i>
-                    </td>
-                </tr>
-
                 @for(author <- authors) {
                     <tr>
                         <td><input class="selected-author" type="checkbox" data-author-id="id_from_db" name="people[]"></td>
-                        <td>@author.papertitle</td>
-                        <td><i class="glyphicon glyphicon-ok green"></i></td>
-                        <td>@author.lastname, @author.username</td>
-                        <td>@author.affiliation</td>
-                        <td>@author.email</td>
-                        <td>@author.date_filled</td>
-                        <td>
-                            <i class="glyphicon glyphicon-info-sign"></i>
-                            @*
-                            <a href=" @routes.Authors.edit(author.id)">E</a>
-                            @helper.form(routes.Authors.delete(author.id)) {
-                                <button type="submit">Delete</button>
-                            } *@
-                        </td>
+                        <td>@author.title</td>
+
+                        @if(author.linkconfirmed) {
+                            <td><i class="glyphicon glyphicon-ok green"></i></td>
+                        } else {
+                            <td><i class="glyphicon glyphicon-ok red"></i></td>
+                        }
+
+                        <td>@author.correspondingname</td>
+                        <td>@author.correspondingaffiliation</td>
+                        <td>@author.correspondingemail</td>
+                        <td>@author.dateformfilled</td>
+                        <td>@author.filleripaddress</td>
                     </tr>
                 }
             </tbody>
@@ -170,7 +108,4 @@
         </button>
     </div>
 
-    <br><br><br><br>
-
-    <a href="@routes.Authors.add">Add new</a>
 }

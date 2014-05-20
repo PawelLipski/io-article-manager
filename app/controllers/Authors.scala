@@ -6,6 +6,7 @@ import play.api.data.Forms._
 import play.api.data.validation._
 import models.Author
 import scala.collection.mutable.HashMap
+import models.dao.CopyrightTransferInternalDao
 import utils.PdfGenerator
 
 object Authors extends Controller with Secured {
@@ -24,41 +25,11 @@ object Authors extends Controller with Secured {
       (Author.apply)(Author.unapply)
   )
 
-  def add = withAuth {
-    user => implicit request =>
-      Ok(views.html.authors.add(form))
-  }
+  def list(id: Int, year: Int, volume_id: Int) = withAuth {
+    var authorsSlick = CopyrightTransferInternalDao.listTransfer(id, year, volume_id)
 
-  def save = withAuth {
     user => implicit request =>
-      val user = form.bindFromRequest.get
-      authors.put(user.id, user)
-      Redirect(routes.Authors.list)
-  }
-
-  def list = withAuth {
-    user => implicit request =>
-      Ok(views.html.authors.list(authors.values))
-  }
-
-  def edit(id: Int) = withAuth {
-    user => implicit request =>
-      val bindedForm = form.fill(authors.get(id).get)
-      Ok(views.html.authors.edit(bindedForm))
-  }
-
-  def update(id: Int) = withAuth {
-    user => implicit request =>
-      val user = form.bindFromRequest.get
-      user.id = id
-      authors.put(id, user)
-      Redirect(routes.Authors.list)
-  }
-
-  def delete(id: Int) = withAuth {
-    user => implicit request =>
-      authors.remove(id)
-      Redirect(routes.Authors.list)
+      Ok(views.html.authors.list(authorsSlick))
   }
 
   // TODO authentication
