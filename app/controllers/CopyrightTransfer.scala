@@ -15,7 +15,7 @@ import models.copyright.Copyright
 import models.copyright.Contribution
 import models.copyright.CopyrightTransferRequest
 import models.copyright.CorrespondingAuthor
-import models.dao.CopyrightTransferInternalDao
+import models.dao.{AuthenticationDao, CopyrightTransferInternalDao}
 
 object CopyrightTransfer extends Controller {
 
@@ -73,6 +73,15 @@ object CopyrightTransfer extends Controller {
           Ok(html.copyright.summary(copyrightTransferRequest, form.fill(cd)))
         }
       )
+  }
+
+  def verify(token : String) = Action {
+    implicit request => {
+      val tokenSHA = TokenGenerator.toSHA(token)
+      val verificationResult = CopyrightTransferInternalDao.markTransferAsConfirmed(tokenSHA) != 0
+      Ok(html.copyright.verify(verificationResult))
+    }
+
   }
 
   def confirm = Action { implicit request =>

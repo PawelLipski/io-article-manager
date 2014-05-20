@@ -38,13 +38,13 @@ object CopyrightTransferInternalDao {
     }
   }
 
-  def markTransferAsConfirmed(tokenSHA: String) {
+  def markTransferAsConfirmed(tokenSHA: String) : Int = {
     Database.forDataSource(DB.getDataSource("internal")).withSession {
       implicit session =>
         val map = slick.internal.Tables.Copyrighttransfer
           .filter(_.linktokenshasum === tokenSHA)
           .map(row => (row.datelinkconfirmed, row.linkconfirmed))
-        val l = map.update((Option[Date](SqlUtils.getCurrnetSqlDate()), true))
+        return map.update((Option[Date](SqlUtils.getCurrnetSqlDate()), true))
     }
   }
 
