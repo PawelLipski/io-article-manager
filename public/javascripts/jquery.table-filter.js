@@ -146,6 +146,12 @@ $(document).ready(function () {
         }
     });
 
+    $('#year-select').change(function () {
+
+
+        alert($( this ).text());
+    });
+
     $('#generate-report').click(function() {
         var authorsIds = [];
 

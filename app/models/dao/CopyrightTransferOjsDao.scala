@@ -24,6 +24,7 @@ object CopyrightTransferOjsDao {
    slonka_io.AuthorsContribution io_a on ojs_a.submission_id = io_c.ojsArticleId and io_c.id = io_a.id
    where ojs_a.submission_id = 1 */
 
+  /*
   def getAuthorsForArticle(ojsArticleId: Int): CopyrightTransferRequest = {
     var authors :Seq[AuthorsRow] = Seq(0, 1)
 
@@ -40,12 +41,12 @@ object CopyrightTransferOjsDao {
 
     var correspondingAuthor = authors.filter(_.primaryContact === 1)
 
-    /*
+
     TODO SOMEONE ELSE WILL NOT COMLETE ON TIME
     CopyrightTransferRequest(ojsArticleId,
       Copyright(ojsArticleId, title,
        CorrespondingAuthor( correspondingAuthor.lift(0).firstName,  )
       )
-    )*/
-  }
+    )
+  }*/
 }

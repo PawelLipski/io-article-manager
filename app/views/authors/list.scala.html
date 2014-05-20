@@ -38,7 +38,7 @@
                 </div>
                 <div class="form-group">
                     <span>Year</span>
-                    <select class="form-control gap-sides">
+                    <select id="year-select" class="form-control gap-sides">
                         <option>2014</option>
                         <option>2013</option>
                         <option>2012</option>
@@ -69,73 +69,10 @@
                     <th>Affiliation</th>
                     <th>E-mail addres</th>
                     <th>Date filled</th>
-                    <th>Details</th>
+                    <th>IP address</th>
                 </tr>
             </thead>
             <tbody>
-                <!--
-                <tr>
-                    <td><input class="selected-author" type="checkbox" data-author-id="1" name="people[]"></td>
-                    <td>Artificial Intelligence</td>
-                    <td><i class="glyphicon glyphicon-ok green"></i></td>
-                    <td>John, Towards Lorem Ipsum</td>
-                    <td>UC Berkeley</td>
-                    <td>john.doe&#64;berkeley.edu</td>
-                    <td>10-10-2014 12:30</td>
-                    <td>
-                        <i class="glyphicon glyphicon-info-sign"></i>
-                    </td>
-                </tr>
-                <tr>
-                    <td><input class="selected-author" type="checkbox" data-author-id="2" name="people[]"></td>
-                    <td>IEEE Transactions on Computers</td>
-                    <td><i class="glyphicon glyphicon-remove red"></i></td>
-                    <td>John, Towards Lorem Ipsum</td>
-                    <td>UC Berkeley</td>
-                    <td>john.doe&#64;berkeley.edu</td>
-                    <td>10-10-2014 12:30</td>
-                    <td>
-                        <i class="glyphicon glyphicon-info-sign"></i>
-                    </td>
-                </tr>
-                <tr>
-                    <td><input class="selected-author" type="checkbox" data-author-id="3" name="people[]"></td>
-                    <td>Chemical Engineering Science</td>
-                    <td><i class="glyphicon glyphicon-ok green"></i></td>
-                    <td>John, Towards Lorem Ipsum</td>
-                    <td>UC Berkeley</td>
-                    <td>john.doe&#64;berkeley.edu</td>
-                    <td>10-10-2014 12:30</td>
-                    <td>
-                        <i class="glyphicon glyphicon-info-sign"></i>
-                    </td>
-                </tr>
-                <tr>
-                    <td><input class="selected-author" type="checkbox" data-author-id="4" name="people[]"></td>
-                    <td>NASA Tech Briefs</td>
-                    <td><i class="glyphicon glyphicon-remove red"></i></td>
-                    <td>John, Towards Lorem Ipsum</td>
-                    <td>UC Berkeley</td>
-                    <td>john.doe&#64;berkeley.edu</td>
-                    <td>10-10-2014 12:30</td>
-                    <td>
-                        <i class="glyphicon glyphicon-info-sign"></i>
-                    </td>
-                </tr>
-                <tr>
-                    <td><input class="selected-author" type="checkbox" data-author-id="5" name="people[]"></td>
-                    <td>Annals of Mathematics</td>
-                    <td><i class="glyphicon glyphicon-ok green"></i></td>
-                    <td>John, Towards Lorem Ipsum</td>
-                    <td>UC Berkeley</td>
-                    <td>john.doe&#64;berkeley.edu</td>
-                    <td>10-10-2014 12:30</td>
-                    <td>
-                        <i class="glyphicon glyphicon-info-sign"></i>
-                    </td>
-                </tr>
-                -->
-                
                 @for(author <- authors) {
                     <tr>
                         <td><input class="selected-author" type="checkbox" data-author-id="id_from_db" name="people[]"></td>
@@ -171,7 +108,4 @@
         </button>
     </div>
 
-    <br><br><br><br>
-
-    <a href="@routes.Authors.add">Add new</a>
 }
