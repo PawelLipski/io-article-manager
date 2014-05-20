@@ -161,5 +161,9 @@ $(document).ready(function () {
 
         // jQuery POST call
         console.log(authorsIds);
+        $.post({
+            url: '/costam',
+            data: JSON.stringify(authorsIds)
+        })
     });
 });

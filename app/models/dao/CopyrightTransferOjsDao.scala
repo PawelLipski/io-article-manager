@@ -1,12 +1,9 @@
-/**
- * Created by Kuba on 2014-05-08.
- */
 package models.dao
 
 import play.api._
 import play.api.mvc._
 import java.sql.{DriverManager, ResultSet}
-import models.copyright.{CopyrightTransferRequest, Copyright}
+import models.copyright.{CorrespondingAuthor, CopyrightTransferRequest, Copyright}
 import scala.slick.driver.MySQLDriver.simple._
 import scala.slick.driver.MySQLDriver
 import play.api.db.DB
@@ -18,74 +15,37 @@ import scala.slick.lifted
 import slick.ojs.Tables
 import slick.ojs
 
-
+/**
+ * Created by slonka on 20.05.14.
+ */
 object CopyrightTransferOjsDao {
 
-  def getAuthorsForArticle(ojsArticleId: Int): String = {
+  /* select * from slonka_ojs238.authors as ojs_a join slonka_io.CopyrightTransfer as io_c left join
+   slonka_io.AuthorsContribution io_a on ojs_a.submission_id = io_c.ojsArticleId and io_c.id = io_a.id
+   where ojs_a.submission_id = 1 */
 
-    //    Database.forDataSource(DB.getDataSource("internal")).withSession {
-    //      implicit session =>
-    //    }
-    ""
-  }
+  def getAuthorsForArticle(ojsArticleId: Int): CopyrightTransferRequest = {
+    var authors :Seq[AuthorsRow] = Seq(0, 1)
 
-  def saveTransfer(filledForm: CopyrightTransferRequest) {
-    Database.forDataSource(DB.getDataSource("internal")).withSession {
-      implicit session =>
-        slick.internal.Tables.Copyrighttransfer.insert(slick.internal.Tables.CopyrighttransferRow(
-          0, filledForm.copyrightData.ojsId, filledForm.copyrightData.title,
-          filledForm.copyrightData.correspondingAuthor.name,
-          filledForm.copyrightData.correspondingAuthor.affiliation,
-          filledForm.copyrightData.correspondingAuthor.email,
-          new Date(filledForm.dateFilled.toDate().getTime()),
-          filledForm.ipAddress,
-          TokenGenerator.generate(),
-          false,
-          Option[Date](new Date(0))
-        ))
-    }
-  }
-
-  def markTransferAsConfirmed(tokenSHA: String) {
-    Database.forDataSource(DB.getDataSource("internal")).withSession {
-      implicit session =>
-      /*for {
-        g <- slick.internal.Tables.Copyrighttransfer; if g.linktokenshasum.equals(tokenSHA)
-      } yield g.mutate( r => (r.linkconfirmed = true))*/
-
-        val map = slick.internal.Tables.Copyrighttransfer
-          .filter(_.linktokenshasum === tokenSHA)
-          .map(row => (row.datelinkconfirmed, row.linkconfirmed))
-        val l = map.update((Option[Date](SqlUtils.getCurrnetSqlDate()), true))
-    }
-  }
-
-  def removeTransfer(id: Int) = {
-    Database.forDataSource(DB.getDataSource("internal")).withSession {
-      implicit session =>
-        slick.internal.Tables.Copyrighttransfer
-          .filter(_.id === id)
-          .mutate(_.delete())
-    }
-  }
-
-  val yearFn = SimpleFunction[Int]("year")
-
-  def listTransfer(ojsJournalId:Long, year:Int, volumeId: Int):Seq[slick.internal.Tables.CopyrighttransferRow] = {
-    var articleIds:Seq[Long] = Seq(0, 1)
     Database.forDataSource(DB.getDataSource("ojs")).withSession {
       implicit session =>
-        articleIds = (for {
-          article <- ojs.Tables.Articles if article.journalId === ojsJournalId && yearFn(Seq(article.lastModified)) === year
-        } yield article.articleId).run
+        authors = slick.ojs.Tables.Authors.filter(_.submissionId === ojsArticleId.asLong)
+
+        var title =
+          slick.ojs.Tables.ArticleSettings.filter(_.articleId === ojsArticleId.asLong, _.settingName === "title")
+
+        var affiliation =
+          slick.ojs.Tables.ArticleSettings.filter(_.articleId === ojsArticleId.asLong, _.settingName === "affiliation")
     }
 
-    Database.forDataSource(DB.getDataSource("internal")).withSession {
-      implicit session =>
-        return (for {
-          transfer <- slick.internal.Tables.Copyrighttransfer if transfer.ojsarticleid inSetBind articleIds.map(_.toInt)
-        } yield transfer).list
-    }
+    var correspondingAuthor = authors.filter(_.primaryContact === 1)
 
+    /*
+    TODO SOMEONE ELSE WILL NOT COMLETE ON TIME
+    CopyrightTransferRequest(ojsArticleId,
+      Copyright(ojsArticleId, title,
+       CorrespondingAuthor( correspondingAuthor.lift(0).firstName,  )
+      )
+    )*/
   }
 }

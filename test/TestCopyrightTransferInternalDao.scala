@@ -9,7 +9,7 @@ import play.api.db.DB
 import play.api.test.WithApplication
 import scala.slick.driver.MySQLDriver.simple._
 import scala.slick.driver.MySQLDriver
-import models.dao.CopyrightTransferOjsDao
+import models.dao.CopyrightTransferInternalDao
 
 import org.specs2.mutable._
 import org.specs2.runner._
@@ -23,12 +23,12 @@ import play.api.test.Helpers._
  * Created by slonka on 19.05.14.
  */
 @RunWith(classOf[JUnitRunner])
-class TestCopyrightTransferOjsDao extends Specification{
+class TestCopyrightTransferInternalDao extends Specification{
   "Application" should {
 
     "insert row into CopyrightTransfer table" in new WithApplication {
 
-      CopyrightTransferOjsDao.saveTransfer(CopyrightTransferRequest( null,
+      CopyrightTransferInternalDao.saveTransfer(CopyrightTransferRequest( null,
         Copyright(1,
           "Text title",
           CorrespondingAuthor("Adam", "Nowak", "test@gmail.com"),
@@ -40,14 +40,14 @@ class TestCopyrightTransferOjsDao extends Specification{
     }
 
     "update row in CopyrightTransfer table" in new WithApplication {
-      CopyrightTransferOjsDao.markTransferAsConfirmed("294785218e9a4034b6c773d02f86fc50")
+      CopyrightTransferInternalDao.markTransferAsConfirmed("294785218e9a4034b6c773d02f86fc50")
     }
 
     "delte row in CopyrightTransger table" in new WithApplication {
-      CopyrightTransferOjsDao.removeTransfer(21)
+      CopyrightTransferInternalDao.removeTransfer(21)
     }
     "select listTransfer in both database" in new WithApplication {
-      org.junit.Assert.assertEquals(2, CopyrightTransferOjsDao.listTransfer(3, 2014, 0).length)
+      org.junit.Assert.assertEquals(2, CopyrightTransferInternalDao.listTransfer(3, 2014, 0).length)
 
     }
   }
