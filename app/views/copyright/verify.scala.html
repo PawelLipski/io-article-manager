@@ -1,0 +1,21 @@
+@(verificationResult : Boolean)(implicit request: Request[AnyContent])
+
+@import helper._
+
+@implicitFieldConstructor = @{
+   FieldConstructor(twitterBootstrapInput.render(_: FieldElements, request))
+}
+
+@main("Verification") {
+
+    @if(verificationResult == true) {
+        <p>Agreement confirmed - thank you for verification.</p>
+    } else {
+        <p>Verification fail - link expired or is invalid.</p>
+    }
+
+    @form(action = routes.Application.index) {
+        <input type="submit" value="Back to the main page" class="btn btn-primary"/>
+    }
+
+}
