@@ -1,9 +1,7 @@
 package utils;
 
 import com.google.common.io.Files;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import models.copyright.Contribution;
@@ -36,6 +34,7 @@ public class PdfGenerator {
         Document document = new Document();
         PdfWriter.getInstance(document, outputStream);
         document.open();
+        document.add(getJournalLogo(document));
         document.add(new Paragraph("Consent to Publish\n"));
         for (int i = 0; i < list.length; i++) {
             String line = list[i];
@@ -54,6 +53,15 @@ public class PdfGenerator {
         document.add(createParagraph("\nFinancial disclosure", request.copyrightData().financialDisclosure()));
         document.close();
         outputStream.close();
+    }
+
+    private static Image getJournalLogo(Document document) throws BadElementException, IOException {
+        Image image = Image.getInstance("./public/images/Computer_Science_logo.png");
+        float scalePercentage = ((document.getPageSize().getWidth() - document.leftMargin()
+                - document.rightMargin()) / image.getWidth()) * 100;
+
+        image.scalePercent(scalePercentage);
+        return image;
     }
 
     private static String[] getConsentToPublishText() throws IOException {
