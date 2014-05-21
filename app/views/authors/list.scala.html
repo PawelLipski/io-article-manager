@@ -1,4 +1,4 @@
-@( (id: Int, year: Int, volume_id: Int), authors: Iterable[slick.internal.Tables.CopyrighttransferRow], journals: models.reports.Journal)(implicit request: Request[AnyContent])
+@(id: Int, year: Int, volumeId: Int, authors: Iterable[slick.internal.Tables.CopyrighttransferRow], journals: List[models.reports.Journal])(implicit request: Request[AnyContent])
 
 @main("All authors") {
     <h1>Journal manager</h1>
@@ -31,14 +31,12 @@
                 <div class="form-group">
                     <span>Journal @request.getQueryString("id") </span>
                     <select id="journal-select" class="form-control gap-sides">
-                        @for(journal <- journals) {
-                            <option value=" @journal.id ">
-                                @journal.title
+
+                        @for(i <- 0 until journals.size) {
+                            <option value="@journals(i).id" @if(i+1 == id) { selected="selected" } >
+                                @journals(i).title
                             </option>
                         }
-
-                        <option @if(request.getQueryString("id") == "2") { selected } value="2">New scientist</option>
-                        <option @if(request.getQueryString("id") == "3") { selected } value="3">Computer science</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -51,7 +49,7 @@
                 </div>
                 <div class="form-group">
                     <span>Volume</span>
-                    <select id="volume-select" class="form-control gap-sides">
+                    <select id="issue-select" class="form-control gap-sides">
                         <option value="3">Vol 13, No 1</option>
                         <option value="2">Vol 13, No 2</option>
                         <option value="1">Vol 13, No 3</option>
