@@ -1,6 +1,11 @@
 
-@(throwable: Throwable)
+@(throwable: Throwable)(implicit request: RequestHeader)
 
-<h1>onError Happened</h1>
-<p>@throwable.getMessage</p>
+@import play.api._
 
+@main("Error") {
+    <h1>We're sorry, an internal server error happened.</h1>
+    @if(Play.isDev(Play.current)) {
+        <p>@throwable.getMessage</p>
+    }
+}

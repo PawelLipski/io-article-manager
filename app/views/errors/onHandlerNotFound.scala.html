@@ -1,5 +1,7 @@
 
-@(request: RequestHeader)
+@()(implicit request: RequestHeader)
 
-<h1>Handler Not Found</h1>
-<p>You requested: @request.path</p>
+@main("Page not found") {
+
+    <h1>The page does not exist!</h1>
+}
