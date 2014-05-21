@@ -29,7 +29,7 @@
         <div>
             <form id="table-filter" class="form-inline">
                 <div class="form-group">
-                    <span>Journal @request.getQueryString("id") </span>
+                    <span>Journal</span>
                     <select id="journal-select" class="form-control gap-sides">
 
                         @for(i <- 0 until journals.size) {
@@ -40,16 +40,18 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <span>Year @request.getQueryString("year") </span>
+                    <span>Year</span>
                     <select id="year-select" class="form-control gap-sides">
-                        <option @if(request.getQueryString("year") == "2014") { selected }>2014</option>
-                        <option @if(request.getQueryString("year") == "2013") { selected }>2013</option>
-                        <option @if(request.getQueryString("year") == "2012") { selected }>2012</option>
+                        <!-- FIXME: needs dao -->
+                        <option @if(year == 2014) { selected="selected" }>2014</option>
+                        <option @if(year == 2013) { selected="selected" }>2013</option>
+                        <option @if(year == 2012) { selected="selected" }>2012</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <span>Volume</span>
                     <select id="issue-select" class="form-control gap-sides">
+                        <!-- FIXME: needs dao -->
                         <option value="3">Vol 13, No 1</option>
                         <option value="2">Vol 13, No 2</option>
                         <option value="1">Vol 13, No 3</option>
