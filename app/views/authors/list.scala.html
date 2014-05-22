@@ -52,10 +52,10 @@
                     <span>Volume</span>
                     <select id="issue-select" class="form-control gap-sides">
                         <!-- FIXME: needs dao -->
-                        <option value="3">Vol 13, No 1</option>
-                        <option value="2">Vol 13, No 2</option>
-                        <option value="1">Vol 13, No 3</option>
-                        <option value="0">Vol 13, No 4</option>
+                        <option @if(volumeId == 3) { selected="selected" } value="3">Vol 13, No 1</option>
+                        <option @if(volumeId == 2) { selected="selected" } value="2">Vol 13, No 2</option>
+                        <option @if(volumeId == 1) { selected="selected" } value="1">Vol 13, No 3</option>
+                        <option @if(volumeId == 0) { selected="selected" } value="0">Vol 13, No 4</option>
                     </select>
                 </div>
                 <div class="form-group">
