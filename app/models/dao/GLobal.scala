@@ -19,7 +19,7 @@ object Global extends GlobalSettings {
     val outputFolder = "gen/app/"
     var pkg = "slick.ojs"
 
-    if (!Files.exists(Paths.get("gen/" , "app"))){
+    if (!new File("gen/app").exists) {
       val driver: JdbcProfile = currentMirror.reflectModule(
         currentMirror.staticModule(slickDriver)
       ).instance.asInstanceOf[JdbcProfile]
