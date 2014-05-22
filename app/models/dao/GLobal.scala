@@ -1,10 +1,10 @@
 import java.io.File
-import java.nio.file.{Paths, Path, Files}
+import java.nio.file.Path
 import play.api.db.DB
 import play.api.GlobalSettings
 import scala.slick.model.codegen.SourceCodeGenerator
 import scala.slick.driver.MySQLDriver.simple._
-import scala.slick.driver.{JdbcProfile, MySQLDriver}
+import scala.slick.driver.JdbcProfile
 import scala.reflect.runtime.currentMirror
 import play.api.Play.current
 
@@ -19,7 +19,7 @@ object Global extends GlobalSettings {
     val outputFolder = "gen/app/"
     var pkg = "slick.ojs"
 
-    if (!Files.exists(Paths.get("gen/" , "app"))){
+    if (!new File("gen/app").exists) {
       val driver: JdbcProfile = currentMirror.reflectModule(
         currentMirror.staticModule(slickDriver)
       ).instance.asInstanceOf[JdbcProfile]
