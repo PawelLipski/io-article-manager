@@ -1,5 +1,4 @@
 import java.io.File
-import java.nio.file.Path
 import play.api.db.DB
 import play.api.GlobalSettings
 import scala.slick.model.codegen.SourceCodeGenerator
