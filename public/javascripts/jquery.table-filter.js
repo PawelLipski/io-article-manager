@@ -146,8 +146,9 @@ $(document).ready(function () {
         }
     });
 
-    $('#year-select, #journal-select, #year-select').change(function () {
-        window.location.replace("/authors/" + $("#journal-select").val() + "/"+ $('#year-select').val() + "/" + $("#volume-select").val() )
+    $('#year-select, #journal-select, #issue-select').change(function () {
+        window.location.replace("/authors/" + $("#journal-select").val() + "/" +
+            $('#year-select').val() + "/" + $("#issue-select").val() )
     });
 
     $('#generate-report').click(function() {
