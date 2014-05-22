@@ -1,20 +1,38 @@
+
 import java.io.File
 import play.api.db.DB
 import play.api.GlobalSettings
+import play.api.mvc.RequestHeader
+import play.api.mvc.Results._
+import play.api.Play.current
+import play.api.Application
+import scala.concurrent._
+import scala.reflect.runtime.currentMirror
 import scala.slick.model.codegen.SourceCodeGenerator
 import scala.slick.driver.MySQLDriver.simple._
 import scala.slick.driver.{JdbcProfile, MySQLDriver}
-import scala.reflect.runtime.currentMirror
-import play.api.Play.current
+import ExecutionContext.Implicits.global
 
-import play.api.Application
 
 object Global extends GlobalSettings {
 
+  // called when a route is found, but it was not possible to bind the request parameters
+  override def onBadRequest(request: RequestHeader, error: String) = future {
+    BadRequest(views.html.errors.onHandlerNotFound()(request))
+  }
+
+  // 500 - internal server error
+  override def onError(request: RequestHeader, throwable: Throwable) = future {
+    InternalServerError(views.html.errors.onError(throwable)(request))
+  }
+
+  // 404 - page not found error
+  override def onHandlerNotFound(request: RequestHeader) = future {
+    NotFound(views.html.errors.onHandlerNotFound()(request))
+  }
 
   override def onStart(app: Application) {
     val slickDriver = "scala.slick.driver.MySQLDriver"
-
     val outputFolder = "gen/app/"
     var pkg = "slick.ojs"
 
@@ -34,8 +52,6 @@ object Global extends GlobalSettings {
           new SourceCodeGenerator(driver.createModel).writeToFile(slickDriver, outputFolder, pkg)
       }
     }
-
   }
 
 }
-
