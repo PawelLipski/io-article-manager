@@ -10,7 +10,7 @@ import scala.concurrent._
 import scala.reflect.runtime.currentMirror
 import scala.slick.model.codegen.SourceCodeGenerator
 import scala.slick.driver.MySQLDriver.simple._
-import scala.slick.driver.{JdbcProfile, MySQLDriver}
+import scala.slick.driver.{JdbcProfile}
 import ExecutionContext.Implicits.global
 
 

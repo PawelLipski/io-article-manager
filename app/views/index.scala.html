@@ -1,12 +1,13 @@
 @()(implicit request: Request[AnyContent])
 
-@main("IO Article Manager") {
+@main("Journal Manager") {
 
     <div class="container-fluid">
 
         <h3>The features implemented up to now are listed below.</h3>
 
-        <b>To see any of them (apart from the copyright transfer), please <a href="@routes.Authentication.login()">log in</a></b>.
+        <b>To see any of them (apart from the copyright transfer, which is publicly available),
+            please <a href="@routes.Authentication.login()">log in</a></b>.<br>
 
         <ul>
             <li><a href="@routes.CopyrightTransfer.index()">Copyright transfer</a><br>
@@ -19,7 +20,9 @@
 
             <li><a href="@routes.ReportGenerator.index()">Ranking data extractor</a><br>
                 Type 2013 in the Year field and press Generate.<br>
-                There is still no underlying database (to be implemented in the 3rd sprint soon), all these features work on mock data.<br>
+                There are still a few bugs in the DAO responsible for this module.
+                They are due to be fixed not later than on May 26.
+                Currently, only mock data is displayed.<br>
             </li>
 
             <li><a href="@routes.Lists.index()">List of authors</a><br></li>
