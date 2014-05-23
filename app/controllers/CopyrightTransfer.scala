@@ -16,6 +16,12 @@ import models.copyright.Contribution
 import models.copyright.CopyrightTransferRequest
 import models.copyright.CorrespondingAuthor
 import models.dao.{CopyrightTransferOjsDao, CopyrightTransferInternalDao}
+import play.api.mvc.Results._
+import models.copyright.Copyright
+import models.copyright.Contribution
+import models.copyright.CopyrightTransferRequest
+import models.copyright.CorrespondingAuthor
+import utils.MailSender.Mail
 
 object CopyrightTransfer extends Controller {
 
@@ -49,9 +55,9 @@ object CopyrightTransfer extends Controller {
     implicit request => {
       val id = request.body.asFormUrlEncoded.get("article-id").apply(0).toInt
       if (!CopyrightTransferOjsDao.articleExists(id)) {
-        BadRequest("The article #" + id + " does not exist!")
+        BadRequest(views.html.errors.badRequest("The article #" + id + " does not exist!"))
       } else if (CopyrightTransferInternalDao.transferExists(id)) {
-        BadRequest("Copyright has already been transferred for the article #" + id + "!")
+        BadRequest(views.html.errors.badRequest("Copyright has already been transferred for the article #" + id + "!"))
       } else {
         val copyright = getPaperDataById(id)
         val consentText = scala.io.Source.fromFile("./public/resources/Computer_Science_ctp.txt").getLines().toList
