@@ -6,6 +6,7 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import models.copyright.Contribution;
 import models.copyright.CopyrightTransferRequest;
+import play.api.Play;
 import scala.collection.Iterator;
 import scala.collection.immutable.List;
 
@@ -56,7 +57,8 @@ public class PdfGenerator {
     }
 
     private static Image getJournalLogo(Document document) throws BadElementException, IOException {
-        Image image = Image.getInstance("./public/images/Computer_Science_logo.png");
+        Image image = Image.getInstance(
+                Play.resource("public/images/Computer_Science_logo.png", Play.current()).get().getPath());
         float scalePercentage = ((document.getPageSize().getWidth() - document.leftMargin()
                 - document.rightMargin()) / image.getWidth()) * 100;
 
@@ -65,7 +67,8 @@ public class PdfGenerator {
     }
 
     private static String[] getConsentToPublishText() throws IOException {
-        File file = new File( "./public/resources/Computer_Science_ctp.txt");
+        File file = new File(
+                Play.resource("public/resources/Computer_Science_ctp.txt", Play.current()).get().getPath());
         return Files.readLines(file, Charset.forName("UTF-8")).toArray(new String[] {} );
     }
 
