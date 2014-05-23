@@ -57,11 +57,11 @@ object CopyrightTransferInternalDao {
     }
   }
 
-  def transferExists(id: Int): Boolean = {
+  def transferExists(ojsArticleId: Int): Boolean = {
     Database.forDataSource(DB.getDataSource("internal")).withSession {
       implicit session =>
         slick.internal.Tables.Copyrighttransfer
-          .filter(_.id === id).length.run > 0
+          .filter(_.ojsarticleid === ojsArticleId).length.run > 0
     }
   }
 

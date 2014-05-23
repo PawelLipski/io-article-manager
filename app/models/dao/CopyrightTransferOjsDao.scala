@@ -35,4 +35,13 @@ object CopyrightTransferOjsDao {
         )
     }
   }
+
+  def articleExists(id: Int): Boolean = {
+    Database.forDataSource(DB.getDataSource("ojs")).withSession {
+      implicit session =>
+        slick.ojs.Tables.ArticleSettings
+          .filter(_.articleId === id.asInstanceOf[Long]).length.run > 0
+    }
+  }
+
 }
