@@ -6,7 +6,6 @@ import play.api.Play.current
 
 object AuthenticationDao {
 
-  // Definition of the SUPPLIERS table
   class User(tag: Tag) extends Table[(Int, String, String)](tag, "INTERNAL_USERS") {
     def id = column[Int]("ID", O.PrimaryKey)
 

@@ -6,8 +6,8 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import models.copyright.Contribution;
 import models.copyright.CopyrightTransferRequest;
+import play.api.Play;
 import scala.collection.Iterator;
-import scala.collection.immutable.List;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -29,15 +29,15 @@ public class PdfGenerator {
     }
 
     private static void generate(CopyrightTransferRequest request, OutputStream outputStream) throws DocumentException, IOException {
-        String[] list = getConsentToPublishText();
+        java.util.List<String> list = getConsentToPublishText();
 
         Document document = new Document();
         PdfWriter.getInstance(document, outputStream);
         document.open();
         document.add(getJournalLogo(document));
         document.add(new Paragraph("Consent to Publish\n"));
-        for (int i = 0; i < list.length; i++) {
-            String line = list[i];
+        for (int i = 0; i < list.size(); i++) {
+            String line = list.get(i);
             Paragraph consentParagraph = new Paragraph((i+1)+":\t\t" + line);
             consentParagraph.setAlignment(Paragraph.ALIGN_JUSTIFIED);
             document.add(consentParagraph);
@@ -56,7 +56,8 @@ public class PdfGenerator {
     }
 
     private static Image getJournalLogo(Document document) throws BadElementException, IOException {
-        Image image = Image.getInstance("./public/images/Computer_Science_logo.png");
+        Image image = Image.getInstance(
+                Play.resource("public/images/Computer_Science_logo.png", Play.current()).get());
         float scalePercentage = ((document.getPageSize().getWidth() - document.leftMargin()
                 - document.rightMargin()) / image.getWidth()) * 100;
 
@@ -64,12 +65,22 @@ public class PdfGenerator {
         return image;
     }
 
-    private static String[] getConsentToPublishText() throws IOException {
-        File file = new File( "./public/resources/Computer_Science_ctp.txt");
-        return Files.readLines(file, Charset.forName("UTF-8")).toArray(new String[] {} );
+    private static java.util.List<String> getConsentToPublishText() throws IOException {
+        BufferedReader br;
+        br = new BufferedReader(
+                new InputStreamReader(
+                    Play.resourceAsStream("public/resources/Computer_Science_ctp.txt", Play.current()).get()
+                )
+        );
+        java.util.List<String> list = new java.util.LinkedList<String>();
+        String line;
+        while ((line = br.readLine()) != null)
+            list.add(line);
+        br.close();
+        return list;
     }
 
-    private static PdfPTable createContributionTable(List<Contribution> contributionList) {
+    private static PdfPTable createContributionTable(scala.collection.immutable.List<Contribution> contributionList) {
         PdfPTable table = new PdfPTable(4);
         table.setWidthPercentage(100);
         table.addCell("Author name");

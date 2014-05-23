@@ -16,6 +16,12 @@ import models.copyright.Contribution
 import models.copyright.CopyrightTransferRequest
 import models.copyright.CorrespondingAuthor
 import models.dao.{CopyrightTransferOjsDao, CopyrightTransferInternalDao}
+import play.api.mvc.Results._
+import models.copyright.Copyright
+import models.copyright.Contribution
+import models.copyright.CopyrightTransferRequest
+import models.copyright.CorrespondingAuthor
+import utils.MailSender.Mail
 
 object CopyrightTransfer extends Controller {
 
@@ -47,14 +53,20 @@ object CopyrightTransfer extends Controller {
 
   def consent = Action {
     implicit request => {
-      val id = request.body.asFormUrlEncoded.get("article-id").apply(0)
-      val copyright = getPaperDataById(id.toInt)
-      val consentText = scala.io.Source.fromFile("./public/resources/Computer_Science_ctp.txt").getLines().toList
-      Ok(html.copyright.consentForm(form.fill(copyright), copyright, consentText))
+      val id = request.body.asFormUrlEncoded.get("article-id").apply(0).toInt
+      if (!CopyrightTransferOjsDao.articleExists(id)) {
+        BadRequest(views.html.errors.badRequest("The article #" + id + " does not exist!"))
+      } else if (CopyrightTransferInternalDao.transferExists(id)) {
+        BadRequest(views.html.errors.badRequest("Copyright has already been transferred for the article #" + id + "!"))
+      } else {
+        val copyright = getPaperDataById(id)
+        val consentText = scala.io.Source.fromFile("./public/resources/Computer_Science_ctp.txt").getLines().toList
+        Ok(html.copyright.consentForm(form.fill(copyright), copyright, consentText))
+      }
     }
   }
 
-  def getPaperDataById(id: Int) : Copyright = {
+  def getPaperDataById(id: Int): Copyright = {
     CopyrightTransferOjsDao.getAuthorsForArticle(id)
   }
 
@@ -70,7 +82,7 @@ object CopyrightTransfer extends Controller {
       )
   }
 
-  def verify(token : String) = Action {
+  def verify(token: String) = Action {
     implicit request => {
       val tokenSHA = TokenGenerator.toSHA(token)
       val verificationResult = CopyrightTransferInternalDao.markTransferAsConfirmed(tokenSHA) != 0
@@ -79,23 +91,24 @@ object CopyrightTransfer extends Controller {
 
   }
 
-  def confirm = Action { implicit request =>
-    val pdfFile = java.io.File.createTempFile("CopyrightTransferForm", ".pdf")
-    val toEmail = copyrightTransferRequest.copyrightData.correspondingAuthor.email
-    PdfGenerator.generate(copyrightTransferRequest, pdfFile)
-    send a new Mail(
-      from = ("test@slonka.udl.pl", "Journal Manager"),
-      to = List(toEmail),
-      subject = "[Journal Manager] Please confirm the copyright transfer",
-      message = "This is the Journal Manager system.\n" +
-        "Your e-mail address was used to fill a copyright transfer form. Details of the transfer can be found in the attached PDF file.\n" +
-        "Please confirm the copyright transfer by clicking the link below:\n" +
-        "http://" +  request.host + "/confirm/" + TokenGenerator.generateAndSave(toEmail) + "\n" +
-        "If you didn't fill the copyright transfer form, please ignore this message.\n",
-      attachment = Option(pdfFile)
-    )
-    pdfFile.delete()
-    Ok(html.copyright.confirmation(toEmail))
+  def confirm = Action {
+    implicit request =>
+      val pdfFile = java.io.File.createTempFile("CopyrightTransferForm", ".pdf")
+      val toEmail = copyrightTransferRequest.copyrightData.correspondingAuthor.email
+      PdfGenerator.generate(copyrightTransferRequest, pdfFile)
+      send a new Mail(
+        from = ("test@slonka.udl.pl", "Journal Manager"),
+        to = List(toEmail),
+        subject = "[Journal Manager] Please confirm the copyright transfer",
+        message = "This is the Journal Manager system.\n" +
+          "Your e-mail address was used to fill a copyright transfer form. Details of the transfer can be found in the attached PDF file.\n" +
+          "Please confirm the copyright transfer by clicking the link below:\n" +
+          "http://" + request.host + "/confirm/" + TokenGenerator.generateAndSave(toEmail) + "\n" +
+          "If you didn't fill the copyright transfer form, please ignore this message.\n",
+        attachment = Option(pdfFile)
+      )
+      pdfFile.delete()
+      Ok(html.copyright.confirmation(toEmail))
   }
 
 }
