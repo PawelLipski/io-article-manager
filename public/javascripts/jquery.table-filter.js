@@ -100,7 +100,7 @@
 $(document).ready(function () {
     $('#data-table').each(function () {
         var currentPage = 0;
-        var numPerPage = 3;
+        var numPerPage = 10;
 
         var $table = $(this);
 
@@ -146,8 +146,9 @@ $(document).ready(function () {
         }
     });
 
-    $('#year-select, #journal-select, #year-select').change(function () {
-        window.location.replace("/authors/" + $("#journal-select").val() + "/"+ $('#year-select').val() + "/" + $("#volume-select").val() )
+    $('#year-select, #journal-select, #issue-select').change(function () {
+        window.location.replace("/authors/" + $("#journal-select").val() + "/" +
+            $('#year-select').val() + "/" + $("#issue-select").val() )
     });
 
     $('#generate-report').click(function() {

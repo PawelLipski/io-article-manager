@@ -57,6 +57,14 @@ object CopyrightTransferInternalDao {
     }
   }
 
+  def transferExists(ojsArticleId: Int): Boolean = {
+    Database.forDataSource(DB.getDataSource("internal")).withSession {
+      implicit session =>
+        slick.internal.Tables.Copyrighttransfer
+          .filter(_.ojsarticleid === ojsArticleId).length.run > 0
+    }
+  }
+
   val yearFn = SimpleFunction[Int]("year")
 
   def listTransfer(ojsJournalId:Long, year:Int, volumeId: Int):Seq[slick.internal.Tables.CopyrighttransferRow] = {
