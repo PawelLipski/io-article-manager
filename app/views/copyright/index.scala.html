@@ -8,8 +8,22 @@
 
 @main("Consent to publish") {
 
-    @form(action = routes.CopyrightTransfer.consent) {
-        Enter your article ID: <input type="text" name="article-id"><br><br>
-        <input type="submit" value="Submit" class="btn btn-primary"/>
+    @form(action = routes.CopyrightTransfer.consent, 'id -> "submit-article-id") {
+        Enter your article ID (<i>for the beta release, please choose any of 1 to 7</i>):
+        <input id="input-article-id" type="text" name="article-id" required><br><br>
+        <button type="submit" class="btn btn-primary">Submit</button>
     }
+
+    <script type="text/javascript">
+        $(function() {
+            // validation of input - entered value must be numeric
+            $("#submit-article-id" ).submit(function(){
+                var invalid = isNaN($("#input-article-id" ).val())
+                if (invalid) {
+                    $("<br><p style='color:red'>Provide correct article id - required numeric value.</p>" ).insertAfter($("#submit-article-id" ))
+                }
+                return invalid == false
+            })
+        })
+    </script>
 }
