@@ -19,7 +19,7 @@ object Authors extends Controller with Secured {
       Ok(views.html.authors.list(id, year, volume_id, authorsSlick, journals))
   }
 
-  def generateReport = withAuth {
+  def generateReport = withAuth(parse.json) {
     user => implicit request =>
       (request.body).asOpt[List[Int]].map { ctrIds =>
         Ok(PdfGenerator.generate(CopyrightTransferInternalDao.listTransfer(ctrIds))).as("application/pdf")
