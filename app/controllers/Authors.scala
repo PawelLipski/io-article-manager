@@ -19,12 +19,12 @@ object Authors extends Controller with Secured {
       Ok(views.html.authors.list(id, year, volume_id, authorsSlick, journals))
   }
 
-  // TODO authentication
-  def generateReport = Action(parse.json) { request =>
-    (request.body).asOpt[List[Int]].map { ctrIds =>
-      Ok(PdfGenerator.generate(CopyrightTransferInternalDao.listTransfer(ctrIds))).as("application/pdf")
-    }.getOrElse {
-      BadRequest("Bad request IDs!")
-    }
+  def generateReport = withAuth {
+    user => implicit request =>
+      (request.body).asOpt[List[Int]].map { ctrIds =>
+        Ok(PdfGenerator.generate(CopyrightTransferInternalDao.listTransfer(ctrIds))).as("application/pdf")
+      }.getOrElse {
+        BadRequest("Bad request IDs!")
+      }
   }
 }
