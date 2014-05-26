@@ -1,12 +1,9 @@
 package models
 
-import models.reports._
-import models.reports.ArticleStatus.ArticleStatus
 import scala.slick.driver.MySQLDriver.simple._
 import play.api.db.DB
 import play.api.Play.current
 import java.text.SimpleDateFormat
-import java.util.Date
 import models.reports.ArticleAuthor
 import models.reports.ArticleStatus.ArticleStatus
 import models.reports.ArticleStatus
@@ -95,16 +92,15 @@ object RankingDataExtractorOjsDao {
     Database.forDataSource(DB.getDataSource("ojs")).withSession {
       implicit session =>
         val reviewers = for {
-          authorSettings <- slick.ojs.Tables.AuthorSettings if authorSettings.settingName === "affiliation" && authorSettings.settingValue === ""
-          author <- slick.ojs.Tables.Authors if author.authorId === authorSettings.authorId
-
           articleSetting <- slick.ojs.Tables.ArticleSettings if articleSetting.settingName === "title"
           article <- slick.ojs.Tables.Articles if article.articleId === articleSetting.articleId &&
-          author.submissionId === article.articleId && article.journalId === ojsJournalId.asInstanceOf[Long] &&
+          article.journalId === ojsJournalId.asInstanceOf[Long] &&
           yearFn(Seq(article.dateSubmitted)) === year
 
           reviewer <- slick.ojs.Tables.ReviewAssignments if article.articleId === reviewer.submissionId
           user <- slick.ojs.Tables.Users if user.userId === reviewer.reviewerId
+          userSettings <- slick.ojs.Tables.UserSettings if userSettings.userId === user.userId &&
+          userSettings.settingName === "affiliation" && userSettings.settingValue === ""
 
         } yield (user.firstName, user.lastName, user.lastName, article.dateSubmitted, articleSetting.settingValue)
 
@@ -130,7 +126,7 @@ object RankingDataExtractorOjsDao {
           articleSetting <- slick.ojs.Tables.ArticleSettings if articleSetting.settingName === "title"
           article <- slick.ojs.Tables.Articles if article.articleId === articleSetting.articleId &&
           author.submissionId === article.articleId &&
-          (article.journalId === ojsJournalId.asInstanceOf[Long] || ojsJournalId == 0)&&
+          (article.journalId === ojsJournalId.asInstanceOf[Long] || ojsJournalId == 0) &&
           (yearFn(Seq(article.dateSubmitted)) === year || year == 0) &&
           (article.status === ArticleStatus.toByte(status) || ArticleStatus.toByte(status) == -1)
 
@@ -148,21 +144,19 @@ object RankingDataExtractorOjsDao {
     Database.forDataSource(DB.getDataSource("ojs")).withSession {
       implicit session =>
         val authors = for {
-          authorSettings <- slick.ojs.Tables.AuthorSettings if authorSettings.settingName === "affiliation"
-          author <- slick.ojs.Tables.Authors if author.authorId === authorSettings.authorId
-
-          articleSetting <- slick.ojs.Tables.ArticleSettings if articleSetting.settingName === "title"
-          article <- slick.ojs.Tables.Articles if article.articleId === articleSetting.articleId &&
-          author.submissionId === article.articleId &&
-          (article.journalId === ojsJournalId.asInstanceOf[Long] || ojsJournalId == 0)&&
+          article <- slick.ojs.Tables.Articles if (article.journalId === ojsJournalId.asInstanceOf[Long] || ojsJournalId == 0) &&
           (yearFn(Seq(article.dateSubmitted)) === year || year == 0) &&
           (article.status === ArticleStatus.toByte(status) || ArticleStatus.toByte(status) == -1)
+          articleSetting <- slick.ojs.Tables.ArticleSettings if articleSetting.settingName === "title" &&
+          article.articleId === articleSetting.articleId
 
           reviewer <- slick.ojs.Tables.ReviewAssignments if article.articleId === reviewer.submissionId
           user <- slick.ojs.Tables.Users if user.userId === reviewer.reviewerId
+          userSettings <- slick.ojs.Tables.UserSettings if userSettings.userId === user.userId &&
+          userSettings.settingName === "affiliation"
 
           journal <- slick.ojs.Tables.Journals if article.journalId === journal.journalId
-        } yield (user.firstName, user.lastName, authorSettings.settingValue, user.email,
+        } yield (user.firstName, user.lastName, userSettings.settingValue, user.email,
             article.articleId, article.dateSubmitted, articleSetting.settingValue, article.status, journal.journalId, journal.path)
 
         authors.list.map(a => new ArticleAuthor(a._1, a._2, models.reports.Journal(a._9.asInstanceOf[Int], a._10),
