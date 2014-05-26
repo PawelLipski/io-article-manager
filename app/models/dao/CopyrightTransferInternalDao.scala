@@ -6,7 +6,7 @@ package models.dao
 import play.api._
 import play.api.mvc._
 import java.sql.{DriverManager, ResultSet}
-import models.copyright.{CorrespondingAuthor, CopyrightTransferRequest, Copyright}
+import models.copyright.{CopyrightTransferStatus, CorrespondingAuthor, CopyrightTransferRequest, Copyright}
 import scala.slick.driver.MySQLDriver.simple._
 import scala.slick.driver.MySQLDriver
 import play.api.db.DB
@@ -17,6 +17,7 @@ import java.sql.Date
 import scala.slick.lifted
 import slick.ojs.Tables
 import slick.ojs
+import org.joda.time.DateTime
 
 
 object CopyrightTransferInternalDao {
@@ -88,20 +89,20 @@ object CopyrightTransferInternalDao {
   def listTransfer(ids: List[Int]) : List[CopyrightTransferRequest] = {
     Database.forDataSource(DB.getDataSource("internal")).withSession {
       implicit session =>
-        return (for {
+        (for {
           transfer <- slick.internal.Tables.Copyrighttransfer if transfer.ojsarticleid inSetBind ids
-        } yield transfer).list.map(
-            CopyrightTransferRequest(
-              Option(_.id), Copyright(
-                _.ojsarticleid, _.title, CorrespondingAuthor(
-                  _.correspondingname, _.correspondingaffiliation, _.correspondingemail
-                ),
+        } yield transfer).list.map(trans => {
+          CopyrightTransferRequest(
+            Option(trans.id), Copyright(
+              trans.ojsarticleid, trans.title, CorrespondingAuthor(
+                trans.correspondingname, trans.correspondingaffiliation, trans.correspondingemail
+              ),
               List(), // TODO
               "TODO" // TODO
-              ),
-              _.dateformFilled, _.filleripaddress, _.linkconfirmed
-            )
+            ),
+            new DateTime(trans.dateformfilled.getTime), trans.filleripaddress, if (trans.linkconfirmed) CopyrightTransferStatus.CONFIRMED else CopyrightTransferStatus.UNCONFIRMED
           )
+        })
     }
   }
 
