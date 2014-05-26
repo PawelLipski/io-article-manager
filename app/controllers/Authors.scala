@@ -35,8 +35,7 @@ object Authors extends Controller with Secured {
   // TODO authentication
   def generateReport = Action(parse.json) { request =>
     (request.body).asOpt[List[Int]].map { ctrIds =>
-      Ok(PdfGenerator.generate(ctrIds.map(id => ))).as("application/pdf")
-      //Ok("Hello " + ctrIds)
+      Ok(PdfGenerator.generate(CopyrightTransferInternalDao.listTransfer(ctrIds))).as("application/pdf")
     }.getOrElse {
       BadRequest("Bad request IDs!")
     }

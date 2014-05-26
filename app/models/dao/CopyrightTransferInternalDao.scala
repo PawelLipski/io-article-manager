@@ -76,4 +76,15 @@ object CopyrightTransferInternalDao {
     }
 
   }
+
+  def listTransfer(ids: List[Int]) : List[CopyrightTransferRequest] = {
+    Database.forDataSource(DB.getDataSource("internal")).withSession {
+      implicit session =>
+        return (for {
+          transfer <- slick.internal.Tables.Copyrighttransfer if transfer.ojsarticleid inSetBind ids
+        } yield transfer).list.map(
+            CopyrightTransferRequest(_.id)
+          )
+    }
+  }
 }
