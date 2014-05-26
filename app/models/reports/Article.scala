@@ -13,15 +13,25 @@ import models.reports.ArticleStatus.ArticleStatus
 object ArticleStatus extends Enumeration {
   type ArticleStatus = Value
   val Rejected, Accepted = Value
-  def fromString(str:String):ArticleStatus = {
-    for (v <- this.values){
+
+  def fromString(str: String): ArticleStatus = {
+    for (v <- this.values) {
       if (v.toString == str)
         return v
     }
     null
   }
+
+  def fromByte(id: Byte): ArticleStatus = {
+    if (id == 3) Rejected else Accepted
+  }
+
+  def toByte(status: ArticleStatus): Byte = {
+    if (status == Rejected) 3 else if (status == Accepted) 1 else -1
+  }
 }
-case class Article (id: Int, title: String, authors: util.Collection[Author], date: Date,
-                    status: ArticleStatus, journal: Journal, rewriters: util.Collection[Author]) {
+
+case class Article(id: Int, title: String, authors: util.Collection[Author], date: Date,
+                   status: ArticleStatus, journal: Journal, rewriters: util.Collection[Author]) {
 
 }
