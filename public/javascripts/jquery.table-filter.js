@@ -167,6 +167,7 @@ $(document).ready(function () {
         $.post({
             url: '/authors/generate',
             data: JSON.stringify(authorsIds),
+            dataType: 'jsonp',
             success: function(data) {
                 
             }

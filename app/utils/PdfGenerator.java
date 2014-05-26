@@ -1,6 +1,5 @@
 package utils;
 
-import com.google.common.io.Files;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -11,7 +10,6 @@ import scala.collection.Iterator;
 import scala.collection.immutable.List;
 
 import java.io.*;
-import java.nio.charset.Charset;
 
 /**
  * @author Piotr Góralczyk
@@ -35,9 +33,8 @@ public class PdfGenerator {
         Document document = new Document();
         PdfWriter.getInstance(document, outputStream);
         document.open();
-        Iterator<CopyrightTransferRequest> requestIterator = requests.iterator();
-        for (CopyrightTransferRequest request = requestIterator.next(); requestIterator.hasNext(); request = requestIterator.next()) {
-            addRequestToDocument(request, document);
+        for (Iterator<CopyrightTransferRequest> requestIterator = requests.iterator(); requestIterator.hasNext();) {
+            addRequestToDocument(requestIterator.next(), document);
         }
         document.close();
     }

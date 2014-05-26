@@ -6,7 +6,7 @@ package models.dao
 import play.api._
 import play.api.mvc._
 import java.sql.{DriverManager, ResultSet}
-import models.copyright.{CopyrightTransferStatus, CorrespondingAuthor, CopyrightTransferRequest, Copyright}
+import models.copyright._
 import scala.slick.driver.MySQLDriver.simple._
 import scala.slick.driver.MySQLDriver
 import play.api.db.DB
@@ -18,6 +18,9 @@ import scala.slick.lifted
 import slick.ojs.Tables
 import slick.ojs
 import org.joda.time.DateTime
+import models.copyright.Copyright
+import models.copyright.CopyrightTransferRequest
+import models.copyright.CorrespondingAuthor
 
 
 object CopyrightTransferInternalDao {
@@ -90,17 +93,19 @@ object CopyrightTransferInternalDao {
     Database.forDataSource(DB.getDataSource("internal")).withSession {
       implicit session =>
         (for {
-          transfer <- slick.internal.Tables.Copyrighttransfer if transfer.ojsarticleid inSetBind ids
-        } yield transfer).list.map(trans => {
+          transfer <- slick.internal.Tables.Copyrighttransfer if transfer.id inSetBind ids
+        } yield transfer).list.map(transfer => {
           CopyrightTransferRequest(
-            Option(trans.id), Copyright(
-              trans.ojsarticleid, trans.title, CorrespondingAuthor(
-                trans.correspondingname, trans.correspondingaffiliation, trans.correspondingemail
+            Option(transfer.id), Copyright(
+              transfer.ojsarticleid, transfer.title, CorrespondingAuthor(
+                transfer.correspondingname, transfer.correspondingaffiliation, transfer.correspondingemail
               ),
-              List(), // TODO
-              "TODO" // TODO
+              slick.internal.Tables.Authorscontribution.filter(_.copyrighttransferid === transfer.id).list.map(contribution => Contribution(
+                contribution.authorname, contribution.affiliation, contribution.contribution, contribution.percent
+              )),
+              "TODO" // TODO change database model (store financial disclosure in DB)
             ),
-            new DateTime(trans.dateformfilled.getTime), trans.filleripaddress, if (trans.linkconfirmed) CopyrightTransferStatus.CONFIRMED else CopyrightTransferStatus.UNCONFIRMED
+            new DateTime(transfer.dateformfilled.getTime), transfer.filleripaddress, if (transfer.linkconfirmed) CopyrightTransferStatus.CONFIRMED else CopyrightTransferStatus.UNCONFIRMED
           )
         })
     }
