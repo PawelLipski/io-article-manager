@@ -59,7 +59,7 @@ object RankingDataExtractorOjsDao {
           reviewer <- slick.ojs.Tables.ReviewAssignments
           user <- slick.ojs.Tables.Users if user.userId === reviewer.reviewerId
 
-          article <- slick.ojs.Tables.Articles if article.userId === user.userId &&
+          article <- slick.ojs.Tables.Articles if article.articleId === reviewer.submissionId &&
           article.journalId === ojsJournalId.asInstanceOf[Long] &&
           yearFn(Seq(article.dateSubmitted)) === year
         } yield user.country
@@ -103,8 +103,9 @@ object RankingDataExtractorOjsDao {
           author.submissionId === article.articleId && article.journalId === ojsJournalId.asInstanceOf[Long] &&
           yearFn(Seq(article.dateSubmitted)) === year
 
-          user <- slick.ojs.Tables.Users if article.userId === user.userId
-          reviewer <- slick.ojs.Tables.ReviewAssignments if user.userId === reviewer.reviewerId
+          reviewer <- slick.ojs.Tables.ReviewAssignments if article.articleId === reviewer.submissionId
+          user <- slick.ojs.Tables.Users if user.userId === reviewer.reviewerId
+
         } yield (user.firstName, user.lastName, user.lastName, article.dateSubmitted, articleSetting.settingValue)
 
         reviewers.list.map(a => Author(a._1, a._2, a._5.getOrElse(""), null, simpleDateFormat.format(a._4.get), a._3, null))
@@ -120,25 +121,6 @@ object RankingDataExtractorOjsDao {
    * @return
    */
   def getListOfAllAuthors(ojsJournalId: Int, year: Int, status: ArticleStatus): Iterable[ArticleAuthor] = {
-    /*
-      Database.forDataSource(DB.getDataSource("ojs")).withSession {
-        implicit session =>
-          val authors = for {
-            author <- slick.ojs.Tables.Authors
-            article <- slick.ojs.Tables.Articles if author.submissionId === article.articleId
-                      ((ojsJournalId == 0).asColumnOf[Boolean] || article.journalId === ojsJournalId.asInstanceOf[Long]) &&
-                        ((year == 0).asColumnOf[Boolean] || yearFn(Seq(article.dateSubmitted)) === year)
-                      ((status == null).asColumnOf[Boolean] || article.status === status.id.asInstanceOf[Byte])
-            journal <- slick.ojs.Tables.Journals if article.journalId === journal.journalId
-          } yield (author.firstName, author.lastName, author.email,
-              journal.journalId, journal.path,
-              article.articleId, article.dateSubmitted, article.status)
-
-          authors.list.map(a => new ArticleAuthor(a._1, a._2, models.reports.Journal(a._4.asInstanceOf[Int], a._5),
-            models.reports.Article(a._6.asInstanceOf[Int], null, null, null, ArticleStatus(a._8), null, null), null, a._3))
-      }
-      */
-
     Database.forDataSource(DB.getDataSource("ojs")).withSession {
       implicit session =>
         val authors = for {
@@ -176,8 +158,8 @@ object RankingDataExtractorOjsDao {
           (yearFn(Seq(article.dateSubmitted)) === year || year == 0) &&
           (article.status === ArticleStatus.toByte(status) || ArticleStatus.toByte(status) == -1)
 
-          user <- slick.ojs.Tables.Users if article.userId === user.userId
-          reviewer <- slick.ojs.Tables.ReviewAssignments if user.userId === reviewer.reviewerId
+          reviewer <- slick.ojs.Tables.ReviewAssignments if article.articleId === reviewer.submissionId
+          user <- slick.ojs.Tables.Users if user.userId === reviewer.reviewerId
 
           journal <- slick.ojs.Tables.Journals if article.journalId === journal.journalId
         } yield (user.firstName, user.lastName, authorSettings.settingValue, user.email,
