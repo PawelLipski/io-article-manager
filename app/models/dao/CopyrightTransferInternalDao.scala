@@ -6,7 +6,7 @@ package models.dao
 import play.api._
 import play.api.mvc._
 import java.sql.{DriverManager, ResultSet}
-import models.copyright.{CopyrightTransferRequest, Copyright}
+import models.copyright.{CorrespondingAuthor, CopyrightTransferRequest, Copyright}
 import scala.slick.driver.MySQLDriver.simple._
 import scala.slick.driver.MySQLDriver
 import play.api.db.DB
@@ -91,8 +91,18 @@ object CopyrightTransferInternalDao {
         return (for {
           transfer <- slick.internal.Tables.Copyrighttransfer if transfer.ojsarticleid inSetBind ids
         } yield transfer).list.map(
-            CopyrightTransferRequest(_.id)
+            CopyrightTransferRequest(
+              Option(_.id), Copyright(
+                _.ojsarticleid, _.title, CorrespondingAuthor(
+                  _.correspondingname, _.correspondingaffiliation, _.correspondingemail
+                ),
+              List(), // TODO
+              "TODO" // TODO
+              ),
+              _.dateformFilled, _.filleripaddress, _.linkconfirmed
+            )
           )
     }
   }
+
 }
