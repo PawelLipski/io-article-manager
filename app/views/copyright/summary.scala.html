@@ -1,4 +1,4 @@
-@(copyrightTransferRequest: models.copyright.CopyrightTransferRequest, copyrightForm: Form[models.copyright.Copyright])(implicit request: Request[AnyContent])
+@(copyrightTransferRequest: models.copyright.CopyrightTransferRequest)(implicit request: Request[AnyContent])
 
 @import helper._
 
@@ -54,8 +54,8 @@
     <p>@Html(copyrightTransferRequest.ipAddress)</p>
     <br>
 
-    @form(action = routes.CopyrightTransfer.confirm) {
-        <input type="submit" value="Confirm" class="btn btn-primary"/>
+    @form(action = routes.CopyrightTransfer.confirm(copyrightTransferRequest.copyrightData.ojsId)) {
+        <button type="submit" class="btn btn-primary">Confirm</button>
     }
 
     <br>
