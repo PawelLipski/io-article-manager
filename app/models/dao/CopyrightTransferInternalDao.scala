@@ -33,7 +33,8 @@ object CopyrightTransferInternalDao {
           filledForm.ipAddress,
           TokenGenerator.generate(),
           false,
-          Option[Date](new Date(0))
+          Option[Date](new Date(0)),
+          filledForm.financialDisclosure
         ))
     }
   }

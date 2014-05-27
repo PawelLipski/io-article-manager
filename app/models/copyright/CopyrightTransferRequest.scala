@@ -7,7 +7,8 @@ case class CopyrightTransferRequest(
                                      copyrightData: Copyright,
                                      dateFilled: DateTime,
                                      ipAddress: String,
-                                     status: CopyrightTransferStatus.Status
+                                     status: CopyrightTransferStatus.Status,
+                                     financialDisclosure: String
                                      )
 {
 
