@@ -21,14 +21,14 @@ object CopyrightTransferOjsDao {
   def getAuthorsForArticle(ojsArticleId: Int): Copyright = {
     Database.forDataSource(DB.getDataSource("ojs")).withSession {
       implicit session =>
-        val titles = slick.ojs.Tables.ArticleSettings.filter(_.articleId === ojsArticleId.asInstanceOf[Long]).filter(_.settingName === "title")
+        val title = slick.ojs.Tables.ArticleSettings.filter(_.articleId === ojsArticleId.asInstanceOf[Long]).filter(_.settingName === "title").firstOption()
         val authors = slick.ojs.Tables.Authors.filter(_.submissionId === ojsArticleId.asInstanceOf[Long]) leftJoin  slick.ojs.Tables.AuthorSettings on (_.authorId === _.authorId)
 
         val primary = authors.filter(_._1.primaryContact =!= 0.asInstanceOf[Byte]).list.map(f => CorrespondingAuthor(f._1.lastName, f._2.settingValue.getOrElse(""), f._1.email))
 
         Copyright(
           ojsArticleId,
-          titles.first.settingValue.getOrElse(""),
+          if (title.isEmpty) "" else title.get.settingValue.getOrElse(""),
           primary.head,
           authors.list.map(f => Contribution(f._1.lastName, f._2.settingValue.getOrElse(""), "", 0)),
           ""
@@ -40,7 +40,7 @@ object CopyrightTransferOjsDao {
     Database.forDataSource(DB.getDataSource("ojs")).withSession {
       implicit session =>
         slick.ojs.Tables.ArticleSettings
-          .filter(_.articleId === id.asInstanceOf[Long]).length.run > 0
+          .filter(_.articleId === id.asInstanceOf[Long]).exists.run
     }
   }
 
