@@ -25,7 +25,7 @@ import utils.MailSender.Mail
 
 object CopyrightTransfer extends Controller {
 
-  var copyrightTransferRequest: CopyrightTransferRequest = null
+  var filledConsents: Map[Int, CopyrightTransferRequest] = Map()
 
   val form: Form[Copyright] = Form(
     mapping(
@@ -75,11 +75,36 @@ object CopyrightTransfer extends Controller {
       form.bindFromRequest.fold(
         errors => BadRequest("Unspecified error occurred, nobody knows what happened yet. Try again."),
         cd => {
-          copyrightTransferRequest = CopyrightTransferRequest(None, cd, DateTime.now(), request.remoteAddress, CopyrightTransferStatus.UNCONFIRMED)
-          CopyrightTransferInternalDao.saveTransfer(copyrightTransferRequest)
-          Ok(html.copyright.summary(copyrightTransferRequest, form.fill(cd)))
+          val copyrightTransferRequest = CopyrightTransferRequest(None, cd, DateTime.now(), request.remoteAddress, CopyrightTransferStatus.UNCONFIRMED)
+          filledConsents += cd.ojsId -> copyrightTransferRequest
+          Ok(html.copyright.summary(copyrightTransferRequest))
         }
       )
+  }
+
+  def confirm(id: Int) = Action {
+    implicit request =>
+      val copyrightTransferRequest = filledConsents.get(id).get
+      filledConsents -= id
+      CopyrightTransferInternalDao.saveTransfer(copyrightTransferRequest)
+
+      val toEmail = copyrightTransferRequest.copyrightData.correspondingAuthor.email
+
+      val pdfFile = java.io.File.createTempFile("CopyrightTransferForm", ".pdf")
+      PdfGenerator.generate(copyrightTransferRequest, pdfFile)
+        send a new Mail(
+          from = ("test@slonka.udl.pl", "Journal Manager"),
+          to = List(toEmail),
+          subject = "[Journal Manager] Please confirm the copyright transfer",
+          message = "This is the Journal Manager system.\n" +
+            "Your e-mail address was used to fill a copyright transfer form. Details of the transfer can be found in the attached PDF file.\n" +
+            "Please confirm the copyright transfer by clicking the link below:\n" +
+            "http://" + request.host + "/confirm/" + TokenGenerator.generateAndSave(toEmail) + "\n" +
+            "If you didn't fill the copyright transfer form, please ignore this message.\n",
+          attachment = Option(pdfFile)
+        )
+        pdfFile.delete()
+        Ok(html.copyright.confirmation(toEmail))
   }
 
   def verify(token: String) = Action {
@@ -90,25 +115,4 @@ object CopyrightTransfer extends Controller {
     }
 
   }
-
-  def confirm = Action {
-    implicit request =>
-      val pdfFile = java.io.File.createTempFile("CopyrightTransferForm", ".pdf")
-      val toEmail = copyrightTransferRequest.copyrightData.correspondingAuthor.email
-      PdfGenerator.generate(copyrightTransferRequest, pdfFile)
-      send a new Mail(
-        from = ("test@slonka.udl.pl", "Journal Manager"),
-        to = List(toEmail),
-        subject = "[Journal Manager] Please confirm the copyright transfer",
-        message = "This is the Journal Manager system.\n" +
-          "Your e-mail address was used to fill a copyright transfer form. Details of the transfer can be found in the attached PDF file.\n" +
-          "Please confirm the copyright transfer by clicking the link below:\n" +
-          "http://" + request.host + "/confirm/" + TokenGenerator.generateAndSave(toEmail) + "\n" +
-          "If you didn't fill the copyright transfer form, please ignore this message.\n",
-        attachment = Option(pdfFile)
-      )
-      pdfFile.delete()
-      Ok(html.copyright.confirmation(toEmail))
-  }
-
 }
