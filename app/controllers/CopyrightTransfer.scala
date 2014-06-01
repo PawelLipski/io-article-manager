@@ -61,7 +61,7 @@ object CopyrightTransfer extends Controller {
       } else {
         val copyright = getPaperDataById(id)
         val journalId = CopyrightTransferOjsDao.getJournalIDForArticle(id)
-        Ok(html.copyright.consentForm(form.fill(copyright), copyright, journalId))
+        Ok(html.copyright.consentForm(form.fill(copyright), journalId))
       }
     }
   }
