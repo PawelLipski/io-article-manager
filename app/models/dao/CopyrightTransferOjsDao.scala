@@ -18,6 +18,15 @@ import slick.ojs
 
 object CopyrightTransferOjsDao {
 
+  def getJournalIDForArticle(ojsArticleId: Int): Long = {
+    Database.forDataSource(DB.getDataSource("ojs")).withSession {
+      implicit session => {
+        val journalId = slick.ojs.Tables.Articles.filter(_.articleId === ojsArticleId.asInstanceOf[Long]).map(f => f.journalId).first()
+        journalId
+      }
+    }
+  }
+
   def getAuthorsForArticle(ojsArticleId: Int): Copyright = {
     Database.forDataSource(DB.getDataSource("ojs")).withSession {
       implicit session =>

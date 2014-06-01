@@ -1,4 +1,4 @@
-@(transferForm: Form[models.copyright.Copyright], transferFormData: models.copyright.Copyright, consentText: List[String])(implicit request: Request[AnyContent])
+@(transferForm: Form[models.copyright.Copyright], transferFormData: models.copyright.Copyright, journalId: Long)(implicit request: Request[AnyContent])
 
 @import helper._
 
@@ -47,12 +47,12 @@
     </div>
 
     <div>
-        <img src="@routes.Assets.at("images/Computer_Science_logo.png")">
+        <img src="@utils.JournalUtilProvider.getLogoAssetsPath(journalId)">
     </div>
 
     <h3>Consent to Publish</h3>
     <ol>
-        @consentText.map { line => <li>@line</li> }
+        @utils.JournalUtilProvider.getConsentToPublishText(journalId).map { line => <li>@line</li> }
     </ol>
 
     @helper.form(action = routes.CopyrightTransfer.submit(), 'class -> "form-horizontal", 'id -> "consentForm-form") {
