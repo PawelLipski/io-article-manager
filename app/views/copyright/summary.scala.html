@@ -15,9 +15,13 @@
     <p>@copyrightTransferRequest.copyrightData.title</p><br>
 
     <h4>Corresponding author</h4>
-    <label>Name:</label>
-    <p>@copyrightTransferRequest.copyrightData.correspondingAuthor.name</p>
-    <label>Surname:</label>
+    <label>First name:</label>
+    <p>@copyrightTransferRequest.copyrightData.correspondingAuthor.firstName</p>
+    <label>Middle name:</label>
+    <p>@copyrightTransferRequest.copyrightData.correspondingAuthor.middleName.getOrElse("-")</p>
+    <label>Last name:</label>
+    <p>@copyrightTransferRequest.copyrightData.correspondingAuthor.firstName</p>
+    <label>Affiliation:</label>
     <p>@copyrightTransferRequest.copyrightData.correspondingAuthor.affiliation</p>
     <label>Email:</label>
     <p>@copyrightTransferRequest.copyrightData.correspondingAuthor.email</p>
@@ -35,7 +39,7 @@
         </thead>
     @copyrightTransferRequest.copyrightData.contribution.map { contribution =>
         <tr>
-            <td>@contribution.authorName</td>
+            <td>@contribution.getFullAuthorName</td>
             <td>@contribution.affiliation</td>
             <td>@contribution.contribution</td>
             <td>@contribution.percent</td>

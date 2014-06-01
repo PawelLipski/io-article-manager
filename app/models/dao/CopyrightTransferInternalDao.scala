@@ -26,7 +26,9 @@ object CopyrightTransferInternalDao {
       implicit session =>
         slick.internal.Tables.Copyrighttransfer.insert(slick.internal.Tables.CopyrighttransferRow(
           0, filledForm.copyrightData.ojsId, filledForm.copyrightData.title,
-          filledForm.copyrightData.correspondingAuthor.name,
+          filledForm.copyrightData.correspondingAuthor.firstName
+            + " " + filledForm.copyrightData.correspondingAuthor.middleName.getOrElse("")
+            + " " + filledForm.copyrightData.correspondingAuthor.lastName,
           filledForm.copyrightData.correspondingAuthor.affiliation,
           filledForm.copyrightData.correspondingAuthor.email,
           new Date(filledForm.dateFilled.toDate().getTime()),

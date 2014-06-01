@@ -30,11 +30,12 @@ class TestCopyrightTransferInternalDao extends Specification{
 
     "insert row into CopyrightTransfer table" in new WithApplication {
 
-      CopyrightTransferInternalDao.saveTransfer(CopyrightTransferRequest( null,
+      CopyrightTransferInternalDao.saveTransfer(CopyrightTransferRequest(
+        null,
         Copyright(1,
           "Text title",
-          CorrespondingAuthor("Adam", "Nowak", "test@gmail.com"),
-          List(Contribution("Adam Nowak", "AGH", "Pelna", 100)),
+          CorrespondingAuthor("Adam", Option("Jan"), "Nowak", "AGH", "test@gmail.com"),
+          List(Contribution("Adam", Option("Jan"), "Nowak", "AGH", "Pelna", 100)),
           "I grant you full rights"),
         DateTime.now(),
         "9.9.9.9",

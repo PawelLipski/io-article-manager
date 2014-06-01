@@ -18,8 +18,22 @@
     <div id="author-template">
         <h4>Author <span class="author-nr">@transferForm.apply("contribution").indexes.length</span>:</h4>
         @inputText(
-            transferForm("authorName"),
-            '_label -> "Author name",
+            transferForm("firstName"),
+            '_label -> "First name",
+            'size -> 30,
+            'class -> "form-control"
+        )
+
+        @inputText(
+            transferForm("middleName"),
+            '_label -> "Middle name",
+            'size -> 30,
+            'class -> "form-control"
+        )
+
+        @inputText(
+            transferForm("lastName"),
+            '_label -> "Last name",
             'size -> 30,
             'class -> "form-control"
         )
@@ -78,8 +92,23 @@
 
             <h4>Corresponding author</h4><br>
             @inputText(
-                transferForm("correspondingAuthor.name"),
-                '_label -> "Name",
+                transferForm("correspondingAuthor.firstName"),
+                '_label -> "First name",
+                'size -> 30,
+                'class -> "form-control",
+                'required -> "required"
+            )
+
+            @inputText(
+                transferForm("correspondingAuthor.middleName"),
+                '_label -> "Middle name",
+                'size -> 30,
+                'class -> "form-control"
+            )
+
+            @inputText(
+                transferForm("correspondingAuthor.lastName"),
+                '_label -> "Last name",
                 'size -> 30,
                 'class -> "form-control",
                 'required -> "required"
@@ -110,8 +139,23 @@
                 <h4>Author <span class="author-nr">@(index+1)</span>:</h4>
 
                 @inputText(
-                    transferForm("contribution[" + index + "].authorName"),
-                    '_label -> "Author name",
+                    transferForm("contribution[" + index + "].firstName"),
+                    '_label -> "First name",
+                    'size -> 30,
+                    'class -> "form-control",
+                    'required -> "required"
+                )
+
+                @inputText(
+                    transferForm("contribution[" + index + "].middleName"),
+                    '_label -> "Middle name",
+                    'size -> 30,
+                    'class -> "form-control"
+                )
+
+                @inputText(
+                    transferForm("contribution[" + index + "].lastName"),
+                    '_label -> "Last name",
                     'size -> 30,
                     'class -> "form-control",
                     'required -> "required"

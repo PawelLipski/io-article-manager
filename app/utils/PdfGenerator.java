@@ -49,7 +49,10 @@ public class PdfGenerator {
         document.add(createParagraph("IP address", request.ipAddress()));
         document.add(createParagraph("\nPaper ID", request.copyrightData().ojsId()));
         document.add(createParagraph("Paper title", request.copyrightData().title()));
-        document.add(createParagraph("\nCorresponding author", "Name: " + request.copyrightData().correspondingAuthor().name() + "\n\t\t\t\tAffiliation: " + request.copyrightData().correspondingAuthor().affiliation() + "\n\t\t\t\tE-mail: " + request.copyrightData().correspondingAuthor().email()));
+        document.add(createParagraph("\nCorresponding author",
+                "Name: " + request.copyrightData().correspondingAuthor().getFullName() +
+                        "\n\t\t\t\tAffiliation: " + request.copyrightData().correspondingAuthor().affiliation() +
+                        "\n\t\t\t\tE-mail: " + request.copyrightData().correspondingAuthor().email()));
         document.add(createParagraph("\nContribution of authors", ""));
         document.add(createContributionTable(request.copyrightData().contribution()));
         document.add(createParagraph("\nFinancial disclosure", request.copyrightData().financialDisclosure()));
@@ -80,7 +83,7 @@ public class PdfGenerator {
         table.addCell("Estimated % of the total contribution");
         for (Iterator<Contribution> contributionIter = contributionList.iterator(); contributionIter.hasNext(); ) {
             Contribution contribution = contributionIter.next();
-            table.addCell(contribution.authorName());
+            table.addCell(contribution.getFullAuthorName());
             table.addCell(contribution.affiliation());
             table.addCell(contribution.contribution());
             table.addCell(Integer.toString(contribution.percent()));
