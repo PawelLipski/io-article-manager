@@ -34,7 +34,7 @@ object CopyrightTransferInternalDao {
           TokenGenerator.generate(),
           false,
           Option[Date](new Date(0)),
-          filledForm.financialDisclosure
+          filledForm.copyrightData.financialDisclosure
         ))
     }
   }

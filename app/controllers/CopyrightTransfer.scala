@@ -75,7 +75,7 @@ object CopyrightTransfer extends Controller {
       form.bindFromRequest.fold(
         errors => BadRequest("Unspecified error occurred, nobody knows what happened yet. Try again."),
         cd => {
-          val copyrightTransferRequest = CopyrightTransferRequest(None, cd, DateTime.now(), request.remoteAddress, CopyrightTransferStatus.UNCONFIRMED, cd.financialDisclosure)
+          val copyrightTransferRequest = CopyrightTransferRequest(None, cd, DateTime.now(), request.remoteAddress, CopyrightTransferStatus.UNCONFIRMED)
           filledConsents += cd.ojsId -> copyrightTransferRequest
           Ok(html.copyright.summary(copyrightTransferRequest, form.fill(cd)))
         }
