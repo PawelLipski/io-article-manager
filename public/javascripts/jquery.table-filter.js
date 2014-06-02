@@ -136,9 +136,9 @@ $(document).ready(function () {
 
     $('#show-only-confirmed').click(function() {
         if($(this).prop('checked')) {
-            $('.glyphicon-remove', this).parents().eq(1).hide();
+            $('.glyphicon-remove', '#data-table').parents().eq(1).hide();
         } else {
-            $('.glyphicon-remove', this).parents().eq(1).show();
+            $('.glyphicon-remove', '#data-table').parents().eq(1).show();
             $('#data-table').trigger('repaginate');
         }
     });
