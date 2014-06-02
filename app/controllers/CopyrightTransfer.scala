@@ -60,8 +60,8 @@ object CopyrightTransfer extends Controller {
       val id = request.body.asFormUrlEncoded.get("article-id").apply(0).toInt
       if (!CopyrightTransferOjsDao.articleExists(id)) {
         BadRequest(views.html.errors.badRequest("The article #" + id + " does not exist!"))
-//      } else if (CopyrightTransferInternalDao.transferExists(id)) {
- //       BadRequest(views.html.errors.badRequest("Copyright has already been transferred for the article #" + id + "!"))
+      } else if (CopyrightTransferInternalDao.transferExists(id)) {
+        BadRequest(views.html.errors.badRequest("Copyright has already been transferred for the article #" + id + "!"))
       } else {
         val copyright = getPaperDataById(id)
         val journalId = CopyrightTransferOjsDao.getJournalIDForArticle(id)
@@ -90,7 +90,7 @@ object CopyrightTransfer extends Controller {
     implicit request =>
       val copyrightTransferRequest = filledConsents.get(id).get
       filledConsents -= id
-//      CopyrightTransferInternalDao.saveTransfer(copyrightTransferRequest)
+      CopyrightTransferInternalDao.saveTransfer(copyrightTransferRequest)
 
       val toEmail = copyrightTransferRequest.copyrightData.correspondingAuthor.email
 
