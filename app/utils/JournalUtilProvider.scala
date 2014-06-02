@@ -2,9 +2,9 @@ package utils
 
 import com.itextpdf.text.Image
 import play.api.Play
-import scala.collection.mutable.ListBuffer
-import java.io.{InputStreamReader, BufferedReader}
-import java.util
+import play.api.Play.current
+import scala.io._
+
 
 /**
  * Created by Zeuko on 31.05.14.
@@ -12,15 +12,17 @@ import java.util
 object JournalUtilProvider {
 
   def getLogoAssetsPath(journalID: Long): String = {
-    return "/assets/resources/" + journalID + "/logo.png"
+    "/assets/resources/" + journalID + "/logo.png"
   }
 
   def getLogoImage(journalID: Long): Image = {
-    return Image.getInstance("./public/resources/" + journalID + "/logo.png")
+    val path = "public/resources/" + journalID + "/logo.png"
+    Image.getInstance(Play.resource(path).get)
   }
 
   def getConsentToPublishText(journalID: Long): List[String] = {
-    return scala.io.Source.fromFile("./public/resources/" + journalID + "/ctp.txt").getLines().toList
+    val path = "public/resources/" + journalID + "/ctp.txt"
+    Source.fromInputStream(Play.resourceAsStream(path).get).getLines().toList
   }
 
 }
