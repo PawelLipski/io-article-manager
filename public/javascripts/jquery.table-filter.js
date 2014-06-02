@@ -134,6 +134,12 @@ $(document).ready(function () {
         $table.trigger('repaginate');
     });
 
+    $('#show-only-confirmed').click(function() {
+        if($(this).prop('checked')) {
+            $('.glyphicon-ok', this).parents().eq(1).hide();
+        }
+    });
+
     $('#select-all-authors').click(function() {
         if (!$(this).prop('checked')) {
             $('#data-table tbody tr input').prop('checked', false);
