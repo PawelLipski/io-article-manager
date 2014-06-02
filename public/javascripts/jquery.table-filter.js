@@ -136,7 +136,10 @@ $(document).ready(function () {
 
     $('#show-only-confirmed').click(function() {
         if($(this).prop('checked')) {
-            $('.glyphicon-ok', this).parents().eq(1).hide();
+            $('.glyphicon-remove', this).parents().eq(1).hide();
+        } else {
+            $('.glyphicon-remove', this).parents().eq(1).show();
+            $('#data-table').trigger('repaginate');
         }
     });
 
