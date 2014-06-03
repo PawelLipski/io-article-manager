@@ -26,7 +26,7 @@ object GeneralOjsDao {
     def getYearsJournalActive(journalId: Int) :List[Int] = {
       Database.forDataSource(DB.getDataSource("ojs")).withSession {
         implicit session => {
-          val years = slick.ojs.Tables.Articles.filter(_.journalId === journalId.asInstanceOf[Long]).map(x => yearFn(x.dateSubmitted))
+          val years = slick.ojs.Tables.Articles.filter(_.journalId === journalId.asInstanceOf[Long]).map(x => yearFn(Seq(x.dateSubmitted)))
           //years.list.distinct
           years.list
         }
@@ -36,7 +36,12 @@ object GeneralOjsDao {
     def getIssuesForJournal(journalId: Int) : List[(Int,String )] = {
       Database.forDataSource(DB.getDataSource("ojs")).withSession {
       implicit session => {
-      val issueList = slick.ojs.Tables.Issues.filter(_.journalId === journalId).map(f.issueId, f.showTitle)
+        for {
+          article <- slick.ojs.Tables.Articles if article.journalId === journalId.asInstanceOf[Long]
+          articleSetting <- slick.ojs.Tables.ArticleSettings if articleSetting.settingName === "title" && article.articleId === articleSetting.articleId
+        } yield()
+
+        val issueList = slick.ojs.Tables.Issues.filter(_.journalId === journalId.asInstanceOf[Long]).map(f=>(f.issueId, f.showTitle)).list
       issueList
       }
     }
