@@ -35,11 +35,17 @@ object GeneralOjsDao {
       }
     }
   }
-  def getYearsOjsActive: Tuple2[Option[Int], Option[Int]] = {
+  def getYearsOjsActiveFrom: Option[Int] = {
     Database.forDataSource(DB.getDataSource("ojs")).withSession {
       implicit session => {
-        val years: lifted.Query[lifted.Column[Int], Int] = slick.ojs.Tables.Articles.map(x => yearFn(Seq(x.dateSubmitted)))
-        Tuple2(years.min.run, years.max.run)
+        slick.ojs.Tables.Articles.map(x => yearFn(Seq(x.dateSubmitted))).min.run
+      }
+    }
+  }
+  def getYearsOjsActiveTo: Option[Int] = {
+    Database.forDataSource(DB.getDataSource("ojs")).withSession {
+      implicit session => {
+        slick.ojs.Tables.Articles.map(x => yearFn(Seq(x.dateSubmitted))).max.run
       }
     }
   }

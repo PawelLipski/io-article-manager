@@ -21,8 +21,8 @@
         '_label -> "Year",
         'class -> "form-control",
         'type -> "number",
-        'min -> models.dao.GeneralOjsDao.getYearsOjsActive._1.getOrElse(1990).toString,
-        'max -> models.dao.GeneralOjsDao.getYearsOjsActive._1.getOrElse(2100).toString
+        'min -> models.dao.GeneralOjsDao.getYearsOjsActiveFrom.getOrElse(1990),
+        'max -> models.dao.GeneralOjsDao.getYearsOjsActiveTo.getOrElse(2100)
     )
     @select(
         authorListForm("article status"),
