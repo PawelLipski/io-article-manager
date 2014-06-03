@@ -35,7 +35,8 @@ object CopyrightTransferInternalDao {
           filledForm.ipAddress,
           TokenGenerator.generate(),
           false,
-          Option[Date](new Date(0))
+          Option[Date](new Date(0)),
+          filledForm.copyrightData.financialDisclosure
         ))
     }
   }
@@ -63,7 +64,7 @@ object CopyrightTransferInternalDao {
     Database.forDataSource(DB.getDataSource("internal")).withSession {
       implicit session =>
         slick.internal.Tables.Copyrighttransfer
-          .filter(_.ojsarticleid === ojsArticleId).length.run > 0
+          .filter(_.ojsarticleid === ojsArticleId).exists.run
     }
   }
 

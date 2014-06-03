@@ -81,7 +81,7 @@ object CopyrightTransfer extends Controller {
         cd => {
           val copyrightTransferRequest = CopyrightTransferRequest(None, cd, DateTime.now(), request.remoteAddress, CopyrightTransferStatus.UNCONFIRMED)
           filledConsents += cd.ojsId -> copyrightTransferRequest
-          Ok(html.copyright.summary(copyrightTransferRequest))
+          Ok(html.copyright.summary(copyrightTransferRequest, form.fill(cd)))
         }
       )
   }
