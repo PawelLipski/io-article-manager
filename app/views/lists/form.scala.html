@@ -1,4 +1,4 @@
-@(authorListForm: Form[models.reports.AuthorList], target: Call)(implicit request: Request[AnyContent])
+@(authorListForm: Form[models.reports.AuthorListFilter], target: Call)(implicit request: Request[AnyContent])
 
 @import models.reports.ArticleStatus
 
@@ -21,8 +21,8 @@
         '_label -> "Year",
         'class -> "form-control",
         'type -> "number",
-        'min -> "2013",
-        'max -> "2048"
+        'min -> models.dao.GeneralOjsDao.getYearsOjsActive._1.getOrElse(1990).toString,
+        'max -> models.dao.GeneralOjsDao.getYearsOjsActive._1.getOrElse(2100).toString
     )
     @select(
         authorListForm("article status"),

@@ -11,6 +11,7 @@ import play.api.Play.current
 import java.sql.Date
 import slick.ojs.Tables
 import slick.ojs
+import scala.slick.lifted
 
 object GeneralOjsDao {
 
@@ -31,6 +32,14 @@ object GeneralOjsDao {
           issue <- slick.ojs.Tables.Issues if issue.journalId === journalId.asInstanceOf[Long]
           issueSetting <- slick.ojs.Tables.IssueSettings if issueSetting.settingName === "title" && issue.issueId === issueSetting.issueId
         } yield issueSetting).list.filter(_.settingValue.isDefined).map(issueTitleSetting => (issueTitleSetting.issueId, issueTitleSetting.settingValue.get))
+      }
+    }
+  }
+  def getYearsOjsActive: Tuple2[Option[Int], Option[Int]] = {
+    Database.forDataSource(DB.getDataSource("ojs")).withSession {
+      implicit session => {
+        val years: lifted.Query[lifted.Column[Int], Int] = slick.ojs.Tables.Articles.map(x => yearFn(Seq(x.dateSubmitted)))
+        Tuple2(years.min.run, years.max.run)
       }
     }
   }
