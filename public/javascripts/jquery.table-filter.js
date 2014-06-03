@@ -104,6 +104,10 @@ $(document).ready(function () {
 
         var $table = $(this);
 
+        $table.bind('show-all', function () {
+            $table.find('tbody tr').show();
+        });
+
         $table.bind('repaginate', function () {
             // show all;
             $table.find('tbody tr').show();
@@ -171,5 +175,13 @@ $(document).ready(function () {
                 
             }
         });
+    });
+
+    $('#show-all').click(function() {
+        if (!$(this).prop('checked')) {
+            $("#data-table").trigger('repaginate');
+        } else {
+            $("#data-table").trigger('show-all');
+        }
     });
 });
