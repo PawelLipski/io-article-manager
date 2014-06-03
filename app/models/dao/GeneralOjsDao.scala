@@ -1,9 +1,5 @@
 package models.dao
 
-/**
- * Created by Kuba on 2014-06-02.
- */
-
 import play.api._
 import play.api.mvc._
 import java.sql.ResultSet
@@ -23,9 +19,7 @@ object GeneralOjsDao {
   def getYearsJournalActive(journalId: Int): List[Int] = {
     Database.forDataSource(DB.getDataSource("ojs")).withSession {
       implicit session => {
-        val years = slick.ojs.Tables.Articles.filter(_.journalId === journalId.asInstanceOf[Long]).map(x => yearFn(Seq(x.dateSubmitted)))
-        //years.list.distinct
-        years.list
+        slick.ojs.Tables.Articles.filter(_.journalId === journalId.asInstanceOf[Long]).map(x => yearFn(Seq(x.dateSubmitted))).filter(_.isNotNull).groupBy(x => x).map(_._1).list
       }
     }
   }
@@ -36,7 +30,7 @@ object GeneralOjsDao {
         (for {
           issue <- slick.ojs.Tables.Issues if issue.journalId === journalId.asInstanceOf[Long]
           issueSetting <- slick.ojs.Tables.IssueSettings if issueSetting.settingName === "title" && issue.issueId === issueSetting.issueId
-        } yield issueSetting).list.filter(_.settingValue.isDefined).map(x => (x.issueId, x.settingValue.get))
+        } yield issueSetting).list.filter(_.settingValue.isDefined).map(issueTitleSetting => (issueTitleSetting.issueId, issueTitleSetting.settingValue.get))
       }
     }
   }
