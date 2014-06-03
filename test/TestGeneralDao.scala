@@ -30,11 +30,11 @@ class TestGeneralDao extends Specification{
 
     "Get years from database" in new WithApplication {
 
-      GeneralOjsDao.getYearsJournalActive(4)
+      System.out.println(GeneralOjsDao.getYearsJournalActive(4))
     }
 
     "Get issues" in new WithApplication {
-      GeneralOjsDao.getIssuesForJournal(4)
+      System.out.println(GeneralOjsDao.getIssuesForJournal(4))
     }
 
     "select listTransfer in both database" in new WithApplication {
