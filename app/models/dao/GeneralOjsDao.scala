@@ -21,29 +21,26 @@ import slick.ojs
 
 object GeneralOjsDao {
 
-    val yearFn = SimpleFunction[Int]("year")
+  val yearFn = SimpleFunction[Int]("year")
 
-    def getYearsJournalActive(journalId: Int) :List[Int] = {
-      Database.forDataSource(DB.getDataSource("ojs")).withSession {
-        implicit session => {
-          val years = slick.ojs.Tables.Articles.filter(_.journalId === journalId.asInstanceOf[Long]).map(x => yearFn(Seq(x.dateSubmitted)))
-          //years.list.distinct
-          years.list
-        }
-      }
-    }
-
-    def getIssuesForJournal(journalId: Int) : List[(Int,String )] = {
-      Database.forDataSource(DB.getDataSource("ojs")).withSession {
+  def getYearsJournalActive(journalId: Int): List[Int] = {
+    Database.forDataSource(DB.getDataSource("ojs")).withSession {
       implicit session => {
-        for {
-          article <- slick.ojs.Tables.Articles if article.journalId === journalId.asInstanceOf[Long]
-          articleSetting <- slick.ojs.Tables.ArticleSettings if articleSetting.settingName === "title" && article.articleId === articleSetting.articleId
-        } yield()
-
-        val issueList = slick.ojs.Tables.Issues.filter(_.journalId === journalId.asInstanceOf[Long]).map(f=>(f.issueId, f.showTitle)).list
-      issueList
+        val years = slick.ojs.Tables.Articles.filter(_.journalId === journalId.asInstanceOf[Long]).map(x => yearFn(Seq(x.dateSubmitted)))
+        //years.list.distinct
+        years.list
       }
     }
+  }
+
+  def getIssuesForJournal(journalId: Int): List[(Long, String)] = {
+    Database.forDataSource(DB.getDataSource("ojs")).withSession {
+      implicit session => {
+        (for {
+          issue <- slick.ojs.Tables.Issues if issue.journalId === journalId.asInstanceOf[Long]
+          issueSetting <- slick.ojs.Tables.IssueSettings if issueSetting.settingName === "title" && issue.issueId === issueSetting.issueId
+        } yield issueSetting).list.filter(_.settingValue.isDefined).map(x => (x.issueId, x.settingValue.get))
+      }
     }
+  }
 }
