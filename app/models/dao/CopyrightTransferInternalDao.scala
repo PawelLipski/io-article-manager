@@ -47,7 +47,7 @@ object CopyrightTransferInternalDao {
         val map = slick.internal.Tables.Copyrighttransfer
           .filter(_.linktokenshasum === tokenSHA)
           .map(row => (row.datelinkconfirmed, row.linkconfirmed))
-        return map.update((Option[Date](SqlUtils.getCurrnetSqlDate()), true))
+        return map.update((Option[Date](SqlUtils.getCurrentSqlDate()), true))
     }
   }
 
