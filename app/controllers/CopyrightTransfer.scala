@@ -52,7 +52,7 @@ object CopyrightTransfer extends Controller {
   def proceedToConsent(id: Int)(implicit request: Request[AnyContent]) = {
     if (!CopyrightTransferOjsDao.articleExists(id)) {
       BadRequest(views.html.errors.badRequest("The article #" + id + " does not exist!"))
-    } else if (CopyrightTransferInternalDao.transferExists(id)) {
+    } else if (CopyrightTransferInternalDao.confirmedTransferExists(id)) {
       BadRequest(views.html.errors.badRequest("Copyright has already been transferred for the article #" + id + "!"))
     } else {
       val copyright = getPaperDataById(id)
