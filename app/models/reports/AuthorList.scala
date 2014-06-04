@@ -10,3 +10,6 @@ import models.reports.ArticleStatus.ArticleStatus
 case class AuthorList (journal: Journal, year : Int, articleStatus: ArticleStatus){
 
 }
+case class AuthorListFilter(journal: Option[Journal], year: Option[Int], articleStatus: Option[ArticleStatus]){
+
+}
