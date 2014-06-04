@@ -48,17 +48,6 @@ object CopyrightTransferInternalDao {
     }
   }
 
-  def saveTokenShaAndReturnTheToken(id: Int): String = {
-    Database.forDataSource(DB.getDataSource("internal")).withSession {
-      implicit session =>
-        val column = slick.internal.Tables.Copyrighttransfer.filter(_.id === id).map(_.linktokenshasum)
-        val token = TokenGenerator.generate
-        val tokenSha = TokenGenerator.toSha(token)
-        column.update(tokenSha)
-        token
-    }
-  }
-
   def markTransferAsConfirmed(tokenSha: String): Int = {
     Database.forDataSource(DB.getDataSource("internal")).withSession {
       implicit session =>
