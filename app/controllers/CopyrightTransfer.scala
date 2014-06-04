@@ -97,16 +97,18 @@ object CopyrightTransfer extends Controller {
       )
   }
 
-  def confirm(id: Int) = Action {
+  def confirm(ojsId: Int) = Action {
     implicit request =>
-      val copyrightTransferRequest = filledConsents.get(id).get
-      filledConsents -= id
-      CopyrightTransferInternalDao.saveTransfer(copyrightTransferRequest)
+      val copyrightTransferRequest = filledConsents.get(ojsId).get
+      filledConsents -= ojsId
+
+      val token = CopyrightTransferInternalDao.saveTransferAndReturnTheToken(copyrightTransferRequest)
+      val verificationLink = "http://" + request.host + "/confirm/" + token
 
       val toEmail = copyrightTransferRequest.copyrightData.correspondingAuthor.email
 
       val pdfFile = java.io.File.createTempFile("CopyrightTransferForm", ".pdf")
-      PdfGenerator.generate(copyrightTransferRequest, pdfFile, CopyrightTransferOjsDao.getJournalIDForArticle(id))
+      PdfGenerator.generate(copyrightTransferRequest, pdfFile, CopyrightTransferOjsDao.getJournalIDForArticle(ojsId))
       send a new Mail(
         from = ("test@slonka.udl.pl", "Journal Manager"),
         to = List(toEmail),
@@ -114,7 +116,7 @@ object CopyrightTransfer extends Controller {
         message = "This is the Journal Manager system.\n" +
           "Your e-mail address was used to fill a copyright transfer form. Details of the transfer can be found in the attached PDF file.\n" +
           "Please confirm the copyright transfer by clicking the link below:\n" +
-          "http://" + request.host + "/confirm/" + TokenGenerator.generateAndSave(toEmail) + "\n" +
+          verificationLink + "\n" +
           "If you didn't fill the copyright transfer form, please ignore this message.\n",
         attachment = Option(pdfFile)
       )
@@ -124,7 +126,7 @@ object CopyrightTransfer extends Controller {
 
   def verify(token: String) = Action {
     implicit request => {
-      val tokenSHA = TokenGenerator.toSHA(token)
+      val tokenSHA = TokenGenerator.toSha(token)
       val verificationResult = CopyrightTransferInternalDao.markTransferAsConfirmed(tokenSHA) != 0
       Ok(html.copyright.verify(verificationResult))
     }

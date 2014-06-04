@@ -21,9 +21,14 @@ import slick.ojs
 
 object CopyrightTransferInternalDao {
 
-  def saveTransfer(filledForm: CopyrightTransferRequest) {
+  def saveTransferAndReturnTheToken(filledForm: CopyrightTransferRequest) = {
     Database.forDataSource(DB.getDataSource("internal")).withSession {
+
       implicit session =>
+
+        val token = TokenGenerator.generate
+        val tokenSha = TokenGenerator.toSha(token)
+
         slick.internal.Tables.Copyrighttransfer.insert(slick.internal.Tables.CopyrighttransferRow(
           0, filledForm.copyrightData.ojsId, filledForm.copyrightData.title,
           filledForm.copyrightData.correspondingAuthor.firstName
@@ -31,23 +36,36 @@ object CopyrightTransferInternalDao {
             + " " + filledForm.copyrightData.correspondingAuthor.lastName,
           filledForm.copyrightData.correspondingAuthor.affiliation,
           filledForm.copyrightData.correspondingAuthor.email,
-          new Date(filledForm.dateFilled.toDate().getTime()),
+          new Date(filledForm.dateFilled.toDate.getTime),
           filledForm.ipAddress,
-          TokenGenerator.generate(),
+          tokenSha,
           false,
           Option[Date](new Date(0)),
           filledForm.copyrightData.financialDisclosure
         ))
+
+        token
     }
   }
 
-  def markTransferAsConfirmed(tokenSHA: String) : Int = {
+  def saveTokenShaAndReturnTheToken(id: Int): String = {
     Database.forDataSource(DB.getDataSource("internal")).withSession {
       implicit session =>
-        val map = slick.internal.Tables.Copyrighttransfer
-          .filter(_.linktokenshasum === tokenSHA)
+        val column = slick.internal.Tables.Copyrighttransfer.filter(_.id === id).map(_.linktokenshasum)
+        val token = TokenGenerator.generate
+        val tokenSha = TokenGenerator.toSha(token)
+        column.update(tokenSha)
+        token
+    }
+  }
+
+  def markTransferAsConfirmed(tokenSha: String): Int = {
+    Database.forDataSource(DB.getDataSource("internal")).withSession {
+      implicit session =>
+        val row = slick.internal.Tables.Copyrighttransfer
+          .filter(_.linktokenshasum === tokenSha)
           .map(row => (row.datelinkconfirmed, row.linkconfirmed))
-        return map.update((Option[Date](SqlUtils.getCurrentSqlDate()), true))
+        row.update((Option[Date](SqlUtils.getCurrentSqlDate()), true))
     }
   }
 
@@ -65,7 +83,7 @@ object CopyrightTransferInternalDao {
       implicit session =>
         slick.internal.Tables.Copyrighttransfer
           .filter(ct => 
-            ct.ojsarticleid === ojsArticleId && ct.linkconfirmed)
+            ct.ojsarticleid === ojsArticleId && ct.linkconfirmed === true)
           .exists.run
     }
   }

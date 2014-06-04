@@ -4,19 +4,19 @@ import java.sql.DriverManager
 
 object TokenGenerator {
 
-  def generate(): String = {
+  def generate: String = {
     val uuid = java.util.UUID.randomUUID.toString
     uuid.replace("-", "")
   }
 
-  def toSHA(token: String): String = {
+  def toSha(token: String): String = {
     val md = java.security.MessageDigest.getInstance("SHA-1")
     md.digest(token.getBytes("UTF-8")).map("%02x".format(_)).mkString
   }
 
   def generateAndSave(mail: String): String = {
-    val token = generate()
-    saveToDB(mail, toSHA(token))
+    val token = generate
+    saveToDB(mail, toSha(token))
     token
   }
 
