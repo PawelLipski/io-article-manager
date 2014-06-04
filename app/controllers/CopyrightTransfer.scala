@@ -6,17 +6,11 @@ import play.api.data.Forms._
 import models.copyright._
 import org.joda.time.DateTime
 import views.html
-import utils.{JournalUtilProvider, TokenGenerator, PdfGenerator}
-import utils.MailSender.{Mail, send}
+import utils.{TokenGenerator, PdfGenerator}
+import utils.MailSender.send
 
 import utils.MailSender.send
-import utils.MailSender.Mail
-import models.copyright.Copyright
-import models.copyright.Contribution
-import models.copyright.CopyrightTransferRequest
-import models.copyright.CorrespondingAuthor
 import models.dao.{CopyrightTransferOjsDao, CopyrightTransferInternalDao}
-import play.api.mvc.Results._
 import models.copyright.Copyright
 import models.copyright.Contribution
 import models.copyright.CopyrightTransferRequest
@@ -67,14 +61,24 @@ object CopyrightTransfer extends Controller {
     }
   }
 
-  def consentByGet(id: Int) = Action {
+  def consentWithIdInUrl(id: Int) = Action {
     implicit request => proceedToConsent(id)
   }
 
-  def consentByPost = Action {
-    implicit request =>
-      val id = request.body.asFormUrlEncoded.get("article-id").apply(0).toInt
-      proceedToConsent(id)
+  def consentWithIdInQueryString = Action {
+    implicit request => {
+      var ok = true
+      var id = 0
+      try {
+        id = request.getQueryString("article-id").get.toInt
+      } catch {
+        case e: Exception => ok = false
+      }
+      if (ok)
+        proceedToConsent(id)
+      else
+        BadRequest(html.errors.badRequest("The provided URL is malformed. Please try again."))
+    }
   }
 
   def getPaperDataById(id: Int): Copyright = {
@@ -84,7 +88,7 @@ object CopyrightTransfer extends Controller {
   def submit = Action {
     implicit request =>
       form.bindFromRequest.fold(
-        errors => BadRequest("Unspecified error occurred, nobody knows what happened yet. Try again."),
+        errors => BadRequest(html.errors.badRequest("Unspecified error occurred, nobody knows what happened yet. Try again.")),
         cd => {
           val copyrightTransferRequest = CopyrightTransferRequest(None, cd, DateTime.now(), request.remoteAddress, CopyrightTransferStatus.UNCONFIRMED)
           filledConsents += cd.ojsId -> copyrightTransferRequest

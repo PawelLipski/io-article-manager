@@ -15,9 +15,9 @@ POST        /login                                  controllers.Authentication.d
 GET         /logout                                 controllers.Authentication.logout
 
 # consent to publish
-GET         /consent_to_publish/index               controllers.CopyrightTransfer.index
-POST        /consent_to_publish                     controllers.CopyrightTransfer.consentByPost
-GET         /consent_to_publish/:id                 controllers.CopyrightTransfer.consentByGet(id : Int)
+GET         /consent_to_publish/choose              controllers.CopyrightTransfer.index
+GET         /consent_to_publish                     controllers.CopyrightTransfer.consentWithIdInQueryString
+GET         /consent_to_publish/:id                 controllers.CopyrightTransfer.consentWithIdInUrl(id : Int)
 POST        /consent_to_publish/submit              controllers.CopyrightTransfer.submit
 POST        /consent_to_publish/confirmation        controllers.CopyrightTransfer.confirm(id : Int)
 GET         /confirm/:token                         controllers.CopyrightTransfer.verify(token : String)
