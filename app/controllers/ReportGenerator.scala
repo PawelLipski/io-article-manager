@@ -10,6 +10,7 @@ import models.reports.Report
 import views.html.helper.options
 import views.html
 import models.{RankingDataExtractorOjsDao, Author}
+import utils.ErrorWrapper
 
 object ReportGenerator extends Controller with Secured {
   val form: Form[Report] = Form(
@@ -29,7 +30,9 @@ object ReportGenerator extends Controller with Secured {
   def submit = withAuth {
     user => implicit request =>
       form.bindFromRequest.fold(
-        errors => BadRequest("Unspecified error occurred, nobody knows what happened yet. Try again.\n"+errors.errors),
+
+        ErrorWrapper.getFormErrorWrapper[Report],
+
         ranking => {
           val ojsJournalId = ranking.journal.id
           val year = ranking.year

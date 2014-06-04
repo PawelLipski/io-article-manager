@@ -3,9 +3,10 @@ package controllers
 import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
-import models.reports.{ArticleStatus, AuthorList, Journal}
+import models.reports.{Report, ArticleStatus, AuthorList, Journal}
 import views.html
 import models.RankingDataExtractorOjsDao
+import utils.ErrorWrapper
 
 object Lists extends Controller with Secured {
   val form: Form[AuthorList] = Form(
@@ -25,7 +26,9 @@ object Lists extends Controller with Secured {
   def indexPost = withAuth {
     user => implicit request =>
       form.bindFromRequest.fold(
-        errors => BadRequest("Unspecified error occurred, nobody knows what happened yet. Try again.\n"+errors.errors),
+
+        ErrorWrapper.getFormErrorWrapper[AuthorList],
+
         authorList => {
           val ojsJournalId = authorList.journal.id
           val year = authorList.year
@@ -44,7 +47,9 @@ object Lists extends Controller with Secured {
   def reviewersPost = withAuth {
     user => implicit request =>
       form.bindFromRequest.fold(
-        errors => BadRequest("Unspecified error occurred, nobody knows what happened yet. Try again.\n"+errors.errors),
+
+        ErrorWrapper.getFormErrorWrapper[AuthorList],
+
         authorList => {
           val ojsJournalId = authorList.journal.id
           val year = authorList.year
