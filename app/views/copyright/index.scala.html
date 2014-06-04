@@ -8,7 +8,7 @@
 
 @main("Consent to publish") {
 
-    @form(action = routes.CopyrightTransfer.consent, 'id -> "submit-article-id") {
+    @form(action = routes.CopyrightTransfer.consentByPost, 'id -> "submit-article-id") {
         Enter your article ID (<i>for the beta release, please choose any of 1 to 7</i>):
         <input id="input-article-id" type="text" name="article-id" required><br><br>
         <button type="submit" class="btn btn-primary">Submit</button>

@@ -55,19 +55,26 @@ object CopyrightTransfer extends Controller {
       Ok(html.copyright.index())
   }
 
-  def consent = Action {
-    implicit request => {
-      val id = request.body.asFormUrlEncoded.get("article-id").apply(0).toInt
-      if (!CopyrightTransferOjsDao.articleExists(id)) {
-        BadRequest(views.html.errors.badRequest("The article #" + id + " does not exist!"))
-      } else if (CopyrightTransferInternalDao.transferExists(id)) {
-        BadRequest(views.html.errors.badRequest("Copyright has already been transferred for the article #" + id + "!"))
-      } else {
-        val copyright = getPaperDataById(id)
-        val journalId = CopyrightTransferOjsDao.getJournalIDForArticle(id)
-        Ok(html.copyright.consentForm(form.fill(copyright), journalId))
-      }
+  def proceedToConsent(id: Int)(implicit request: Request[AnyContent]) = {
+    if (!CopyrightTransferOjsDao.articleExists(id)) {
+      BadRequest(views.html.errors.badRequest("The article #" + id + " does not exist!"))
+    } else if (CopyrightTransferInternalDao.transferExists(id)) {
+      BadRequest(views.html.errors.badRequest("Copyright has already been transferred for the article #" + id + "!"))
+    } else {
+      val copyright = getPaperDataById(id)
+      val journalId = CopyrightTransferOjsDao.getJournalIDForArticle(id)
+      Ok(html.copyright.consentForm(form.fill(copyright), journalId))
     }
+  }
+
+  def consentByGet(id: Int) = Action {
+    implicit request => proceedToConsent(id)
+  }
+
+  def consentByPost = Action {
+    implicit request =>
+      val id = request.body.asFormUrlEncoded.get("article-id").apply(0).toInt
+      proceedToConsent(id)
   }
 
   def getPaperDataById(id: Int): Copyright = {
@@ -96,19 +103,19 @@ object CopyrightTransfer extends Controller {
 
       val pdfFile = java.io.File.createTempFile("CopyrightTransferForm", ".pdf")
       PdfGenerator.generate(copyrightTransferRequest, pdfFile, CopyrightTransferOjsDao.getJournalIDForArticle(id))
-        send a new Mail(
-          from = ("test@slonka.udl.pl", "Journal Manager"),
-          to = List(toEmail),
-          subject = "[Journal Manager] Please confirm the copyright transfer",
-          message = "This is the Journal Manager system.\n" +
-            "Your e-mail address was used to fill a copyright transfer form. Details of the transfer can be found in the attached PDF file.\n" +
-            "Please confirm the copyright transfer by clicking the link below:\n" +
-            "http://" + request.host + "/confirm/" + TokenGenerator.generateAndSave(toEmail) + "\n" +
-            "If you didn't fill the copyright transfer form, please ignore this message.\n",
-          attachment = Option(pdfFile)
-        )
-        pdfFile.delete()
-        Ok(html.copyright.confirmation(toEmail))
+      send a new Mail(
+        from = ("test@slonka.udl.pl", "Journal Manager"),
+        to = List(toEmail),
+        subject = "[Journal Manager] Please confirm the copyright transfer",
+        message = "This is the Journal Manager system.\n" +
+          "Your e-mail address was used to fill a copyright transfer form. Details of the transfer can be found in the attached PDF file.\n" +
+          "Please confirm the copyright transfer by clicking the link below:\n" +
+          "http://" + request.host + "/confirm/" + TokenGenerator.generateAndSave(toEmail) + "\n" +
+          "If you didn't fill the copyright transfer form, please ignore this message.\n",
+        attachment = Option(pdfFile)
+      )
+      pdfFile.delete()
+      Ok(html.copyright.confirmation(toEmail))
   }
 
   def verify(token: String) = Action {
