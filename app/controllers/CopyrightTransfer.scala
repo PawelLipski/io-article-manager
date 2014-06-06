@@ -6,8 +6,7 @@ import play.api.data.Forms._
 import models.copyright._
 import org.joda.time.DateTime
 import views.html
-import utils.{TokenGenerator, PdfGenerator}
-import utils.MailSender.send
+import utils.{TokenGenerator, PdfGenerator, ErrorWrapper}
 
 import utils.MailSender.send
 import models.dao.{CopyrightTransferOjsDao, CopyrightTransferInternalDao}
@@ -88,7 +87,7 @@ object CopyrightTransfer extends Controller {
   def submit = Action {
     implicit request =>
       form.bindFromRequest.fold(
-        errors => BadRequest(html.errors.badRequest("Unspecified error occurred, nobody knows what happened yet. Try again.")),
+        ErrorWrapper.getFormErrorWrapper[Copyright],
         cd => {
           val copyrightTransferRequest = CopyrightTransferRequest(None, cd, DateTime.now(), request.remoteAddress, CopyrightTransferStatus.UNCONFIRMED)
           filledConsents += cd.ojsId -> copyrightTransferRequest
