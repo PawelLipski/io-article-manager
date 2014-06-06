@@ -1,27 +1,20 @@
-/**
- * Created by Kuba on 2014-05-08.
- */
+
 package models.dao
 
-import play.api._
-import play.api.mvc._
-import java.sql.{DriverManager, ResultSet}
-import models.copyright.{CopyrightTransferRequest, Copyright}
+import java.sql.DriverManager
+import models.copyright.CopyrightTransferRequest
 import scala.slick.driver.MySQLDriver.simple._
-import scala.slick.driver.MySQLDriver
 import play.api.db.DB
 import utils.{SqlUtils, TokenGenerator}
 import play.api.Play.current
-import com.google.common.base.Optional
 import java.sql.Date
-import scala.slick.lifted
-import slick.ojs.Tables
+import slick.internal.Tables._
 import slick.ojs
 
 
 object CopyrightTransferInternalDao {
 
-  def saveTransferAndReturnTheToken(filledForm: CopyrightTransferRequest) = {
+  def saveTransferAndReturnTheToken(ctr: CopyrightTransferRequest) = {
     Database.forDataSource(DB.getDataSource("internal")).withSession {
 
       implicit session =>
@@ -29,19 +22,19 @@ object CopyrightTransferInternalDao {
         val token = TokenGenerator.generate
         val tokenSha = TokenGenerator.toSha(token)
 
-        slick.internal.Tables.Copyrighttransfer.insert(slick.internal.Tables.CopyrighttransferRow(
-          0, filledForm.copyrightData.ojsId, filledForm.copyrightData.title,
-          filledForm.copyrightData.correspondingAuthor.firstName
-            + " " + filledForm.copyrightData.correspondingAuthor.middleName.getOrElse("")
-            + " " + filledForm.copyrightData.correspondingAuthor.lastName,
-          filledForm.copyrightData.correspondingAuthor.affiliation,
-          filledForm.copyrightData.correspondingAuthor.email,
-          new Date(filledForm.dateFilled.toDate.getTime),
-          filledForm.ipAddress,
+        Copyrighttransfer.insert(CopyrighttransferRow(
+          0, ctr.copyrightData.ojsId, ctr.copyrightData.title,
+          ctr.copyrightData.correspondingAuthor.firstName
+            + " " + ctr.copyrightData.correspondingAuthor.middleName.getOrElse("")
+            + " " + ctr.copyrightData.correspondingAuthor.lastName,
+          ctr.copyrightData.correspondingAuthor.affiliation,
+          ctr.copyrightData.correspondingAuthor.email,
+          new Date(ctr.dateFilled.toDate.getTime),
+          ctr.ipAddress,
           tokenSha,
           false,
           Option[Date](new Date(0)),
-          filledForm.copyrightData.financialDisclosure
+          ctr.copyrightData.financialDisclosure
         ))
 
         token
@@ -58,11 +51,11 @@ object CopyrightTransferInternalDao {
     }
   }
 
-  def removeTransfer(id: Int) = {
+  def removeTransfer(transferId: Int) = {
     Database.forDataSource(DB.getDataSource("internal")).withSession {
       implicit session =>
-        slick.internal.Tables.Copyrighttransfer
-          .filter(_.id === id)
+        Copyrighttransfer
+          .filter(_.id === transferId)
           .mutate(_.delete())
     }
   }
@@ -70,7 +63,7 @@ object CopyrightTransferInternalDao {
   def confirmedTransferExists(ojsArticleId: Int): Boolean = {
     Database.forDataSource(DB.getDataSource("internal")).withSession {
       implicit session =>
-        slick.internal.Tables.Copyrighttransfer
+        Copyrighttransfer
           .filter(ct => 
             ct.ojsarticleid === ojsArticleId && ct.linkconfirmed === true)
           .exists.run
@@ -79,19 +72,22 @@ object CopyrightTransferInternalDao {
 
   val yearFn = SimpleFunction[Int]("year")
 
-  def listTransfer(ojsJournalId:Long, year:Int, volumeId: Int):Seq[slick.internal.Tables.CopyrighttransferRow] = {
+  def listTransfers(ojsJournalId: Long, year: Int, volumeId: Int): Seq[CopyrighttransferRow] = {
     var articleIds:Seq[Long] = Seq(0, 1)
     Database.forDataSource(DB.getDataSource("ojs")).withSession {
       implicit session =>
         articleIds = (for {
-          article <- ojs.Tables.Articles if article.journalId === ojsJournalId && yearFn(Seq(article.lastModified)) === year
+          article <- ojs.Tables.Articles if
+            article.journalId === ojsJournalId &&
+            yearFn(Seq(article.lastModified)) === year
         } yield article.articleId).run
     }
 
     Database.forDataSource(DB.getDataSource("internal")).withSession {
       implicit session =>
         return (for {
-          transfer <- slick.internal.Tables.Copyrighttransfer if transfer.ojsarticleid inSetBind articleIds.map(_.toInt)
+          transfer <- Copyrighttransfer if 
+            transfer.ojsarticleid inSetBind articleIds.map(_.toInt)
         } yield transfer).list
     }
 

@@ -50,7 +50,7 @@ class TestCopyrightTransferInternalDao extends Specification{
       CopyrightTransferInternalDao.removeTransfer(21)
     }
     "select listTransfer in both database" in new WithApplication {
-      org.junit.Assert.assertEquals(2, CopyrightTransferInternalDao.listTransfer(3, 2014, 0).length)
+      org.junit.Assert.assertEquals(2, CopyrightTransferInternalDao.listTransfers(3, 2014, 0).length)
 
     }
   }

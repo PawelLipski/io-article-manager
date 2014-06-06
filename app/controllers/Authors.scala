@@ -11,7 +11,7 @@ import models.dao.CopyrightTransferInternalDao
 object Authors extends Controller with Secured {
 
   def list(id: Int, year: Int, volume_id: Int) = withAuth {
-    var authorsSlick = CopyrightTransferInternalDao.listTransfer(id, year, volume_id)
+    var authorsSlick = CopyrightTransferInternalDao.listTransfers(id, year, volume_id)
     var journals = RankingDataExtractorOjsDao.getListOfJournals
 
     user => implicit request =>
