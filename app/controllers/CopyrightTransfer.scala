@@ -60,28 +60,28 @@ object CopyrightTransfer extends Controller {
     }
   }
 
-  def consentWithIdInUrl(id: Int) = Action {
-    implicit request => proceedToConsent(id)
+  def consentWithIdInUrl(ojsArticleId: Int) = Action {
+    implicit request => proceedToConsent(ojsArticleId)
   }
 
   def consentWithIdInQueryString = Action {
     implicit request => {
       var ok = true
-      var id = 0
+      var ojsArticleId = 0
       try {
-        id = request.getQueryString("article-id").get.toInt
+        ojsArticleId = request.getQueryString("article-id").get.toInt
       } catch {
         case e: Exception => ok = false
       }
       if (ok)
-        proceedToConsent(id)
+        proceedToConsent(ojsArticleId)
       else
         BadRequest(html.errors.badRequest("The provided URL is malformed. Please try again."))
     }
   }
 
-  def getPaperDataById(id: Int): Copyright = {
-    CopyrightTransferOjsDao.getAuthorsForArticle(id)
+  def getPaperDataById(ojsArticleId: Int): Copyright = {
+    CopyrightTransferOjsDao.getAuthorsForArticle(ojsArticleId)
   }
 
   def submit = Action {
@@ -96,10 +96,10 @@ object CopyrightTransfer extends Controller {
       )
   }
 
-  def confirm(ojsId: Int) = Action {
+  def confirm(ojsArticleId: Int) = Action {
     implicit request =>
-      val copyrightTransferRequest = filledConsents.get(ojsId).get
-      filledConsents -= ojsId
+      val copyrightTransferRequest = filledConsents.get(ojsArticleId).get
+      filledConsents -= ojsArticleId
 
       val token = CopyrightTransferInternalDao.saveTransferAndReturnTheToken(copyrightTransferRequest)
       val verificationLink = "http://" + request.host + "/confirm/" + token
@@ -107,7 +107,8 @@ object CopyrightTransfer extends Controller {
       val toEmail = copyrightTransferRequest.copyrightData.correspondingAuthor.email
 
       val pdfFile = java.io.File.createTempFile("CopyrightTransferForm", ".pdf")
-      PdfGenerator.generate(copyrightTransferRequest, pdfFile, CopyrightTransferOjsDao.getJournalIDForArticle(ojsId))
+      val ojsJournalId = CopyrightTransferOjsDao.getJournalIDForArticle(ojsArticleId)
+      PdfGenerator.generate(copyrightTransferRequest, pdfFile, ojsJournalId)
       send a new Mail(
         from = ("test@slonka.udl.pl", "Journal Manager"),
         to = List(toEmail),
