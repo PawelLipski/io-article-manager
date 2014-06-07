@@ -1,16 +1,30 @@
 package models.copyright
 
-import org.joda.time.DateTime
+import scala.slick.driver.MySQLDriver.simple._
 
-/**
- * Created by Zeuko on 05.04.14.
- */
 case class Copyright(
-                          ojsId: Int,
-                          title: String,
-                          correspondingAuthor: CorrespondingAuthor,
-                          contribution: List[Contribution],
-                          financialDisclosure: String
-                          ) {
+                      ojsId: Int,
+                      title: String,
+                      correspondingAuthor: CorrespondingAuthor,
+                      contribution: List[Contribution],
+                      financialDisclosure: String
+                      ) {
 
+}
+
+class Copyrights(tag: Tag) extends Table[(Int, Int, String)](tag, "COPYRIGHTS") {
+
+  def id = column[Int]("id", O.PrimaryKey)
+
+  def ojsArticleId = column[Int]("ojsArticleId")
+
+  // TODO: foreign key to (Corresponding)Authors + add to the projection
+
+  def financialDisclosure = column[String]("financialDisclosure")
+
+  def * = (id, ojsArticleId, financialDisclosure) //<> (Copyright.tupled, Copyright.unapply)
+}
+
+object Copyrights {
+  val copyrights = TableQuery[Copyrights]
 }
