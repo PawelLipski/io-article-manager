@@ -2,7 +2,10 @@ package models.authentication
 
 import scala.slick.driver.MySQLDriver.simple._
 
-class User(tag: Tag) extends Table[(Int, String, String)](tag, "USERS") {
+case class User(id: Int, name: String, passwordSha1Sum: String)
+
+class Users(tag: Tag) extends Table[User](tag, "USERS") {
+
   def id = column[Int]("id", O.PrimaryKey)
 
   def name = column[String]("name")
@@ -10,9 +13,9 @@ class User(tag: Tag) extends Table[(Int, String, String)](tag, "USERS") {
   def passwordSha1Sum = column[String]("passwordSha1Sum")
 
   // Every table needs a * projection with the same type as the table's type parameter
-  def * = (id, name, passwordSha1Sum)
+  def * = (id, name, passwordSha1Sum) <> (User.tupled, User.unapply)
 }
 
-object User {
-  val users = TableQuery[User]
+object Users {
+  val users = TableQuery[Users]
 }

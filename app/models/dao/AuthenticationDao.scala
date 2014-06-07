@@ -3,12 +3,12 @@ package models.dao
 import play.api.db.DB
 import play.api.Play.current
 import scala.slick.driver.MySQLDriver.simple._
-import models.authentication.User._
+import models.authentication.Users._
 import scala.slick.jdbc.meta.MTable
 
 object AuthenticationDao {
 
-  def printUserNames {
+  /*def printUserNames {
     Database.forDataSource(DB.getDataSource("internal")).withSession {
       implicit session =>
         users.ddl.create
@@ -18,7 +18,7 @@ object AuthenticationDao {
             println(id + "  " + name + "  " + passwordSha1Sum)
         }
     }
-  }
+  }*/
 
   def getPasswordSha1SumForUser(userName: String): Option[String] = {
     Database.forDataSource(DB.getDataSource("internal")).withSession {
