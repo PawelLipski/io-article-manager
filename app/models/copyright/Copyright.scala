@@ -9,10 +9,9 @@ case class Copyright(
                       contribution: List[Contribution],
                       financialDisclosure: String
                       ) {
-
 }
 
-class Copyrights(tag: Tag) extends Table[(Int, Int, String)](tag, "COPYRIGHTS") {
+class Copyrights(tag: Tag) extends Table[(Int, Int, String)](tag, Copyrights.TABLE_NAME) {
 
   def id = column[Int]("id", O.PrimaryKey)
 
@@ -26,5 +25,6 @@ class Copyrights(tag: Tag) extends Table[(Int, Int, String)](tag, "COPYRIGHTS") 
 }
 
 object Copyrights {
+  val TABLE_NAME = "COPYRIGHTS"
   val copyrights = TableQuery[Copyrights]
 }
