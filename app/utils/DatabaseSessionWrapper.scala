@@ -4,7 +4,7 @@ import play.api.db.DB
 import scala.slick.driver.MySQLDriver.simple._
 import play.api.Play.current
 import scala.slick.jdbc.meta.MTable
-import models.authentication.Users._
+import models.authentication._
 
 object DatabaseSessionWrapper {
 
@@ -13,8 +13,8 @@ object DatabaseSessionWrapper {
   }
 
   def ensureInternalDatabaseTablesExist(implicit session: Session) {
-    if (MTable.getTables("USERS").list.isEmpty)
-      users.ddl.create
+    if (MTable.getTables(Users.TABLE_NAME).list.isEmpty)
+      Users.users.ddl.create
   }
 
   def withInternalDatabaseSession[T](block: Session => T): T = withSession("internal") {

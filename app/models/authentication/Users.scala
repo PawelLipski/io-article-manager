@@ -4,7 +4,7 @@ import scala.slick.driver.MySQLDriver.simple._
 
 case class User(id: Int, name: String, passwordSha1Sum: String)
 
-class Users(tag: Tag) extends Table[User](tag, "USERS") {
+class Users(tag: Tag) extends Table[User](tag, Users.TABLE_NAME) {
 
   def id = column[Int]("id", O.PrimaryKey)
 
@@ -17,5 +17,6 @@ class Users(tag: Tag) extends Table[User](tag, "USERS") {
 }
 
 object Users {
+  val TABLE_NAME = "USERS"
   val users = TableQuery[Users]
 }
