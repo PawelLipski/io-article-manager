@@ -69,8 +69,8 @@ object RankingDataExtractorOjsDao {
     Database.forDataSource(DB.getDataSource("ojs")).withSession {
       implicit session =>
         val authors = for {
-          authorSettings <- slick.ojs.Tables.AuthorSettings if authorSettings.settingName === "affiliation" && authorSettings.settingValue === ""
-          author <- slick.ojs.Tables.Authors if author.authorId === authorSettings.authorId
+          authorSettings <- slick.ojs.Tables.AuthorSettings if authorSettings.settingName === "affiliation"
+          author <- slick.ojs.Tables.Authors if author.authorId === authorSettings.authorId && author.country === ""
 
           articleSetting <- slick.ojs.Tables.ArticleSettings if articleSetting.settingName === "title"
           article <- slick.ojs.Tables.Articles if article.articleId === articleSetting.articleId &&
@@ -78,8 +78,8 @@ object RankingDataExtractorOjsDao {
           article.journalId === ojsJournalId.asInstanceOf[Long] &&
           yearFn(Seq(article.dateSubmitted)) === year
 
-        } yield (author.firstName, author.lastName, author.email, article.dateSubmitted, articleSetting.settingValue)
-        authors.list.map(a => Author(a._1, a._2, a._5.getOrElse(""), null, simpleDateFormat.format(a._4.get), a._3, null))
+        } yield (author.firstName, author.lastName, author.email, article.dateSubmitted, articleSetting.settingValue, authorSettings.settingValue)
+        authors.list.map(a => Author(a._1, a._2, a._5.getOrElse(""), null, simpleDateFormat.format(a._4.get), a._3, a._6.getOrElse("")))
     }
   }
 
@@ -93,13 +93,13 @@ object RankingDataExtractorOjsDao {
           yearFn(Seq(article.dateSubmitted)) === year
 
           reviewer <- slick.ojs.Tables.ReviewAssignments if article.articleId === reviewer.submissionId
-          user <- slick.ojs.Tables.Users if user.userId === reviewer.reviewerId
+          user <- slick.ojs.Tables.Users if user.userId === reviewer.reviewerId && user.country === ""
           userSettings <- slick.ojs.Tables.UserSettings if userSettings.userId === user.userId &&
-          userSettings.settingName === "affiliation" && userSettings.settingValue === ""
+          userSettings.settingName === "affiliation"
 
-        } yield (user.firstName, user.lastName, user.lastName, article.dateSubmitted, articleSetting.settingValue)
+        } yield (user.firstName, user.lastName, user.lastName, article.dateSubmitted, articleSetting.settingValue, userSettings.settingValue)
 
-        reviewers.list.map(a => Author(a._1, a._2, a._5.getOrElse(""), null, simpleDateFormat.format(a._4.get), a._3, null))
+        reviewers.list.map(a => Author(a._1, a._2, a._5.getOrElse(""), null, simpleDateFormat.format(a._4.get), a._3, a._6.getOrElse("")))
 
     }
   }
