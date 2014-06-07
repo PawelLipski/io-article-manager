@@ -4,6 +4,7 @@ import play.api.db.DB
 import play.api.Play.current
 import scala.slick.driver.MySQLDriver.simple._
 import models.authentication.User._
+import scala.slick.jdbc.meta.MTable
 
 object AuthenticationDao {
 
@@ -22,6 +23,8 @@ object AuthenticationDao {
   def getPasswordSha1SumForUser(userName: String): Option[String] = {
     Database.forDataSource(DB.getDataSource("internal")).withSession {
       implicit session =>
+        if (MTable.getTables("USERS").list.isEmpty)
+          users.ddl.create
         val found = users.filter(_.name === userName).map(_.passwordSha1Sum)
         found.firstOption
     }
