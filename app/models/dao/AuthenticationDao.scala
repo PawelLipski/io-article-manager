@@ -1,10 +1,9 @@
 package models.dao
 
-import play.api.db.DB
-import play.api.Play.current
 import scala.slick.driver.MySQLDriver.simple._
 import models.authentication.Users._
 import scala.slick.jdbc.meta.MTable
+import utils.DatabaseSessionWrapper._
 
 object AuthenticationDao {
 
@@ -21,7 +20,7 @@ object AuthenticationDao {
   }*/
 
   def getPasswordSha1SumForUser(userName: String): Option[String] = {
-    Database.forDataSource(DB.getDataSource("internal")).withSession {
+    withInternalDatabaseSession {
       implicit session =>
         if (MTable.getTables("USERS").list.isEmpty)
           users.ddl.create
