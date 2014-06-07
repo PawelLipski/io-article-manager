@@ -1,23 +1,11 @@
 package models.dao
 
 import play.api.db.DB
-import scala.slick.driver.MySQLDriver.simple._
 import play.api.Play.current
+import scala.slick.driver.MySQLDriver.simple._
+import models.authentication.User._
 
 object AuthenticationDao {
-
-  class User(tag: Tag) extends Table[(Int, String, String)](tag, "INTERNAL_USERS") {
-    def id = column[Int]("ID", O.PrimaryKey)
-
-    def name = column[String]("NAME")
-
-    def passwordSha1Sum = column[String]("PASSWORD_SHA1_SUM")
-
-    // Every table needs a * projection with the same type as the table's type parameter
-    def * = (id, name, passwordSha1Sum)
-  }
-
-  val users = TableQuery[User]
 
   def printUserNames {
     Database.forDataSource(DB.getDataSource("internal")).withSession {
