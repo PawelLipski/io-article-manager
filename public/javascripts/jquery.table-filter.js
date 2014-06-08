@@ -151,26 +151,8 @@ $(document).ready(function () {
             $('#year-select').val() + "/" + $("#issue-select").val() )
     });
 
-    $('#generate-report').click(function() {
-        var authorsIds = [];
-
-        $('#data-table tbody tr').each(function() {
-            if ($(this).css("display") != 'none') {
-                $(this).find("input").each(function() {
-                    if ($(this).prop('checked')) {
-                        authorsIds.push(parseInt($(this).attr('data-author-id')));
-                    }
-                });
-            }
-        });
-
-        $.post({
-            url: '/authors/generate',
-            data: JSON.stringify(authorsIds),
-            dataType: 'jsonp',
-            success: function(data) {
-                
-            }
-        });
+    var selectedAuthorCheckboxes = $("input[class='selected-author']");
+    selectedAuthorCheckboxes.click(function() {
+        $("button[type='submit']").attr("disabled", !selectedAuthorCheckboxes.is(":checked"));
     });
 });
