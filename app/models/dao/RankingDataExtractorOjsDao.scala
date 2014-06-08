@@ -65,7 +65,7 @@ object RankingDataExtractorOjsDao {
     }
   }
 
-  def getListOfUnknownAuthors(ojsJournalId: Int, year: Int): Iterable[Author] = {
+  def getListOfAuthorsWithUnknownCountry(ojsJournalId: Int, year: Int): Iterable[Author] = {
     Database.forDataSource(DB.getDataSource("ojs")).withSession {
       implicit session =>
         val authors = for {
@@ -83,7 +83,7 @@ object RankingDataExtractorOjsDao {
     }
   }
 
-  def getListOfUnknownReviewers(ojsJournalId: Int, year: Int): Iterable[Author] = {
+  def getListOfReviewersWithUnknownCountry(ojsJournalId: Int, year: Int): Iterable[Author] = {
     Database.forDataSource(DB.getDataSource("ojs")).withSession {
       implicit session =>
         val reviewers = for {
