@@ -140,6 +140,8 @@ $(document).ready(function () {
         $("button[type='submit']").attr("disabled", !selectedAuthorCheckboxes.is(":checked"));
     }
 
+    selectedAuthorCheckboxes.click(refreshCheckboxes);
+
     $('#select-all-authors').click(function() {
         if (!$(this).prop('checked')) {
             $('#data-table tbody tr input').prop('checked', false);
@@ -157,6 +159,4 @@ $(document).ready(function () {
         window.location.replace("/authors/" + $("#journal-select").val() + "/" +
             $('#year-select').val() + "/" + $("#issue-select").val() )
     });
-
-    selectedAuthorCheckboxes.click(refreshCheckboxes);
 });

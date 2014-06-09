@@ -28,7 +28,7 @@ object Authors extends Controller with Secured {
   def generateReport = withAuth {
     user => implicit request =>
       consentReportForm.bindFromRequest.fold(
-        errors => BadRequest("Unspecified error occurred, nobody knows what happened yet. Try again."),
+        errors => BadRequest("Error parsing PDF generation request. Try again."),
         consentIds => {
           Ok(PdfGenerator.generate(CopyrightTransferInternalDao.listTransfer(consentIds))).as("application/pdf")
         }
