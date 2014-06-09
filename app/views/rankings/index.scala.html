@@ -4,11 +4,11 @@
     @implicitFieldConstructor = @{
         FieldConstructor(twitterBootstrapInput.render(_: FieldElements, request))
     }
-@import views.html.helper.inputText
-@main("Ranking") {
+
+@main("Journal rankings") {
 
     <div class="col-md-4">
-    @ranking.form(reportForm)
+    @views.html.rankings.form(reportForm)
     </div>
     <div class="clearfix"/>
 }

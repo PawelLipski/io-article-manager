@@ -1,8 +1,7 @@
 @(id: Int, year: Int, volumeId: Int, transferRequests: Seq[models.copyright.CopyrightTransferRequestWrapper], journals: List[models.rankings.Journal])(implicit request: Request[AnyContent])
 @import models.copyright.CopyrightTransferStatus
 
-@main("All authors") {
-    <h1>Journal manager</h1>
+@main("Transfer management") {
 
     <style type="text/css">
     #table-filter {

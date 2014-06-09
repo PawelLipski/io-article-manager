@@ -1,7 +1,6 @@
 @(authors: Iterable[models.rankings.ArticleAuthor], authorListForm: Form[models.rankings.AuthorList], topic: String, target: Call)(implicit request: Request[AnyContent])
 
 @main(topic) {
-    <h1>@topic</h1>
 
     <div class="col-md-4">
     @lists.form(authorListForm, target)

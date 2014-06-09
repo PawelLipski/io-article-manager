@@ -21,7 +21,7 @@ object ReportGenerator extends Controller with Secured {
 
   def index = withAuth {
     user => implicit request =>
-      Ok(html.ranking.index(form))
+      Ok(html.rankings.index(form))
   }
 
   def submit = withAuth {
