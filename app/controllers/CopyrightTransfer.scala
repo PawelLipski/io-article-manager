@@ -38,7 +38,7 @@ object CopyrightTransfer extends Controller {
         "contribution" -> text,
         "percent" -> number
       )(Contribution.assemble)(Contribution.unassemble))
-    )(CopyrightWrapper.build)(CopyrightWrapper.unbuild)
+    )(CopyrightWrapper.assemble)(CopyrightWrapper.unassemble)
   )
 
   def index = Action {

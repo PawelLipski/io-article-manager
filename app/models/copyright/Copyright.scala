@@ -2,7 +2,7 @@ package models.copyright
 
 import scala.slick.driver.MySQLDriver.simple._
 
-case class Copyright(id: Option[Int],
+case class Copyright(id: Int,
                      requestId: Option[Int],
                      correspondingAuthorId: Option[Int],
                      ojsArticleId: Int,
@@ -13,13 +13,8 @@ case class Copyright(id: Option[Int],
 
 object Copyright {
 
-  /*def fromTuple(tuple: (Option[Int], Option[Int], Option[Int], Int, String, String)): Copyright = tuple match {
-    case (id: Option[Int], requestId: Option[Int], correspondingAuthorId: Option[Int], ojsArticleId: Int, title: String, financialDisclosure: String) =>
-      Copyright(id, requestId, correspondingAuthorId, ojsArticleId, title, financialDisclosure)
-  }*/
-
   def assemble(ojsArticleId: Int, title: String, financialDisclosure: String): Copyright = {
-    apply(None, None, None, ojsArticleId, title, financialDisclosure)
+    apply(0, None, None, ojsArticleId, title, financialDisclosure)
   }
 
   def unassemble(a: Copyright): Option[(Int, String, String)] = {
@@ -30,7 +25,7 @@ object Copyright {
 
 class Copyrights(tag: Tag) extends Table[Copyright](tag, Copyrights.TABLE_NAME) {
 
-  def id = column[Option[Int]]("id", O.PrimaryKey)
+  def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
 
   def requestId = column[Option[Int]]("requestId")
 
@@ -40,7 +35,7 @@ class Copyrights(tag: Tag) extends Table[Copyright](tag, Copyrights.TABLE_NAME) 
 
   def title = column[String]("title")
 
-  def financialDisclosure = column[String]("financialDisclosure")
+  def financialDisclosure = column[String]("financialDisclosure", O.DBType("TEXT"))
 
 
   def * = (id, requestId, correspondingAuthorId, ojsArticleId, title, financialDisclosure) <>

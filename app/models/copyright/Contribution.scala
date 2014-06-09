@@ -50,7 +50,7 @@ class Contributions(tag: Tag)
 
   def affiliation = column[String]("affiliation")
 
-  def contribution = column[String]("contribution")
+  def contribution = column[String]("contribution", O.DBType("TEXT"))
 
   def percent = column[Int]("percent")
 

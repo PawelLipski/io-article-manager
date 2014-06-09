@@ -43,8 +43,9 @@ object CopyrightTransferInternalDao {
     withInternalDatabaseSession {
       implicit session =>
 
-        val copyrightId: Int = ((copyrights returning
-          (copyrights.map(_.id))) += copyright).get
+        println("Inserting copyright " + copyright)
+        val copyrightId: Int = (copyrights returning (copyrights.map(_.id))) += copyright
+        println("Ok, copyright inserted")
 
         contributionList foreach {
           cb =>

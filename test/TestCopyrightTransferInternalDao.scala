@@ -1,23 +1,8 @@
-import models.copyright._
-import models.copyright.Copyright
-import models.copyright.CopyrightTransferRequest
-import models.copyright.CorrespondingAuthor
-import org.joda.time.DateTime
 import org.junit.Ignore
-import org.junit.runner.RunWith
-import org.specs2.runner.JUnitRunner
-import play.api.db.DB
-import play.api.test.WithApplication
-import scala.slick.driver.MySQLDriver.simple._
-import scala.slick.driver.MySQLDriver
-import models.dao.CopyrightTransferInternalDao
 
 import org.specs2.mutable._
 import org.specs2.runner._
 import org.junit.runner._
-
-import play.api.test._
-import play.api.test.Helpers._
 
 
 /**
@@ -26,10 +11,10 @@ import play.api.test.Helpers._
 @RunWith(classOf[JUnitRunner])
 @Ignore
 class TestCopyrightTransferInternalDao extends Specification{
-  "Application" should {
+  /*"Application" should {
 
     "insert row into CopyrightTransfer table" in new WithApplication {
-      /*
+
       CopyrightTransferInternalDao.saveTransfer(CopyrightTransferRequest(
         null,
         Copyright(1,
@@ -39,7 +24,7 @@ class TestCopyrightTransferInternalDao extends Specification{
           "I grant you full rights"),
         DateTime.now(),
         "9.9.9.9",
-        CopyrightTransferStatus.UNCONFIRMED))*/
+        CopyrightTransferStatus.UNCONFIRMED))
     }
 
     "update row in CopyrightTransfer table" in new WithApplication {
@@ -53,5 +38,5 @@ class TestCopyrightTransferInternalDao extends Specification{
       org.junit.Assert.assertEquals(2, CopyrightTransferInternalDao.listTransfers(3, 2014, 0).length)
 
     }
-  }
+  }*/
 }
