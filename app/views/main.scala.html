@@ -31,7 +31,9 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="@routes.Application.index()">Journal Manager</a>
+                    <a class="navbar-brand" style="color: white" href="@routes.Application.index()">
+                        Journal Manager
+                    </a>
                 </div>
 
                     <!-- Collect the nav links, forms, and other content for toggling -->
@@ -46,11 +48,15 @@
                         }
                     </ul>
                     <ul class="nav navbar-nav pull-right">
+                        <li>
                         @if(request.session.get("user")) {
-                            <li><a href="@routes.Authentication.logout">Log out (@request.session.get("user"))</a></li>
+                            <a href="@routes.Authentication.logout" style="color: white">
+                                Log out (@request.session.get("user")) </a>
                         } else {
-                            <li><a href="@routes.Authentication.login">Log in</a></li>
+                            <a href="@routes.Authentication.login" style="color: white">
+                                Log in </a>
                         }
+                        </li>
                     </ul>
                 </div> <!-- /.navbar-collapse -->
             </div> <!-- /.container-fluid -->
