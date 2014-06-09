@@ -18,9 +18,7 @@
         reportForm("year"),
         '_label -> "Year",
         'class -> "form-control",
-        'type -> "number",
-        'min -> models.dao.GeneralOjsDao.getYearsOjsActiveFrom.getOrElse(1990),
-        'max -> models.dao.GeneralOjsDao.getYearsOjsActiveTo.getOrElse(2100)
+        'type -> "number"
     )
     <input type="submit" class="btn primary" value="Generate">
 }

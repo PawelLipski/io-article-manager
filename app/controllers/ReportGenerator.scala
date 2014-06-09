@@ -17,7 +17,7 @@ object ReportGenerator extends Controller with Secured {
       "journal" -> mapping(
         "id" -> number
       )((id) => Journal(id, null))((journal) => Some(journal.id)),
-      "year" -> number(min = models.dao.GeneralOjsDao.getYearsOjsActiveFrom.getOrElse(1990), max = models.dao.GeneralOjsDao.getYearsOjsActiveTo.getOrElse(2100))
+      "year" -> number
     )(Report.apply)(Report.unapply)
   )
 
