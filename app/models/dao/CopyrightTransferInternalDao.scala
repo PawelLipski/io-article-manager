@@ -124,7 +124,7 @@ object CopyrightTransferInternalDao {
 
   val yearFn = SimpleFunction[Int]("year")
 
-  def listTransferRequests(ojsJournalId: Long, year: Int, volumeId: Int): Seq[CopyrightTransferRequest] = {
+  def listTransferRequests(ojsJournalId: Long, year: Int, volumeId: Int): Seq[CopyrightTransferRequestWrapper] = {
 
     val articleIds: Seq[Long] =
       withOjsDatabaseSession {
@@ -138,14 +138,12 @@ object CopyrightTransferInternalDao {
 
     withInternalDatabaseSession {
       implicit session =>
-        copyrightTransferRequests
-          .filter {
-          ctr =>
-            copyrights.filter(c =>
-              c.id === ctr.copyrightId &&
-                c.ojsArticleId.inSetBind(articleIds.map(_.toInt))
-            ).exists.run
-        }.run
+        copyrights
+          .filter(_.ojsArticleId.inSetBind(articleIds.map(_.toInt)))
+          .map(_.requestId)
+          .run
+          .flatten
+          .map(fetchTransferRequest(_))
     }
   }
 }

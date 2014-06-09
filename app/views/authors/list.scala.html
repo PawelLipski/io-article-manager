@@ -1,4 +1,5 @@
-@(id: Int, year: Int, volumeId: Int, transferRequests: Seq[models.copyright.CopyrightTransferRequest], journals: List[models.reports.Journal])(implicit request: Request[AnyContent])
+@(id: Int, year: Int, volumeId: Int, transferRequests: Seq[models.copyright.CopyrightTransferRequestWrapper], journals: List[models.reports.Journal])(implicit request: Request[AnyContent])
+@import models.copyright.CopyrightTransferStatus
 
 @main("All authors") {
     <h1>Journal manager</h1>
@@ -78,24 +79,24 @@
                 </tr>
             </thead>
             <tbody>
-                @* for(author <- authors) {
-                    <tr>
+            @for(ctr <- transferRequests) {
+                <tr>
                         <td><input class="selected-author" type="checkbox" data-author-id="id_from_db" name="people[]"></td>
-                        <td>@author.title</td>
+                    <td>@ctr.copyright.title</td>
 
-                        @if(author.linkconfirmed) {
-                            <td><i class="glyphicon glyphicon-ok green"></i></td>
+                    @if(ctr.copyrightTransferRequest.status == CopyrightTransferStatus.VERIFIED) {
+                        <td><i class="glyphicon glyphicon-ok green"></i></td>
                         } else {
                             <td><i class="glyphicon glyphicon-ok red"></i></td>
                         }
 
-                        <td>@author.correspondingname</td>
-                        <td>@author.correspondingaffiliation</td>
-                        <td>@author.correspondingemail</td>
-                        <td>@author.dateformfilled</td>
-                        <td>@author.filleripaddress</td>
-                    </tr>
-                } *@
+                    <td>@ctr.correspondingAuthor.getFullName</td>
+                    <td>@ctr.correspondingAuthor.affiliation</td>
+                    <td>@ctr.correspondingAuthor.email</td>
+                    <td>@ctr.copyrightTransferRequest.dateVerified</td>
+                    <td>@ctr.copyrightTransferRequest.ipAddress</td>
+                </tr>
+            }
             </tbody>
         </table>
 
