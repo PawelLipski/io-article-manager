@@ -24,7 +24,7 @@ GET         /copyright-transfer/verify/:token            controllers.CopyrightTr
 #authors
 GET         /manage-transfers/:id/:year/:volumeId        controllers.CopyrightTransferManagement.list(id: Int, year: Int, volumeId: Int)
 
-#ranking
+#rankings
 GET         /ranking                                controllers.ReportGenerator.index
 POST        /ranking                                controllers.ReportGenerator.submit
 
