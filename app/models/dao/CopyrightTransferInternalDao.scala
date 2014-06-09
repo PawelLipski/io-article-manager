@@ -43,9 +43,7 @@ object CopyrightTransferInternalDao {
     withInternalDatabaseSession {
       implicit session =>
 
-        println("Inserting copyright " + copyright)
         val copyrightId: Int = (copyrights returning (copyrights.map(_.id))) += copyright
-        println("Ok, copyright inserted")
 
         contributionList foreach {
           cb =>
@@ -57,7 +55,7 @@ object CopyrightTransferInternalDao {
           (correspondingAuthors.map(_.id))) += correspondingAuthor
         correspondingAuthors.filter(_.id === correspondingAuthorId).map(_.copyrightId).update(Some(copyrightId))
 
-        copyrights.filter(_.id == copyrightId).map(_.correspondingAuthorId).update(Some(correspondingAuthorId))
+        copyrights.filter(_.id === copyrightId).map(_.correspondingAuthorId).update(Some(correspondingAuthorId))
 
         val dateConfirmed = new Date(0)
         val dateVerified = new Date(0)
@@ -69,7 +67,7 @@ object CopyrightTransferInternalDao {
         val requestId: Int = (copyrightTransferRequests returning
           (copyrightTransferRequests.map(_.id))) += request
 
-        copyrights.filter(_.id == copyrightId).map(_.requestId).update(Some(requestId))
+        copyrights.filter(_.id === copyrightId).map(_.requestId).update(Some(requestId))
 
         requestId
     }

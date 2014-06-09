@@ -16,7 +16,7 @@ case class Contribution(id: Int,
     contribution + "\n\rContribution percentage: " +
     percent + "%"
 
-  def getFullAuthorName = firstName + " " + middleName + " " + lastName
+  def getFullAuthorName = firstName + " " + middleName.getOrElse("") + " " + lastName
 }
 
 object Contribution {
