@@ -12,7 +12,7 @@ object DatabaseSessionWrapper {
         try {
           block(session)
         } catch {
-          case e => 
+          case e: Exception =>
             session.rollback()
             throw e
         }
