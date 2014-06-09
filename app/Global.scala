@@ -2,11 +2,9 @@
 import java.io.File
 import models.authentication.Users
 import models.copyright._
-import play.api.db.DB
 import play.api.GlobalSettings
 import play.api.mvc.RequestHeader
 import play.api.mvc.Results._
-import play.api.Play.current
 import play.api.Application
 import scala.concurrent._
 import scala.reflect.runtime.currentMirror
@@ -40,20 +38,14 @@ object Global extends GlobalSettings {
   override def onStart(app: Application) {
     val slickDriver = "scala.slick.driver.MySQLDriver"
     val outputFolder = "gen/app/"
-    var pkg = "slick.ojs"
+    val pkg = "slick.ojs"
 
     if (!new File("gen/app").exists) {
       val driver: JdbcProfile = currentMirror.reflectModule(
         currentMirror.staticModule(slickDriver)
       ).instance.asInstanceOf[JdbcProfile]
 
-      Database.forDataSource(DB.getDataSource("ojs")) withSession {
-        implicit session =>
-          new SourceCodeGenerator(driver.createModel).writeToFile(slickDriver, outputFolder, pkg)
-      }
-      pkg = "slick.internal"
-
-      Database.forDataSource(DB.getDataSource("internal")) withSession {
+      withOjsDatabaseSession {
         implicit session =>
           new SourceCodeGenerator(driver.createModel).writeToFile(slickDriver, outputFolder, pkg)
       }
