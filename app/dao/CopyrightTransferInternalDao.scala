@@ -123,7 +123,7 @@ object CopyrightTransferInternalDao {
   }
 
   def verifiedTransferRequestExists(ojsArticleId: Int): Boolean = {
-    Database.forDataSource(DB.getDataSource("internal")).withSession {
+    withInternalDatabaseSession {
       implicit session =>
         copyrightTransferRequests
           .filter(_.status === VERIFIED)

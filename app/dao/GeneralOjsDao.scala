@@ -1,15 +1,14 @@
 package dao
 
 import scala.slick.driver.MySQLDriver.simple._
-import play.api.db.DB
-import play.api.Play.current
+import utils.DatabaseSessionWrapper._
 
 object GeneralOjsDao {
 
   val yearFn = SimpleFunction[Int]("year")
 
   def getYearsJournalActive(journalId: Int): List[Int] = {
-    Database.forDataSource(DB.getDataSource("ojs")).withSession {
+    withOjsDatabaseSession {
       implicit session => {
         slick.ojs.Tables.Articles.filter(_.journalId === journalId.asInstanceOf[Long]).map(x => yearFn(Seq(x.dateSubmitted))).filter(_.isNotNull).groupBy(x => x).map(_._1).list
       }
@@ -17,7 +16,7 @@ object GeneralOjsDao {
   }
 
   def getIssuesForJournal(journalId: Int): List[(Long, String)] = {
-    Database.forDataSource(DB.getDataSource("ojs")).withSession {
+    withOjsDatabaseSession {
       implicit session => {
         (for {
           issue <- slick.ojs.Tables.Issues if issue.journalId === journalId.asInstanceOf[Long]
@@ -28,7 +27,7 @@ object GeneralOjsDao {
   }
 
   def getListOfJournals = {
-    Database.forDataSource(DB.getDataSource("ojs")).withSession {
+    withOjsDatabaseSession {
       implicit session =>
         slick.ojs.Tables.Journals.list.map(a => models.rankings.Journal(a.journalId.asInstanceOf[Int], a.path))
     }
