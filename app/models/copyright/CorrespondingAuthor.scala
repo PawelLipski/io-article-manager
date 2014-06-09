@@ -5,7 +5,7 @@ import scala.slick.driver.MySQLDriver.simple._
 case class CorrespondingAuthor(id: Int,
                                copyrightId: Option[Int],
                                firstName: String,
-                               middleName: String,
+                               middleName: Option[String],
                                lastName: String,
                                affiliation: String,
                                email: String) {
@@ -14,16 +14,16 @@ case class CorrespondingAuthor(id: Int,
     "\n\rAffiliation: " + affiliation +
     "\n\rE-mail address: " + email
 
-  def getFullName = firstName + " " + middleName + " " + lastName
+  def getFullName = firstName + " " + middleName.getOrElse("") + " " + lastName
 }
 
 object CorrespondingAuthor {
 
-  def assemble(firstName: String, middleName: String, lastName: String, affiliation: String, email: String): CorrespondingAuthor = {
+  def assemble(firstName: String, middleName: Option[String], lastName: String, affiliation: String, email: String): CorrespondingAuthor = {
     apply(0, None, firstName, middleName, lastName, affiliation, email)
   }
 
-  def unassemble(a: CorrespondingAuthor): Option[(String, String, String, String, String)] = {
+  def unassemble(a: CorrespondingAuthor): Option[(String, Option[String], String, String, String)] = {
     Some(a.firstName, a.middleName, a.lastName, a.affiliation, a.email)
   }
 }
@@ -37,7 +37,7 @@ class CorrespondingAuthors(tag: Tag)
 
   def firstName = column[String]("firstName")
 
-  def middleName = column[String]("middleName")
+  def middleName = column[Option[String]]("middleName")
 
   def lastName = column[String]("lastName")
 

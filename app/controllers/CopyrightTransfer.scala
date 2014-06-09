@@ -25,7 +25,7 @@ object CopyrightTransfer extends Controller {
       "financial" -> text,
       "correspondingAuthor" -> mapping(
         "firstName" -> text,
-        "middleName" -> text,
+        "middleName" -> optional(text),
         "lastName" -> text,
         "affiliation" -> text,
         "email" -> text
@@ -100,7 +100,7 @@ object CopyrightTransfer extends Controller {
       val transferId = request.cookies.get("transferId").get.value.toInt
       val token = CopyrightTransferInternalDao.confirmTransferRequestAndReturnToken(transferId)
       val transferRequest: CopyrightTransferRequestWrapper = CopyrightTransferInternalDao.fetchTransferRequest(transferId)
-      val verificationLink = "http://" + request.host + "/consent_to_publish/verify/" + token
+      val verificationLink = "http://" + request.host + "/copyright-transfer/verify/" + token
 
       val email = transferRequest.correspondingAuthor.email
 

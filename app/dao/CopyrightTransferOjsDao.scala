@@ -45,7 +45,7 @@ object CopyrightTransferOjsDao {
           .filter(_._1.primaryContact =!= 0.asInstanceOf[Byte])
           .list
           .map(f => CorrespondingAuthor.assemble(
-          f._1.firstName, f._1.middleName.getOrElse(""), f._1.lastName, f._2.settingValue.getOrElse(""), f._1.email))
+          f._1.firstName, f._1.middleName, f._1.lastName, f._2.settingValue.getOrElse(""), f._1.email))
           .head
 
         val contributionList = authors
