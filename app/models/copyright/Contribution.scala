@@ -2,26 +2,45 @@ package models.copyright
 
 import scala.slick.driver.MySQLDriver.simple._
 
-case class Contribution(firstName : String,
+case class Contribution(id: Option[Int],
+                        transferId: Option[Int],
+                        firstName: String,
                         middleName: Option[String],
                         lastName: String,
-                        affiliation : String,
+                        affiliation: String,
                         contribution: String,
                         percent: Int) {
 
-  override  def toString = "Name: "+lastName+"\n\rAffiliation: "+
-      affiliation+"\n\rContribution to paper: "+
-      contribution+"\n\rContribution percentage: "+
-      percent+"%"
+  override def toString = "Name: " + lastName + "\n\rAffiliation: " +
+    affiliation + "\n\rContribution to paper: " +
+    contribution + "\n\rContribution percentage: " +
+    percent + "%"
 
-  def getFullAuthorName = firstName + " " + middleName.getOrElse("") + " " + lastName
+  def getFullAuthorName = firstName + " " + middleName + " " + lastName
+}
+
+object Contribution {
+
+  /*def fromTuple(tuple: (Option[Int], Option[Int], String, Option[String], String, String, String, Int)): Contribution = tuple match {
+    case (id: Option[Int], transferId: Option[Int], firstName: String, middleName: Option[String], lastName: String, affiliation: String, contribution: String, percent: Int) =>
+      Contribution(id, transferId, firstName, middleName, lastName, affiliation, contribution, percent)
+  }*/
+
+  def assemble(firstName: String, middleName: Option[String], lastName: String, affiliation: String, contribution: String, percent: Int): Contribution = {
+    apply(None, None, firstName, middleName, lastName, affiliation, contribution, percent)
+  }
+
+  def unassemble(a: Contribution): Option[(String, Option[String], String, String, String, Int)] = {
+    Some(a.firstName, a.middleName, a.lastName, a.affiliation, a.contribution, a.percent)
+  }
 }
 
 class Contributions(tag: Tag)
   extends Table[Contribution](tag, Contributions.TABLE_NAME) {
 
-  // TODO: add to the case class
-  //def id = column[Int]("id", O.PrimaryKey)
+  def id = column[Option[Int]]("id", O.PrimaryKey)
+
+  def copyrightId = column[Option[Int]]("copyrightId")
 
   def firstName = column[String]("firstName")
 
@@ -35,8 +54,12 @@ class Contributions(tag: Tag)
 
   def percent = column[Int]("percent")
 
-  def * = (firstName, middleName, lastName, affiliation, contribution, percent) <>
-    (Contribution.tupled, Contribution.unapply)
+
+  def * = (id, copyrightId, firstName, middleName, lastName, affiliation, contribution, percent) <>
+    ((Contribution.apply _).tupled, Contribution.unapply)
+
+
+  def copyright = foreignKey("copyrightId", copyrightId, Copyrights.copyrights)(_.id)
 }
 
 object Contributions {

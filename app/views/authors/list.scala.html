@@ -1,4 +1,4 @@
-@(id: Int, year: Int, volumeId: Int, authors: Iterable[slick.internal.Tables.CopyrighttransferRow], journals: List[models.reports.Journal])(implicit request: Request[AnyContent])
+@(id: Int, year: Int, volumeId: Int, transferRequests: Seq[models.copyright.CopyrightTransferRequest], journals: List[models.reports.Journal])(implicit request: Request[AnyContent])
 
 @main("All authors") {
     <h1>Journal manager</h1>
@@ -78,7 +78,7 @@
                 </tr>
             </thead>
             <tbody>
-                @for(author <- authors) {
+                @* for(author <- authors) {
                     <tr>
                         <td><input class="selected-author" type="checkbox" data-author-id="id_from_db" name="people[]"></td>
                         <td>@author.title</td>
@@ -95,7 +95,7 @@
                         <td>@author.dateformfilled</td>
                         <td>@author.filleripaddress</td>
                     </tr>
-                }
+                } *@
             </tbody>
         </table>
 

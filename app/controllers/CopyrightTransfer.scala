@@ -4,13 +4,11 @@ import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
 import models.copyright._
-import org.joda.time.DateTime
 import views.html
 import utils.{TokenGenerator, PdfGenerator, ErrorWrapper}
 
 import utils.MailSender.send
 import models.dao.{CopyrightTransferOjsDao, CopyrightTransferInternalDao}
-import models.copyright.Copyright
 import models.copyright.Contribution
 import models.copyright.CopyrightTransferRequest
 import models.copyright.CorrespondingAuthor
@@ -20,17 +18,18 @@ object CopyrightTransfer extends Controller {
 
   var filledConsents: Map[Int, CopyrightTransferRequest] = Map()
 
-  val form: Form[Copyright] = Form(
+  val form: Form[CopyrightWrapper] = Form(
     mapping(
       "ojsId" -> number,
       "title" -> text,
+      "financial" -> text,
       "correspondingAuthor" -> mapping(
         "firstName" -> text,
-        "middleName" -> optional(text),
+        "middleName" -> text,
         "lastName" -> text,
         "affiliation" -> text,
         "email" -> text
-      )(CorrespondingAuthor.apply)(CorrespondingAuthor.unapply),
+      )(CorrespondingAuthor.assemble)(CorrespondingAuthor.unassemble),
       "contribution" -> list(mapping(
         "firstName" -> text,
         "middleName" -> optional(text),
@@ -38,9 +37,8 @@ object CopyrightTransfer extends Controller {
         "affiliation" -> text,
         "contribution" -> text,
         "percent" -> number
-      )(Contribution.apply)(Contribution.unapply)),
-      "financial" -> text
-    )(Copyright.apply)(Copyright.unapply)
+      )(Contribution.assemble)(Contribution.unassemble))
+    )(CopyrightWrapper.build)(CopyrightWrapper.unbuild)
   )
 
   def index = Action {
@@ -48,15 +46,18 @@ object CopyrightTransfer extends Controller {
       Ok(html.copyright.index())
   }
 
-  def proceedToConsent(id: Int)(implicit request: Request[AnyContent]) = {
-    if (!CopyrightTransferOjsDao.articleExists(id)) {
-      BadRequest(views.html.errors.badRequest("The article #" + id + " does not exist!"))
-    } else if (CopyrightTransferInternalDao.confirmedTransferExists(id)) {
-      BadRequest(views.html.errors.badRequest("Copyright has already been transferred for the article #" + id + "!"))
+  def proceedToConsent(ojsArticleId: Int)(implicit request: Request[AnyContent]) = {
+
+    if (!CopyrightTransferOjsDao.articleExists(ojsArticleId)) {
+      BadRequest(views.html.errors.badRequest("The article #" + ojsArticleId + " does not exist!"))
+
+    } else if (CopyrightTransferInternalDao.verifiedTransferRequestExists(ojsArticleId)) {
+      BadRequest(views.html.errors.badRequest("Copyright has already been transferred for the article #" + ojsArticleId + "!"))
+
     } else {
-      val copyright = getPaperDataById(id)
-      val journalId = CopyrightTransferOjsDao.getJournalIDForArticle(id)
-      Ok(html.copyright.consentForm(form.fill(copyright), journalId))
+      val copyrightFormWrapper = CopyrightTransferOjsDao.getCopyrightFormWrapperForArticle(ojsArticleId)
+      val journalId = CopyrightTransferOjsDao.getJournalIDForArticle(ojsArticleId)
+      Ok(html.copyright.consentForm(form.fill(copyrightFormWrapper), journalId))
     }
   }
 
@@ -80,38 +81,35 @@ object CopyrightTransfer extends Controller {
     }
   }
 
-  def getPaperDataById(ojsArticleId: Int): Copyright = {
-    CopyrightTransferOjsDao.getAuthorsForArticle(ojsArticleId)
-  }
-
   def submit = Action {
     implicit request =>
       form.bindFromRequest.fold(
-        ErrorWrapper.getFormErrorWrapper[Copyright],
-        cd => {
-          val copyrightTransferRequest = CopyrightTransferRequest(None, cd, DateTime.now(), request.remoteAddress, CopyrightTransferStatus.UNCONFIRMED)
-          filledConsents += cd.ojsId -> copyrightTransferRequest
-          Ok(html.copyright.summary(copyrightTransferRequest, form.fill(cd)))
+        ErrorWrapper.getFormErrorWrapper[CopyrightWrapper],
+        wrapper => {
+          val ipAddress = request.remoteAddress
+          val transferId = CopyrightTransferInternalDao.submitTransferRequestAndReturnId(
+            wrapper.contributionList, wrapper.correspondingAuthor, wrapper.copyright, ipAddress)
+          Ok(html.copyright.summary(wrapper)).withCookies(Cookie("transferId", transferId.toString))
         }
       )
   }
 
-  def confirm(ojsArticleId: Int) = Action {
+  def confirm = Action {
     implicit request =>
-      val copyrightTransferRequest = filledConsents.get(ojsArticleId).get
-      filledConsents -= ojsArticleId
 
-      val token = CopyrightTransferInternalDao.saveTransferAndReturnTheToken(copyrightTransferRequest)
-      val verificationLink = "http://" + request.host + "/confirm/" + token
+      val transferId = request.cookies.get("transferId").get.value.toInt
+      val token = CopyrightTransferInternalDao.confirmTransferRequestAndReturnToken(transferId)
+      val transferRequest: CopyrightTransferRequestWrapper = CopyrightTransferInternalDao.fetchTransferRequest(transferId)
+      val verificationLink = "http://" + request.host + "/consent_to_publish/verify/" + token
 
-      val toEmail = copyrightTransferRequest.copyrightData.correspondingAuthor.email
+      val email = transferRequest.correspondingAuthor.email
 
       val pdfFile = java.io.File.createTempFile("CopyrightTransferForm", ".pdf")
-      val ojsJournalId = CopyrightTransferOjsDao.getJournalIDForArticle(ojsArticleId)
-      PdfGenerator.generate(copyrightTransferRequest, pdfFile, ojsJournalId)
+      val ojsJournalId = CopyrightTransferOjsDao.getJournalIDForArticle(transferRequest.copyright.ojsArticleId)
+      PdfGenerator.generate(transferRequest, pdfFile, ojsJournalId)
       send a new Mail(
         from = ("test@slonka.udl.pl", "Journal Manager"),
-        to = List(toEmail),
+        to = List(email),
         subject = "[Journal Manager] Please confirm the copyright transfer",
         message = "This is the Journal Manager system.\n" +
           "Your e-mail address was used to fill a copyright transfer form. Details of the transfer can be found in the attached PDF file.\n" +
@@ -121,13 +119,14 @@ object CopyrightTransfer extends Controller {
         attachment = Option(pdfFile)
       )
       pdfFile.delete()
-      Ok(html.copyright.confirmation(toEmail))
+
+      Ok(html.copyright.confirmation(email))
   }
 
   def verify(token: String) = Action {
     implicit request => {
       val tokenSHA = TokenGenerator.toSha(token)
-      val verificationResult = CopyrightTransferInternalDao.markTransferAsConfirmed(tokenSHA) != 0
+      val verificationResult = CopyrightTransferInternalDao.verifyTransferRequest(tokenSHA) != 0
       Ok(html.copyright.verify(verificationResult))
     }
 

@@ -19,10 +19,10 @@ GET         /consent_to_publish/choose              controllers.CopyrightTransfe
 GET         /consent_to_publish                     controllers.CopyrightTransfer.consentWithIdInQueryString
 GET         /consent_to_publish/:id                 controllers.CopyrightTransfer.consentWithIdInUrl(id : Int)
 POST        /consent_to_publish/submit              controllers.CopyrightTransfer.submit
-POST        /consent_to_publish/confirmation        controllers.CopyrightTransfer.confirm(id : Int)
-GET         /confirm/:token                         controllers.CopyrightTransfer.verify(token : String)
+POST        /consent_to_publish/confirm             controllers.CopyrightTransfer.confirm
+GET         /consent_to_publish/verify/:token       controllers.CopyrightTransfer.verify(token : String)
 #authors
-GET         /authors/:id/:year/:volume_id           controllers.Authors.list(id: Int, year: Int, volume_id: Int)
+GET         /authors/:id/:year/:volumeId           controllers.Authors.list(id: Int, year: Int, volumeId: Int)
 
 #ranking
 GET         /ranking                                controllers.ReportGenerator.index

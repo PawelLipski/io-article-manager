@@ -2,26 +2,56 @@ package models.copyright
 
 import scala.slick.driver.MySQLDriver.simple._
 
-case class Copyright(
-                      ojsId: Int,
-                      title: String,
-                      correspondingAuthor: CorrespondingAuthor,
-                      contribution: List[Contribution],
-                      financialDisclosure: String
+case class Copyright(id: Option[Int],
+                     requestId: Option[Int],
+                     correspondingAuthorId: Option[Int],
+                     ojsArticleId: Int,
+                     title: String,
+                     financialDisclosure: String
                       ) {
 }
 
-class Copyrights(tag: Tag) extends Table[(Int, Int, String)](tag, Copyrights.TABLE_NAME) {
+object Copyright {
 
-  def id = column[Int]("id", O.PrimaryKey)
+  /*def fromTuple(tuple: (Option[Int], Option[Int], Option[Int], Int, String, String)): Copyright = tuple match {
+    case (id: Option[Int], requestId: Option[Int], correspondingAuthorId: Option[Int], ojsArticleId: Int, title: String, financialDisclosure: String) =>
+      Copyright(id, requestId, correspondingAuthorId, ojsArticleId, title, financialDisclosure)
+  }*/
+
+  def assemble(ojsArticleId: Int, title: String, financialDisclosure: String): Copyright = {
+    apply(None, None, None, ojsArticleId, title, financialDisclosure)
+  }
+
+  def unassemble(a: Copyright): Option[(Int, String, String)] = {
+    Some(a.ojsArticleId, a.title, a.financialDisclosure)
+  }
+}
+
+
+class Copyrights(tag: Tag) extends Table[Copyright](tag, Copyrights.TABLE_NAME) {
+
+  def id = column[Option[Int]]("id", O.PrimaryKey)
+
+  def requestId = column[Option[Int]]("requestId")
+
+  def correspondingAuthorId = column[Option[Int]]("correspondingAuthorId")
 
   def ojsArticleId = column[Int]("ojsArticleId")
 
-  // TODO: foreign key to (Corresponding)Authors + add to the projection
+  def title = column[String]("title")
 
   def financialDisclosure = column[String]("financialDisclosure")
 
-  def * = (id, ojsArticleId, financialDisclosure) //<> (Copyright.tupled, Copyright.unapply)
+
+  def * = (id, requestId, correspondingAuthorId, ojsArticleId, title, financialDisclosure) <>
+    ((Copyright.apply _).tupled, Copyright.unapply)
+
+
+  def request = foreignKey("requestId",
+    requestId, CopyrightTransferRequests.copyrightTransferRequests)(_.id)
+
+  def correspondingAuthor = foreignKey("correspondingAuthorId",
+    correspondingAuthorId, CorrespondingAuthors.correspondingAuthors)(_.id)
 }
 
 object Copyrights {

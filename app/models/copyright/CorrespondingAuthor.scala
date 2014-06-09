@@ -2,29 +2,52 @@ package models.copyright
 
 import scala.slick.driver.MySQLDriver.simple._
 
-case class CorrespondingAuthor(
+case class CorrespondingAuthor(id: Option[Int],
+                               copyrightId: Option[Int],
                                firstName: String,
-                               middleName: Option[String],
+                               middleName: String,
                                lastName: String,
                                affiliation: String,
                                email: String) {
 
-  override def toString = "Name: "+lastName+
-      "\n\rAffiliation: "+affiliation+
-      "\n\rE-mail address: "+email
+  override def toString = "Name: " + lastName +
+    "\n\rAffiliation: " + affiliation +
+    "\n\rE-mail address: " + email
 
-  def getFullName = firstName + " " + middleName.getOrElse("") + " " + lastName
+  def getFullName = firstName + " " + middleName + " " + lastName
+}
+
+object CorrespondingAuthor {
+
+  /*def fromTuple(tuple: (Option[Int], Option[Int], String, String, String, String, String)): CorrespondingAuthor = tuple match {
+    case (id: Option[Int], copyrightId: Option[Int], firstName: String, middleName: String, lastName: String, affiliation: String, email: String) =>
+      CorrespondingAuthor(id, copyrightId, firstName, middleName, lastName, affiliation, email)
+  }*/
+    
+  /*def build(tuple: (String, String, String, String, String)): CorrespondingAuthor = {   
+    case (firstName: String, middleName: String, lastName: String, affiliation: String, email: String) =>
+      CorrespondingAuthor(None, None, firstName, middleName, lastName, affiliation, email)
+  }*/
+
+  def assemble(firstName: String, middleName: String, lastName: String, affiliation: String, email: String): CorrespondingAuthor = {
+      apply(None, None, firstName, middleName, lastName, affiliation, email)
+  }
+
+  def unassemble(a: CorrespondingAuthor): Option[(String, String, String, String, String)] = {
+    Some(a.firstName, a.middleName, a.lastName, a.affiliation, a.email)
+  }
 }
 
 class CorrespondingAuthors(tag: Tag)
   extends Table[CorrespondingAuthor](tag, CorrespondingAuthors.TABLE_NAME) {
 
-  // TODO: add to the case class
-  //def id = column[Int]("id", O.PrimaryKey)
+  def id = column[Option[Int]]("id", O.PrimaryKey)
+
+  def copyrightId = column[Option[Int]]("copyrightId")
 
   def firstName = column[String]("firstName")
 
-  def middleName = column[Option[String]]("middleName")
+  def middleName = column[String]("middleName")
 
   def lastName = column[String]("lastName")
 
@@ -32,8 +55,12 @@ class CorrespondingAuthors(tag: Tag)
 
   def email = column[String]("email")
 
-  def * = (firstName, middleName, lastName, affiliation, email) <>
-    (CorrespondingAuthor.tupled, CorrespondingAuthor.unapply)
+
+  def * = (id, copyrightId, firstName, middleName, lastName, affiliation, email) <>
+    ((CorrespondingAuthor.apply _).tupled, CorrespondingAuthor.unapply)
+
+
+  def copyright = foreignKey("copyrightId", copyrightId, Copyrights.copyrights)(_.id)
 }
 
 object CorrespondingAuthors {

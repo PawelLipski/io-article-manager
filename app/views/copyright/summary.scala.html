@@ -1,4 +1,4 @@
-@(copyrightTransferRequest: models.copyright.CopyrightTransferRequest, copyrightForm: Form[models.copyright.Copyright])(implicit request: Request[AnyContent])
+@(copyrightFormWrapper: models.copyright.CopyrightWrapper)(implicit request: Request[AnyContent])
 
 @import helper._
 
@@ -10,21 +10,21 @@
 
     <h4>Paper</h4>
     <label>ID:</label>
-    <p>@copyrightTransferRequest.copyrightData.ojsId</p>
+    <p>@copyrightFormWrapper.copyright.ojsArticleId</p>
     <label>Title:</label>
-    <p>@copyrightTransferRequest.copyrightData.title</p><br>
+    <p>@copyrightFormWrapper.copyright.title</p><br>
 
     <h4>Corresponding author</h4>
     <label>First name:</label>
-    <p>@copyrightTransferRequest.copyrightData.correspondingAuthor.firstName</p>
+    <p>@copyrightFormWrapper.correspondingAuthor.firstName</p>
     <label>Middle name:</label>
-    <p>@copyrightTransferRequest.copyrightData.correspondingAuthor.middleName.getOrElse("-")</p>
+    <p>@copyrightFormWrapper.correspondingAuthor.middleName</p>
     <label>Last name:</label>
-    <p>@copyrightTransferRequest.copyrightData.correspondingAuthor.firstName</p>
+    <p>@copyrightFormWrapper.correspondingAuthor.firstName</p>
     <label>Affiliation:</label>
-    <p>@copyrightTransferRequest.copyrightData.correspondingAuthor.affiliation</p>
+    <p>@copyrightFormWrapper.correspondingAuthor.affiliation</p>
     <label>Email:</label>
-    <p>@copyrightTransferRequest.copyrightData.correspondingAuthor.email</p>
+    <p>@copyrightFormWrapper.correspondingAuthor.email</p>
     <br>
     <h4>Authors</h4>
 
@@ -37,7 +37,7 @@
                 <th>Estimated % of the total contribution</th>
             </tr>
         </thead>
-    @copyrightTransferRequest.copyrightData.contribution.map { contribution =>
+        @copyrightFormWrapper.contributionList.map { contribution =>
         <tr>
             <td>@contribution.getFullAuthorName</td>
             <td>@contribution.affiliation</td>
@@ -49,16 +49,9 @@
     </table>
     <br>
     <h4>Financial disclosure</h4>
-    <p>@copyrightTransferRequest.copyrightData.financialDisclosure</p>
+    <p>@copyrightFormWrapper.copyright.financialDisclosure</p>
 
-    <br>
-    <label>Date filled:</label>
-    <p>@Html(copyrightTransferRequest.dateFilled.toString("yyyy-MM-dd HH:mm:ss SSSZZ"))</p>
-    <label>IP address:</label>
-    <p>@Html(copyrightTransferRequest.ipAddress)</p>
-    <br>
-
-    @form(action = routes.CopyrightTransfer.confirm(copyrightTransferRequest.copyrightData.ojsId)) {
+    @form(action = routes.CopyrightTransfer.confirm()) {
         <button type="submit" class="btn btn-primary">Confirm</button>
     }
 

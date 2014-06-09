@@ -1,14 +1,10 @@
 package utils;
 
-import com.google.common.io.Files;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
-import models.copyright.Contribution;
-import models.copyright.CopyrightTransferRequest;
-import play.api.Play;
+import models.copyright.*;
 import scala.collection.Iterator;
-import scala.collection.immutable.*;
 import scala.collection.immutable.List;
 
 import java.io.*;
@@ -19,18 +15,18 @@ import java.nio.charset.Charset;
  */
 public class PdfGenerator {
 
-    public static void generate(CopyrightTransferRequest request, File file, long journalId) throws DocumentException, IOException {
+    public static void generate(CopyrightTransferRequestWrapper request, File file, long journalId) throws DocumentException, IOException {
         FileOutputStream outputStream = new FileOutputStream(file);
         generate(request, outputStream, journalId);
     }
 
-    public static byte[] generate(CopyrightTransferRequest request, long journalId) throws DocumentException, IOException {
+    public static byte[] generate(CopyrightTransferRequestWrapper request, long journalId) throws DocumentException, IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         generate(request, outputStream, journalId);
         return outputStream.toByteArray();
     }
 
-    private static void generate(CopyrightTransferRequest request, OutputStream outputStream, long journalID) throws DocumentException, IOException {
+    private static void generate(CopyrightTransferRequestWrapper wrapper, OutputStream outputStream, long journalID) throws DocumentException, IOException {
 
         java.util.List<String> list = getConsentToPublishText(journalID);
         Document document = new Document();
@@ -44,18 +40,23 @@ public class PdfGenerator {
             consentParagraph.setAlignment(Paragraph.ALIGN_JUSTIFIED);
             document.add(consentParagraph);
         }
+        CopyrightTransferRequest request = wrapper.copyrightTransferRequest();
+        Copyright copyright = wrapper.copyright();
+        CorrespondingAuthor correspondingAuthor = wrapper.correspondingAuthor();
+        List<Contribution> contributionList = wrapper.contributionList();
+
         document.add(new Paragraph("\nCopyright transfer form\n\n"));
-        document.add(createParagraph("Date filled", request.dateFilled()));
+        document.add(createParagraph("Date confirmed", request.dateConfirmed()));
         document.add(createParagraph("IP address", request.ipAddress()));
-        document.add(createParagraph("\nPaper ID", request.copyrightData().ojsId()));
-        document.add(createParagraph("Paper title", request.copyrightData().title()));
+        document.add(createParagraph("\nPaper ID", copyright.ojsArticleId()));
+        document.add(createParagraph("Paper title", copyright.title()));
         document.add(createParagraph("\nCorresponding author",
-                "Name: " + request.copyrightData().correspondingAuthor().getFullName() +
-                        "\n\t\t\t\tAffiliation: " + request.copyrightData().correspondingAuthor().affiliation() +
-                        "\n\t\t\t\tE-mail: " + request.copyrightData().correspondingAuthor().email()));
+                "Name: " + correspondingAuthor.getFullName() +
+                        "\n\t\t\t\tAffiliation: " + correspondingAuthor.affiliation() +
+                        "\n\t\t\t\tE-mail: " + correspondingAuthor.email()));
         document.add(createParagraph("\nContribution of authors", ""));
-        document.add(createContributionTable(request.copyrightData().contribution()));
-        document.add(createParagraph("\nFinancial disclosure", request.copyrightData().financialDisclosure()));
+        document.add(createContributionTable(contributionList));
+        document.add(createParagraph("\nFinancial disclosure", copyright.financialDisclosure()));
         document.close();
         outputStream.close();
     }
