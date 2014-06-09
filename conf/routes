@@ -15,14 +15,14 @@ POST        /login                                  controllers.Authentication.d
 GET         /logout                                 controllers.Authentication.logout
 
 # consent to publish
-GET         /consent_to_publish/choose              controllers.CopyrightTransfer.index
-GET         /consent_to_publish                     controllers.CopyrightTransfer.consentWithIdInQueryString
-GET         /consent_to_publish/:id                 controllers.CopyrightTransfer.consentWithIdInUrl(id : Int)
-POST        /consent_to_publish/submit              controllers.CopyrightTransfer.submit
-POST        /consent_to_publish/confirm             controllers.CopyrightTransfer.confirm
-GET         /consent_to_publish/verify/:token       controllers.CopyrightTransfer.verify(token : String)
+GET         /copyright-transfer/choose                   controllers.CopyrightTransfer.index
+GET         /copyright-transfer                          controllers.CopyrightTransfer.consentWithIdInQueryString
+GET         /copyright-transfer/:id                      controllers.CopyrightTransfer.consentWithIdInUrl(id : Int)
+POST        /copyright-transfer/submit                   controllers.CopyrightTransfer.submit
+POST        /copyright-transfer/confirm                  controllers.CopyrightTransfer.confirm
+GET         /copyright-transfer/verify/:token            controllers.CopyrightTransfer.verify(token : String)
 #authors
-GET         /authors/:id/:year/:volumeId           controllers.Authors.list(id: Int, year: Int, volumeId: Int)
+GET         /manage-transfers/:id/:year/:volumeId        controllers.CopyrightTransferManagement.list(id: Int, year: Int, volumeId: Int)
 
 #ranking
 GET         /ranking                                controllers.ReportGenerator.index
