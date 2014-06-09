@@ -243,16 +243,16 @@
                     });
 
                     $('#consentForm-form').submit(function() {
-                        var list = $(this ).find(".percent")
+                        var management = $(this ).find(".percent")
                         var sum = 0;
-                        for(var i=0; i< list.length; i++){
-                            sum+= parseInt(list.eq(i ).val())
+                        for(var i=0; i< management.length; i++){
+                            sum+= parseInt(management.eq(i ).val())
                         }
 
                         if (sum != 100) {
                             // display information about invalid values
                             $("<p style='color:red'>Percent of contribution must sum up to 100%. Current value is "+sum+".</p>" ).insertAfter(".error-display-place" )
-                            list.parent( ).parent( ).addClass("has-error")
+                            management.parent( ).parent( ).addClass("has-error")
                         }
 
                         return sum == 100

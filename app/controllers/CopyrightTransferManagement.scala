@@ -11,6 +11,6 @@ object CopyrightTransferManagement extends Controller with Secured {
       val transferRequests = CopyrightTransferInternalDao.listTransferRequests(id, year, volumeId)
       val journals = GeneralOjsDao.getListOfJournals
 
-      Ok(views.html.authors.list(id, year, volumeId, transferRequests, journals))
+      Ok(views.html.copyright.management(id, year, volumeId, transferRequests, journals))
   }
 }
