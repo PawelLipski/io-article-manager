@@ -4,7 +4,7 @@ import play.api._
 import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
-import models.dao.AuthenticationDao
+import dao.AuthenticationDao
 import org.apache.commons.codec.binary.Hex
 
 object Authentication extends Controller with Secured {
@@ -13,7 +13,7 @@ object Authentication extends Controller with Secured {
     tuple(
       "user" -> text,
       "password" -> text
-    ) verifying ("Invalid user or password", result => result match {
+    ) verifying("Invalid user or password", result => result match {
       case (user, password) if verifyCredentials(user, password) => true
       case _ => false
     })
@@ -39,15 +39,17 @@ object Authentication extends Controller with Secured {
     }
   }
 
-  def doLogin = Action { implicit request =>
-    loginForm.bindFromRequest.fold(
-      formWithErrors => BadRequest(views.html.login(formWithErrors, routes.Authentication.doLogin())),
-      user => Redirect(session.get("returnUrl").getOrElse("/")).withSession(session + ("user" -> user._1) - "returnUrl")
-    )
+  def doLogin = Action {
+    implicit request =>
+      loginForm.bindFromRequest.fold(
+        formWithErrors => BadRequest(views.html.login(formWithErrors, routes.Authentication.doLogin())),
+        user => Redirect(session.get("returnUrl").getOrElse("/")).withSession(session + ("user" -> user._1) - "returnUrl")
+      )
   }
 
-  def login = Action { implicit request =>
-    Ok(views.html.login(loginForm, routes.Authentication.doLogin()))
+  def login = Action {
+    implicit request =>
+      Ok(views.html.login(loginForm, routes.Authentication.doLogin()))
   }
 
   def logout = Action {

@@ -1,16 +1,8 @@
-package models.dao
+package dao
 
-import play.api._
-import play.api.mvc._
-import java.sql.ResultSet
-import models.copyright.Contribution
 import scala.slick.driver.MySQLDriver.simple._
 import play.api.db.DB
-import utils.TokenGenerator
 import play.api.Play.current
-import java.sql.Date
-import slick.ojs.Tables
-import slick.ojs
 
 object GeneralOjsDao {
 

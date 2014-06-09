@@ -1,8 +1,7 @@
-package models.dao
+package dao
 
 import scala.slick.driver.MySQLDriver.simple._
 import models.authentication.Users._
-import scala.slick.jdbc.meta.MTable
 import utils.DatabaseSessionWrapper._
 
 object AuthenticationDao {

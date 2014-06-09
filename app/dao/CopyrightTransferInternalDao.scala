@@ -1,5 +1,5 @@
 
-package models.dao
+package dao
 
 import models.copyright._
 import models.copyright.Contributions._

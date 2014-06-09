@@ -1,4 +1,4 @@
-@(reportForm: Form[models.reports.Report], percentOfForeignAuthors: Double, percentOfForeignReviewers: Double, numberOfPublishedArticles: Int, listOfUnknownAuthors: Iterable[models.Author], listOfUnknownReviewers: Iterable[models.Author])(implicit request: Request[AnyContent])
+@(reportForm: Form[models.reports.Report], percentOfForeignAuthors: Double, percentOfForeignReviewers: Double, numberOfPublishedArticles: Int, listOfUnknownAuthors: Iterable[models.reports.Author], listOfUnknownReviewers: Iterable[models.reports.Author])(implicit request: Request[AnyContent])
 
 @main("Ranking") {
 

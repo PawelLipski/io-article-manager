@@ -4,9 +4,8 @@ import scala.slick.driver.MySQLDriver.simple._
 import play.api.db.DB
 import play.api.Play.current
 import java.text.SimpleDateFormat
-import models.reports.ArticleAuthor
+import models.reports.{Author, ArticleAuthor, ArticleStatus}
 import models.reports.ArticleStatus.ArticleStatus
-import models.reports.ArticleStatus
 
 object RankingDataExtractorOjsDao {
 

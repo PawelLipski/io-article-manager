@@ -2,7 +2,7 @@ package controllers
 
 import play.api.mvc._
 import models.RankingDataExtractorOjsDao
-import models.dao.CopyrightTransferInternalDao
+import dao.CopyrightTransferInternalDao
 
 object CopyrightTransferManagement extends Controller with Secured {
 

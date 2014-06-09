@@ -2,7 +2,6 @@ package models.reports
 
 import java.util
 import java.util.Date
-import models.Author
 import models.reports.ArticleStatus.ArticleStatus
 
 /**

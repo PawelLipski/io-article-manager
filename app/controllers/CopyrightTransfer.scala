@@ -8,7 +8,7 @@ import views.html
 import utils.{TokenGenerator, PdfGenerator, ErrorWrapper}
 
 import utils.MailSender.send
-import models.dao.{CopyrightTransferOjsDao, CopyrightTransferInternalDao}
+import dao.{CopyrightTransferOjsDao, CopyrightTransferInternalDao}
 import models.copyright.Contribution
 import models.copyright.CopyrightTransferRequest
 import models.copyright.CorrespondingAuthor

@@ -1,4 +1,4 @@
-package models.dao
+package dao
 
 import models.copyright.{CopyrightWrapper, Contribution, CorrespondingAuthor, Copyright}
 import scala.slick.driver.MySQLDriver.simple._
@@ -10,7 +10,7 @@ object CopyrightTransferOjsDao {
 
   def getJournalIDForArticle(ojsArticleId: Int): Long = {
 
-    withOjsDatabaseSession  {
+    withOjsDatabaseSession {
 
       implicit session => {
         Articles
@@ -45,13 +45,13 @@ object CopyrightTransferOjsDao {
           .filter(_._1.primaryContact =!= 0.asInstanceOf[Byte])
           .list
           .map(f => CorrespondingAuthor.assemble(
-            f._1.firstName, f._1.middleName.getOrElse(""), f._1.lastName, f._2.settingValue.getOrElse(""), f._1.email))
+          f._1.firstName, f._1.middleName.getOrElse(""), f._1.lastName, f._2.settingValue.getOrElse(""), f._1.email))
           .head
 
         val contributionList = authors
           .list
           .map(f => Contribution.assemble(
-            f._1.firstName, f._1.middleName, f._1.lastName, f._2.settingValue.getOrElse(""), "", 0))
+          f._1.firstName, f._1.middleName, f._1.lastName, f._2.settingValue.getOrElse(""), "", 0))
           .toList
 
         CopyrightWrapper(copyright, correspondingAuthor, contributionList)
