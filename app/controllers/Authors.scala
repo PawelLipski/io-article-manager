@@ -11,6 +11,12 @@ import utils.PdfGenerator
 
 object Authors extends Controller with Secured {
 
+  val consentReportForm = Form(
+    single(
+      "author" -> seq(number)
+    )
+  )
+
   def list(id: Int, year: Int, volume_id: Int) = withAuth {
     var authorsSlick = CopyrightTransferInternalDao.listTransfer(id, year, volume_id)
     var journals = RankingDataExtractorOjsDao.getListOfJournals
@@ -19,12 +25,13 @@ object Authors extends Controller with Secured {
       Ok(views.html.authors.list(id, year, volume_id, authorsSlick, journals))
   }
 
-  def generateReport = withAuth(parse.json) {
+  def generateReport = withAuth {
     user => implicit request =>
-      (request.body).asOpt[List[Int]].map { ctrIds =>
-        Ok(PdfGenerator.generate(CopyrightTransferInternalDao.listTransfer(ctrIds))).as("application/pdf")
-      }.getOrElse {
-        BadRequest("Bad request IDs!")
-      }
+      consentReportForm.bindFromRequest.fold(
+        errors => BadRequest("Unspecified error occurred, nobody knows what happened yet. Try again."),
+        consentIds => {
+          Ok(PdfGenerator.generate(CopyrightTransferInternalDao.listTransfer(consentIds))).as("application/pdf")
+        }
+      )
   }
 }

@@ -4,9 +4,8 @@ import scala.slick.driver.MySQLDriver.simple._
 import play.api.db.DB
 import play.api.Play.current
 import java.text.SimpleDateFormat
-import models.reports.ArticleAuthor
+import models.reports.{Journal, ArticleAuthor, ArticleStatus}
 import models.reports.ArticleStatus.ArticleStatus
-import models.reports.ArticleStatus
 
 /**
  * Author: Mateusz Pszczółka <mateusz.pszczolka@gmail.com>
@@ -165,7 +164,7 @@ object RankingDataExtractorOjsDao {
     }
   }
 
-  def getListOfJournals = {
+  def getListOfJournals : List[Journal] = {
     Database.forDataSource(DB.getDataSource("ojs")).withSession {
       implicit session =>
         slick.ojs.Tables.Journals.list.map(a => models.reports.Journal(a.journalId.asInstanceOf[Int], a.path))

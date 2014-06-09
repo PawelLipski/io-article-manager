@@ -89,7 +89,7 @@ object CopyrightTransferInternalDao {
 
   }
 
-  def listTransfer(ids: List[Int]) : List[CopyrightTransferRequest] = {
+  def listTransfer(ids: Seq[Int]) : List[CopyrightTransferRequest] = {
     Database.forDataSource(DB.getDataSource("internal")).withSession {
       implicit session =>
         (for {

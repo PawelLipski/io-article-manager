@@ -134,6 +134,12 @@ $(document).ready(function () {
         $table.trigger('repaginate');
     });
 
+    var selectedAuthorCheckboxes = $("input[class='selected-author']");
+
+    function refreshCheckboxes() {
+        $("button[type='submit']").attr("disabled", !selectedAuthorCheckboxes.is(":checked"));
+    }
+
     $('#select-all-authors').click(function() {
         if (!$(this).prop('checked')) {
             $('#data-table tbody tr input').prop('checked', false);
@@ -144,6 +150,7 @@ $(document).ready(function () {
                 }
             });
         }
+        refreshCheckboxes();
     });
 
     $('#year-select, #journal-select, #issue-select').change(function () {
@@ -151,8 +158,5 @@ $(document).ready(function () {
             $('#year-select').val() + "/" + $("#issue-select").val() )
     });
 
-    var selectedAuthorCheckboxes = $("input[class='selected-author']");
-    selectedAuthorCheckboxes.click(function() {
-        $("button[type='submit']").attr("disabled", !selectedAuthorCheckboxes.is(":checked"));
-    });
+    selectedAuthorCheckboxes.click(refreshCheckboxes);
 });
