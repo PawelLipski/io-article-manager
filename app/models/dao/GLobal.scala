@@ -1,5 +1,7 @@
 
 import java.io.File
+import models.authentication.Users
+import models.copyright._
 import play.api.db.DB
 import play.api.GlobalSettings
 import play.api.mvc.RequestHeader
@@ -10,7 +12,11 @@ import scala.concurrent._
 import scala.reflect.runtime.currentMirror
 import scala.slick.model.codegen.SourceCodeGenerator
 import scala.slick.driver.MySQLDriver.simple._
-import scala.slick.driver.{JdbcProfile}
+import scala.slick.driver.MySQLDriver.SchemaDescription
+import scala.slick.driver.JdbcProfile
+import scala.slick.jdbc.meta.MTable
+import scala.slick.lifted.AbstractTable
+import utils.DatabaseSessionWrapper._
 import ExecutionContext.Implicits.global
 
 
@@ -52,6 +58,24 @@ object Global extends GlobalSettings {
           new SourceCodeGenerator(driver.createModel).writeToFile(slickDriver, outputFolder, pkg)
       }
     }
+
+    ensureInternalDatabaseTablesExist
+
   }
 
+  def ensureTableExists[T <: AbstractTable[_]](ddl: SchemaDescription, name: String)(implicit session: Session) {
+    if (MTable.getTables(name).list.isEmpty)
+      ddl.create
+  }
+
+  def ensureInternalDatabaseTablesExist {
+    withInternalDatabaseSession {
+      implicit session =>
+        ensureTableExists(Contributions.contributions.ddl, Contributions.TABLE_NAME)
+        ensureTableExists(Copyrights.copyrights.ddl, Copyrights.TABLE_NAME)
+        ensureTableExists(CopyrightTransferRequests.copyrightTransferRequests.ddl, CopyrightTransferRequests.TABLE_NAME)
+        ensureTableExists(CorrespondingAuthors.correspondingAuthors.ddl, CorrespondingAuthors.TABLE_NAME)
+        ensureTableExists(Users.users.ddl, Users.TABLE_NAME)
+    }
+  }
 }
