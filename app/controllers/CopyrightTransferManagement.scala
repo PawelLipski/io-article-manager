@@ -1,8 +1,7 @@
 package controllers
 
 import play.api.mvc._
-import models.RankingDataExtractorOjsDao
-import dao.CopyrightTransferInternalDao
+import dao.{GeneralOjsDao, CopyrightTransferInternalDao}
 
 object CopyrightTransferManagement extends Controller with Secured {
 
@@ -10,7 +9,7 @@ object CopyrightTransferManagement extends Controller with Secured {
     user => implicit request =>
 
       val transferRequests = CopyrightTransferInternalDao.listTransferRequests(id, year, volumeId)
-      val journals = RankingDataExtractorOjsDao.getListOfJournals
+      val journals = GeneralOjsDao.getListOfJournals
 
       Ok(views.html.authors.list(id, year, volumeId, transferRequests, journals))
   }

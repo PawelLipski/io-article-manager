@@ -159,11 +159,4 @@ object RankingDataExtractorOjsDao {
     }
   }
 
-  def getListOfJournals = {
-    Database.forDataSource(DB.getDataSource("ojs")).withSession {
-      implicit session =>
-        slick.ojs.Tables.Journals.list.map(a => models.reports.Journal(a.journalId.asInstanceOf[Int], a.path))
-    }
-  }
-
 }

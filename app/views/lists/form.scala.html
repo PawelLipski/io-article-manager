@@ -11,7 +11,7 @@
 @helper.form(action = target, 'class -> "form-horizontal", 'id -> "consent-form") {
     @select(
         authorListForm("journal.id"),
-        options = List(new Tuple2(null, null)).++(models.RankingDataExtractorOjsDao.getListOfJournals.map(j => new Tuple2(j.id.toString, j.title))).seq,
+        options = List(new Tuple2(null, null)).++(dao.GeneralOjsDao.getListOfJournals.map(j => new Tuple2(j.id.toString, j.title))).seq,
         '_label -> "Journal",
         'class -> "form-control",
         'inputDivClass -> "col-lg-8"
