@@ -4,8 +4,8 @@ import scala.slick.driver.MySQLDriver.simple._
 import play.api.db.DB
 import play.api.Play.current
 import java.text.SimpleDateFormat
-import models.reports.{Author, ArticleAuthor, ArticleStatus}
-import models.reports.ArticleStatus.ArticleStatus
+import models.rankings.{Author, ArticleAuthor, ArticleStatus}
+import models.rankings.ArticleStatus.ArticleStatus
 
 object RankingDataExtractorOjsDao {
 
@@ -128,8 +128,8 @@ object RankingDataExtractorOjsDao {
         } yield (author.firstName, author.lastName, authorSettings.settingValue, author.email,
             article.articleId, article.dateSubmitted, articleSetting.settingValue, article.status, journal.journalId, journal.path)
 
-        authors.list.map(a => new ArticleAuthor(a._1, a._2, models.reports.Journal(a._9.asInstanceOf[Int], a._10),
-          models.reports.Article(a._5.asInstanceOf[Int], a._7.getOrElse(""),
+        authors.list.map(a => new ArticleAuthor(a._1, a._2, models.rankings.Journal(a._9.asInstanceOf[Int], a._10),
+          models.rankings.Article(a._5.asInstanceOf[Int], a._7.getOrElse(""),
             null, null, ArticleStatus.fromByte(a._8), null, null), a._3.getOrElse(""), a._4))
     }
   }
@@ -153,8 +153,8 @@ object RankingDataExtractorOjsDao {
         } yield (user.firstName, user.lastName, userSettings.settingValue, user.email,
             article.articleId, article.dateSubmitted, articleSetting.settingValue, article.status, journal.journalId, journal.path)
 
-        authors.list.map(a => new ArticleAuthor(a._1, a._2, models.reports.Journal(a._9.asInstanceOf[Int], a._10),
-          models.reports.Article(a._5.asInstanceOf[Int], a._7.getOrElse(""),
+        authors.list.map(a => new ArticleAuthor(a._1, a._2, models.rankings.Journal(a._9.asInstanceOf[Int], a._10),
+          models.rankings.Article(a._5.asInstanceOf[Int], a._7.getOrElse(""),
             null, null, ArticleStatus.fromByte(a._8), null, null), a._3.getOrElse(""), a._4))
     }
   }

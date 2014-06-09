@@ -3,8 +3,8 @@ package controllers
 import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
-import models.reports.Journal
-import models.reports.Report
+import models.rankings.Journal
+import models.rankings.Report
 import views.html
 import models.RankingDataExtractorOjsDao
 import utils.ErrorWrapper

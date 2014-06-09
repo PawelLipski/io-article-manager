@@ -1,8 +1,8 @@
-package models.reports
+package models.rankings
 
 import java.util
 import java.util.Date
-import models.reports.ArticleStatus.ArticleStatus
+import models.rankings.ArticleStatus.ArticleStatus
 
 /**
  * Author: Mateusz Pszczółka <mateusz.pszczolka@gmail.com>

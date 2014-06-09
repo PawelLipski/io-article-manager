@@ -1,4 +1,4 @@
-package models.reports
+package models.rankings
 
 /**
  * Author: Mateusz Pszczółka <mateusz.pszczolka@gmail.com>

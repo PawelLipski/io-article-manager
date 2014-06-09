@@ -1,4 +1,4 @@
-package models.reports
+package models.rankings
 
 case class Author(username: String,
                   lastname: String,
