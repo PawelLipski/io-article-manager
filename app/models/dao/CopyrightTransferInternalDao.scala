@@ -49,12 +49,12 @@ object CopyrightTransferInternalDao {
 
         contributionList foreach {
           cb =>
-            val cbId: Int = (contributions returning (contributions.map(_.id)) += cb).get
+            val cbId: Int = contributions returning (contributions.map(_.id)) += cb
             contributions.filter(_.id === cbId).map(_.copyrightId).update(Some(copyrightId))
         }
 
-        val correspondingAuthorId: Int = ((correspondingAuthors returning
-          (correspondingAuthors.map(_.id))) += correspondingAuthor).get
+        val correspondingAuthorId: Int = (correspondingAuthors returning
+          (correspondingAuthors.map(_.id))) += correspondingAuthor
         correspondingAuthors.filter(_.id === correspondingAuthorId).map(_.copyrightId).update(Some(copyrightId))
 
         copyrights.filter(_.id == copyrightId).map(_.correspondingAuthorId).update(Some(correspondingAuthorId))
@@ -64,10 +64,10 @@ object CopyrightTransferInternalDao {
         val tokenShaSum = "(not confirmed yet)"
         val status = SUBMITTED
         val request = CopyrightTransferRequest(
-          None, Some(copyrightId), ipAddress, dateConfirmed, dateVerified, tokenShaSum, status)
+          0, Some(copyrightId), ipAddress, dateConfirmed, dateVerified, tokenShaSum, status)
 
-        val requestId: Int = ((copyrightTransferRequests returning
-          (copyrightTransferRequests.map(_.id))) += request).get
+        val requestId: Int = (copyrightTransferRequests returning
+          (copyrightTransferRequests.map(_.id))) += request
 
         copyrights.filter(_.id == copyrightId).map(_.requestId).update(Some(requestId))
 

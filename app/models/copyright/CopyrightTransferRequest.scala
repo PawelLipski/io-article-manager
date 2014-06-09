@@ -5,7 +5,7 @@ import scala.slick.driver.MySQLDriver.simple._
 
 
 case class CopyrightTransferRequest(
-                                     id: Option[Int],
+                                     id: Int,
                                      copyrightId: Option[Int],
                                      ipAddress: String,
                                      dateConfirmed: Date,
@@ -15,19 +15,10 @@ case class CopyrightTransferRequest(
                                      ) {
 }
 
-/*
-object CopyrightTransferRequest {
-  /def fromTuple(tuple: (Option[Int], Option[Int], String, Date, Date, String, Int)): CopyrightTransferRequest = tuple match {
-    case (id: Option[Int], copyrightId: Option[Int], ipAddress: String,
-      dateConfirmed: Date, dateVerified: Date, tokenShaSum: String, status: Int) =>
-        CopyrightTransferRequest(id, copyrightId, ipAddress, dateConfirmed, dateVerified, tokenShaSum, status)
-  }
-}*/
-
 class CopyrightTransferRequests(tag: Tag)
   extends Table[CopyrightTransferRequest](tag, CopyrightTransferRequests.TABLE_NAME) {
 
-  def id = column[Option[Int]]("id", O.PrimaryKey)
+  def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
 
   def copyrightId = column[Option[Int]]("copyrightId")
 

@@ -2,7 +2,7 @@ package models.copyright
 
 import scala.slick.driver.MySQLDriver.simple._
 
-case class CorrespondingAuthor(id: Option[Int],
+case class CorrespondingAuthor(id: Int,
                                copyrightId: Option[Int],
                                firstName: String,
                                middleName: String,
@@ -19,18 +19,8 @@ case class CorrespondingAuthor(id: Option[Int],
 
 object CorrespondingAuthor {
 
-  /*def fromTuple(tuple: (Option[Int], Option[Int], String, String, String, String, String)): CorrespondingAuthor = tuple match {
-    case (id: Option[Int], copyrightId: Option[Int], firstName: String, middleName: String, lastName: String, affiliation: String, email: String) =>
-      CorrespondingAuthor(id, copyrightId, firstName, middleName, lastName, affiliation, email)
-  }*/
-    
-  /*def build(tuple: (String, String, String, String, String)): CorrespondingAuthor = {   
-    case (firstName: String, middleName: String, lastName: String, affiliation: String, email: String) =>
-      CorrespondingAuthor(None, None, firstName, middleName, lastName, affiliation, email)
-  }*/
-
   def assemble(firstName: String, middleName: String, lastName: String, affiliation: String, email: String): CorrespondingAuthor = {
-      apply(None, None, firstName, middleName, lastName, affiliation, email)
+    apply(0, None, firstName, middleName, lastName, affiliation, email)
   }
 
   def unassemble(a: CorrespondingAuthor): Option[(String, String, String, String, String)] = {
@@ -41,7 +31,7 @@ object CorrespondingAuthor {
 class CorrespondingAuthors(tag: Tag)
   extends Table[CorrespondingAuthor](tag, CorrespondingAuthors.TABLE_NAME) {
 
-  def id = column[Option[Int]]("id", O.PrimaryKey)
+  def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
 
   def copyrightId = column[Option[Int]]("copyrightId")
 

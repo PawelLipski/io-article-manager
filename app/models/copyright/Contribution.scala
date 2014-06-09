@@ -2,7 +2,7 @@ package models.copyright
 
 import scala.slick.driver.MySQLDriver.simple._
 
-case class Contribution(id: Option[Int],
+case class Contribution(id: Int,
                         transferId: Option[Int],
                         firstName: String,
                         middleName: Option[String],
@@ -21,13 +21,8 @@ case class Contribution(id: Option[Int],
 
 object Contribution {
 
-  /*def fromTuple(tuple: (Option[Int], Option[Int], String, Option[String], String, String, String, Int)): Contribution = tuple match {
-    case (id: Option[Int], transferId: Option[Int], firstName: String, middleName: Option[String], lastName: String, affiliation: String, contribution: String, percent: Int) =>
-      Contribution(id, transferId, firstName, middleName, lastName, affiliation, contribution, percent)
-  }*/
-
   def assemble(firstName: String, middleName: Option[String], lastName: String, affiliation: String, contribution: String, percent: Int): Contribution = {
-    apply(None, None, firstName, middleName, lastName, affiliation, contribution, percent)
+    apply(0, None, firstName, middleName, lastName, affiliation, contribution, percent)
   }
 
   def unassemble(a: Contribution): Option[(String, Option[String], String, String, String, Int)] = {
@@ -38,7 +33,7 @@ object Contribution {
 class Contributions(tag: Tag)
   extends Table[Contribution](tag, Contributions.TABLE_NAME) {
 
-  def id = column[Option[Int]]("id", O.PrimaryKey)
+  def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
 
   def copyrightId = column[Option[Int]]("copyrightId")
 
