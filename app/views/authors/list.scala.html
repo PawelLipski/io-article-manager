@@ -5,25 +5,25 @@
     <h1>Journal manager</h1>
 
     <style type="text/css">
-        #table-filter {
-            padding: 10px 0px;
-        }
+    #table-filter {
+    padding : 10 px 0 px ;
+    }
 
-        .gap-sides {
-            margin: 0px 10px;
-        }
+    .gap-sides {
+    margin : 0 px 10 px ;
+    }
 
-        #data-table td:first-child, #data-table th:first-child {
-            text-align: center;
-        }
+    #data-table td : first-child, #data-table th : first-child {
+    text-align : center ;
+    }
 
-        .green {
-            color: #1be533;
-        }
+    .green {
+    color : #1be533 ;
+    }
 
-        .red {
-            color: #e51b24;
-        }
+    .red {
+    color : #e51b24 ;
+    }
     </style>
 
     <div>
@@ -33,17 +33,18 @@
                     <span>Journal</span>
                     <select id="journal-select" class="form-control gap-sides">
 
-                        @for(i <- 0 until journals.size) {
-                            <option value="@journals(i).id" @if(i+1 == id) { selected="selected" } >
-                                @journals(i).title
-                            </option>
-                        }
+                    @for(i <- 0 until journals.size) {
+                        <option value="@journals(i).id" @if(i + 1 == id) {
+                                selected="selected" } >
+                        @journals(i).title
+                        </option>
+                    }
                     </select>
                 </div>
                 <div class="form-group">
                     <span>Year</span>
                     <select id="year-select" class="form-control gap-sides">
-                        <!-- FIXME: needs dao -->
+                            <!-- FIXME: needs dao -->
                         <option @if(year == 2014) { selected="selected" }>2014</option>
                         <option @if(year == 2013) { selected="selected" }>2013</option>
                         <option @if(year == 2012) { selected="selected" }>2012</option>
@@ -52,7 +53,7 @@
                 <div class="form-group">
                     <span>Volume</span>
                     <select id="issue-select" class="form-control gap-sides">
-                        <!-- FIXME: needs dao -->
+                            <!-- FIXME: needs dao -->
                         <option @if(volumeId == 3) { selected="selected" } value="3">Vol 13, No 1</option>
                         <option @if(volumeId == 2) { selected="selected" } value="2">Vol 13, No 2</option>
                         <option @if(volumeId == 1) { selected="selected" } value="1">Vol 13, No 3</option>
@@ -70,30 +71,36 @@
                 <tr>
                     <th><input id="select-all-authors" type="checkbox"></th>
                     <th>Paper title</th>
-                    <th>Confirmed</th>
-                    <th>Corresp. author</th>
+                    <th>Verification status</th>
+                    <th>Corresponding author</th>
                     <th>Affiliation</th>
                     <th>E-mail address</th>
-                    <th>Date filled</th>
+                    <th>Date of verification</th>
                     <th>IP address</th>
                 </tr>
             </thead>
             <tbody>
             @for(ctr <- transferRequests) {
                 <tr>
-                        <td><input class="selected-author" type="checkbox" data-author-id="id_from_db" name="people[]"></td>
+                    <td><input class="selected-author" type="checkbox" data-author-id="id_from_db" name="people[]"></td>
                     <td>@ctr.copyright.title</td>
 
+                    <td>
                     @if(ctr.copyrightTransferRequest.status == CopyrightTransferStatus.VERIFIED) {
-                        <td><i class="glyphicon glyphicon-ok green"></i></td>
-                        } else {
-                            <td><i class="glyphicon glyphicon-ok red"></i></td>
-                        }
+                        <i class="glyphicon glyphicon-ok green"></i>
+                    } else {
+                        <i class="glyphicon glyphicon-ok red"></i>
+                    }
+                    </td>
 
                     <td>@ctr.correspondingAuthor.getFullName</td>
                     <td>@ctr.correspondingAuthor.affiliation</td>
                     <td>@ctr.correspondingAuthor.email</td>
-                    <td>@ctr.copyrightTransferRequest.dateVerified</td>
+                    <td>
+                    @if(ctr.copyrightTransferRequest.status == CopyrightTransferStatus.VERIFIED) {
+                        @ctr.copyrightTransferRequest.dateVerified
+                    }
+                    </td>
                     <td>@ctr.copyrightTransferRequest.ipAddress</td>
                 </tr>
             }
@@ -103,14 +110,14 @@
         <script src="@routes.Assets.at("javascripts/jquery.table-filter.js")" type="text/javascript"></script>
         <script type="text/javascript">
 
-        $("#data-table").addTableFilter({ inputid: 'input-filter' });
+        $ ( "#data-table" ).addTableFilter ( { inputid : 'input-filter' } ) ;
 
         </script>
     </div>
 
-    <div id="bottomrow" style="padding: 10px 0px; position: relative">
-        <button type="button" id="generate-report" class="btn btn-default" style="position: absolute; right: 10px; top: 20px">
-            Generate report
+    <div id="bottomrow" style="padding : 10 px 0 px ; position : relative">
+        <button type="button" id="generate-report" class="btn btn-default" style="position : absolute ; right : 10 px ; top : 20 px">
+        Generate report
         </button>
     </div>
 
