@@ -99,11 +99,25 @@ object CopyrightTransferInternalDao {
     }
   }
 
+  /* TODO: requires testing */
   def removeTransferRequest(transferId: Int) = {
     withInternalDatabaseSession {
       implicit session =>
         copyrightTransferRequests
           .filter(_.id === transferId)
+          .mutate(_.delete())
+
+        val copyrightRow = copyrights
+          .filter(_.requestId === transferId)
+        val copyrightId: Int = copyrightRow.first.id
+        copyrightRow.mutate(_.delete())
+
+        correspondingAuthors
+          .filter(_.copyrightId === copyrightId)
+          .mutate(_.delete())
+
+        contributions
+          .filter(_.copyrightId === copyrightId)
           .mutate(_.delete())
     }
   }
