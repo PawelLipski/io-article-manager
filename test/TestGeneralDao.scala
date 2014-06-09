@@ -41,5 +41,8 @@ class TestGeneralDao extends Specification{
       org.junit.Assert.assertEquals(List(2014), GeneralOjsDao.getYearsJournalActive(4))
 
     }
+    "read journal active" in new WithApplication() {
+      org.junit.Assert.assertEquals(List(2014), GeneralOjsDao.getYearsJournalActive(3))
+    }
   }
 }
