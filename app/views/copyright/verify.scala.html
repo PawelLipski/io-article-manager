@@ -9,9 +9,9 @@
 @main("Verification") {
 
     @if(verificationResult == true) {
-        <p>Agreement confirmed - thank you for verification.</p>
+        <p>Copyright transfer verified successfully - thank you.</p>
     } else {
-        <p>Verification fail - link expired or is invalid.</p>
+        <p>Verification failed - link invalid or expired.</p>
     }
 
     @form(action = routes.Application.index) {
