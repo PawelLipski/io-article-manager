@@ -30,14 +30,17 @@ object CopyrightTransferInternalDao {
       implicit session =>
         slick.internal.Tables.Copyrighttransfer.insert(slick.internal.Tables.CopyrighttransferRow(
           0, filledForm.copyrightData.ojsId, filledForm.copyrightData.title,
-          filledForm.copyrightData.correspondingAuthor.name,
+          filledForm.copyrightData.correspondingAuthor.firstName
+            + " " + filledForm.copyrightData.correspondingAuthor.middleName.getOrElse("")
+            + " " + filledForm.copyrightData.correspondingAuthor.lastName,
           filledForm.copyrightData.correspondingAuthor.affiliation,
           filledForm.copyrightData.correspondingAuthor.email,
           new Date(filledForm.dateFilled.toDate().getTime()),
           filledForm.ipAddress,
           TokenGenerator.generate(),
           false,
-          Option[Date](new Date(0))
+          Option[Date](new Date(0)),
+          filledForm.copyrightData.financialDisclosure
         ))
     }
   }
@@ -65,7 +68,7 @@ object CopyrightTransferInternalDao {
     Database.forDataSource(DB.getDataSource("internal")).withSession {
       implicit session =>
         slick.internal.Tables.Copyrighttransfer
-          .filter(_.ojsarticleid === ojsArticleId).length.run > 0
+          .filter(_.ojsarticleid === ojsArticleId).exists.run
     }
   }
 

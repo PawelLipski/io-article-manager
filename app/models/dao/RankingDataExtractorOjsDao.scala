@@ -7,11 +7,6 @@ import java.text.SimpleDateFormat
 import models.reports.{Journal, ArticleAuthor, ArticleStatus}
 import models.reports.ArticleStatus.ArticleStatus
 
-/**
- * Author: Mateusz Pszczółka <mateusz.pszczolka@gmail.com>
- * Date: 4/22/2014
- * Time: 2:13 PM
- */
 object RankingDataExtractorOjsDao {
 
   val yearFn = SimpleFunction[Int]("year")

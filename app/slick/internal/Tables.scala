@@ -1,5 +1,4 @@
 package slick.internal
-
 // AUTO-GENERATED Slick data model
 /** Stand-alone Slick data model for immediate use */
 object Tables extends {
@@ -86,18 +85,19 @@ trait Tables {
    *  @param filleripaddress Database column fillerIpAddress 
    *  @param linktokenshasum Database column linkTokenSHASum 
    *  @param linkconfirmed Database column linkConfirmed 
-   *  @param datelinkconfirmed Database column dateLinkConfirmed  */
-  case class CopyrighttransferRow(id: Int, ojsarticleid: Int, title: String, correspondingname: String, correspondingaffiliation: String, correspondingemail: String, dateformfilled: java.sql.Date, filleripaddress: String, linktokenshasum: String, linkconfirmed: Boolean, datelinkconfirmed: Option[java.sql.Date])
+   *  @param datelinkconfirmed Database column dateLinkConfirmed 
+   *  @param financialdisclosure Database column financialDisclosure  */
+  case class CopyrighttransferRow(id: Int, ojsarticleid: Int, title: String, correspondingname: String, correspondingaffiliation: String, correspondingemail: String, dateformfilled: java.sql.Date, filleripaddress: String, linktokenshasum: String, linkconfirmed: Boolean, datelinkconfirmed: Option[java.sql.Date], financialdisclosure: String)
   /** GetResult implicit for fetching CopyrighttransferRow objects using plain SQL queries */
   implicit def GetResultCopyrighttransferRow(implicit e0: GR[Int], e1: GR[String], e2: GR[java.sql.Date], e3: GR[Boolean], e4: GR[Option[java.sql.Date]]): GR[CopyrighttransferRow] = GR{
     prs => import prs._
-    CopyrighttransferRow.tupled((<<[Int], <<[Int], <<[String], <<[String], <<[String], <<[String], <<[java.sql.Date], <<[String], <<[String], <<[Boolean], <<?[java.sql.Date]))
+    CopyrighttransferRow.tupled((<<[Int], <<[Int], <<[String], <<[String], <<[String], <<[String], <<[java.sql.Date], <<[String], <<[String], <<[Boolean], <<?[java.sql.Date], <<[String]))
   }
   /** Table description of table CopyrightTransfer. Objects of this class serve as prototypes for rows in queries. */
   class Copyrighttransfer(tag: Tag) extends Table[CopyrighttransferRow](tag, "CopyrightTransfer") {
-    def * = (id, ojsarticleid, title, correspondingname, correspondingaffiliation, correspondingemail, dateformfilled, filleripaddress, linktokenshasum, linkconfirmed, datelinkconfirmed) <> (CopyrighttransferRow.tupled, CopyrighttransferRow.unapply)
+    def * = (id, ojsarticleid, title, correspondingname, correspondingaffiliation, correspondingemail, dateformfilled, filleripaddress, linktokenshasum, linkconfirmed, datelinkconfirmed, financialdisclosure) <> (CopyrighttransferRow.tupled, CopyrighttransferRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (id.?, ojsarticleid.?, title.?, correspondingname.?, correspondingaffiliation.?, correspondingemail.?, dateformfilled.?, filleripaddress.?, linktokenshasum.?, linkconfirmed.?, datelinkconfirmed).shaped.<>({r=>import r._; _1.map(_=> CopyrighttransferRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6.get, _7.get, _8.get, _9.get, _10.get, _11)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (id.?, ojsarticleid.?, title.?, correspondingname.?, correspondingaffiliation.?, correspondingemail.?, dateformfilled.?, filleripaddress.?, linktokenshasum.?, linkconfirmed.?, datelinkconfirmed, financialdisclosure.?).shaped.<>({r=>import r._; _1.map(_=> CopyrighttransferRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6.get, _7.get, _8.get, _9.get, _10.get, _11, _12.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
     
     /** Database column id AutoInc, PrimaryKey */
     val id: Column[Int] = column[Int]("id", O.AutoInc, O.PrimaryKey)
@@ -121,6 +121,8 @@ trait Tables {
     val linkconfirmed: Column[Boolean] = column[Boolean]("linkConfirmed")
     /** Database column dateLinkConfirmed  */
     val datelinkconfirmed: Column[Option[java.sql.Date]] = column[Option[java.sql.Date]]("dateLinkConfirmed")
+    /** Database column financialDisclosure  */
+    val financialdisclosure: Column[String] = column[String]("financialDisclosure")
     
     /** Uniqueness Index over (ojsarticleid) (database name ojsArticleID) */
     val index1 = index("ojsArticleID", ojsarticleid, unique=true)
