@@ -7,7 +7,7 @@ import utils.DatabaseSessionWrapper._
 object AuthenticationDao {
 
   def getPasswordSha1SumForUser(userName: String): Option[String] = {
-    withInternalDatabaseSession {
+    withInternalDatabaseTransaction {
       implicit session =>
         val found = users.filter(_.name === userName).map(_.passwordSha1Sum)
         found.firstOption

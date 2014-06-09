@@ -6,15 +6,24 @@ import play.api.Play.current
 
 object DatabaseSessionWrapper {
 
-  def withSession[T](dbName: String)(block: Session => T): T = {
-    Database.forDataSource(DB.getDataSource(dbName)).withSession(block)
+  def withTransaction[T](dbName: String)(block: Session => T): T = {
+    Database.forDataSource(DB.getDataSource(dbName)).withTransaction {
+      implicit session =>
+        try {
+          block(session)
+        } catch {
+          case e => 
+            session.rollback()
+            throw e
+        }
+    }
   }
 
-  def withInternalDatabaseSession[T](block: Session => T): T = withSession("internal") {
+  def withInternalDatabaseTransaction[T](block: Session => T): T = withTransaction("internal") {
     block
   }
 
-  def withOjsDatabaseSession[T](block: Session => T): T = withSession("ojs") {
+  def withOjsDatabaseTransaction[T](block: Session => T): T = withTransaction("ojs") {
     block
   }
 }

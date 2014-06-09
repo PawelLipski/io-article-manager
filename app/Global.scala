@@ -45,7 +45,7 @@ object Global extends GlobalSettings {
         currentMirror.staticModule(slickDriver)
       ).instance.asInstanceOf[JdbcProfile]
 
-      withOjsDatabaseSession {
+      withOjsDatabaseTransaction {
         implicit session =>
           new SourceCodeGenerator(driver.createModel).writeToFile(slickDriver, outputFolder, pkg)
       }
@@ -61,7 +61,7 @@ object Global extends GlobalSettings {
   }
 
   def ensureInternalDatabaseTablesExist {
-    withInternalDatabaseSession {
+    withInternalDatabaseTransaction {
       implicit session =>
         ensureTableExists(Contributions.contributions.ddl, Contributions.TABLE_NAME)
         ensureTableExists(Copyrights.copyrights.ddl, Copyrights.TABLE_NAME)

@@ -18,7 +18,7 @@ import slick.ojs
 object CopyrightTransferInternalDao {
 
   def fetchTransferRequest(transferId: Int): CopyrightTransferRequestWrapper = {
-    withInternalDatabaseSession {
+    withInternalDatabaseTransaction {
       implicit session =>
 
         val transferRequest: CopyrightTransferRequest =
@@ -40,7 +40,7 @@ object CopyrightTransferInternalDao {
   def submitTransferRequestAndReturnId(
                                         contributionList: List[Contribution], correspondingAuthor: CorrespondingAuthor, copyright: Copyright, ipAddress: String): Int = {
 
-    withInternalDatabaseSession {
+    withInternalDatabaseTransaction {
       implicit session =>
 
         val copyrightId: Int = (copyrights returning (copyrights.map(_.id))) += copyright
@@ -78,7 +78,7 @@ object CopyrightTransferInternalDao {
     val token = TokenGenerator.generate
     val tokenShaSum = TokenGenerator.toSha(token)
 
-    withInternalDatabaseSession {
+    withInternalDatabaseTransaction {
       implicit session =>
         copyrightTransferRequests
           .filter(_.id === transferId)
@@ -90,7 +90,7 @@ object CopyrightTransferInternalDao {
   }
 
   def verifyTransferRequest(tokenShaSum: String): Int = {
-    withInternalDatabaseSession {
+    withInternalDatabaseTransaction {
       implicit session =>
         copyrightTransferRequests
           .filter(_.tokenShaSum === tokenShaSum)
@@ -101,7 +101,7 @@ object CopyrightTransferInternalDao {
 
   /* TODO: requires testing */
   def removeTransferRequest(transferId: Int) = {
-    withInternalDatabaseSession {
+    withInternalDatabaseTransaction {
       implicit session =>
         copyrightTransferRequests
           .filter(_.id === transferId)
@@ -123,7 +123,7 @@ object CopyrightTransferInternalDao {
   }
 
   def verifiedTransferRequestExists(ojsArticleId: Int): Boolean = {
-    withInternalDatabaseSession {
+    withInternalDatabaseTransaction {
       implicit session =>
         copyrightTransferRequests
           .filter(_.status === VERIFIED)
@@ -141,7 +141,7 @@ object CopyrightTransferInternalDao {
   def listTransferRequests(ojsJournalId: Long, year: Int, volumeId: Int): Seq[CopyrightTransferRequestWrapper] = {
 
     val articleIds: Seq[Long] =
-      withOjsDatabaseSession {
+      withOjsDatabaseTransaction {
         implicit session =>
           (for {
             article <- ojs.Tables.Articles if
@@ -150,7 +150,7 @@ object CopyrightTransferInternalDao {
           } yield article.articleId).run
       }
 
-    withInternalDatabaseSession {
+    withInternalDatabaseTransaction {
       implicit session =>
         copyrights
           .filter(_.ojsArticleId.inSetBind(articleIds.map(_.toInt)))

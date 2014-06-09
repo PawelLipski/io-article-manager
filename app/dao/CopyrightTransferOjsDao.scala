@@ -10,7 +10,7 @@ object CopyrightTransferOjsDao {
 
   def getJournalIDForArticle(ojsArticleId: Int): Long = {
 
-    withOjsDatabaseSession {
+    withOjsDatabaseTransaction {
 
       implicit session => {
         Articles
@@ -23,7 +23,7 @@ object CopyrightTransferOjsDao {
 
   def getCopyrightFormWrapperForArticle(ojsArticleId: Int): CopyrightWrapper = {
 
-    withOjsDatabaseSession {
+    withOjsDatabaseTransaction {
 
       implicit session =>
 
@@ -60,7 +60,7 @@ object CopyrightTransferOjsDao {
 
   def articleExists(id: Int): Boolean = {
 
-    withOjsDatabaseSession {
+    withOjsDatabaseTransaction {
       implicit session =>
         slick.ojs.Tables.ArticleSettings
           .filter(_.articleId === id.asInstanceOf[Long]).exists.run

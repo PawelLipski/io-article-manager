@@ -8,7 +8,7 @@ object GeneralOjsDao {
   val yearFn = SimpleFunction[Int]("year")
 
   def getYearsJournalActive(journalId: Int): List[Int] = {
-    withOjsDatabaseSession {
+    withOjsDatabaseTransaction {
       implicit session => {
         slick.ojs.Tables.Articles.filter(_.journalId === journalId.asInstanceOf[Long]).map(x => yearFn(Seq(x.dateSubmitted))).filter(_.isNotNull).groupBy(x => x).map(_._1).list
       }
@@ -16,7 +16,7 @@ object GeneralOjsDao {
   }
 
   def getIssuesForJournal(journalId: Int): List[(Long, String)] = {
-    withOjsDatabaseSession {
+    withOjsDatabaseTransaction {
       implicit session => {
         (for {
           issue <- slick.ojs.Tables.Issues if issue.journalId === journalId.asInstanceOf[Long]
@@ -27,7 +27,7 @@ object GeneralOjsDao {
   }
 
   def getListOfJournals = {
-    withOjsDatabaseSession {
+    withOjsDatabaseTransaction {
       implicit session =>
         slick.ojs.Tables.Journals.list.map(a => models.rankings.Journal(a.journalId.asInstanceOf[Int], a.path))
     }
