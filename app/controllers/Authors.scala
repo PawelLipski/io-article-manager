@@ -12,7 +12,8 @@ import utils.PdfGenerator
 object Authors extends Controller with Secured {
 
   val consentReportForm = Form(
-    single(
+    tuple(
+      "journalId" -> number,
       "author" -> seq(number)
     )
   )
@@ -29,8 +30,8 @@ object Authors extends Controller with Secured {
     user => implicit request =>
       consentReportForm.bindFromRequest.fold(
         errors => BadRequest("Error parsing PDF generation request. Try again."),
-        consentIds => {
-          Ok(PdfGenerator.generate(CopyrightTransferInternalDao.listTransfer(consentIds))).as("application/pdf")
+        formData => {
+          Ok(PdfGenerator.generate(CopyrightTransferInternalDao.listTransfer(formData._2), formData._1)).as("application/pdf")
         }
       )
   }

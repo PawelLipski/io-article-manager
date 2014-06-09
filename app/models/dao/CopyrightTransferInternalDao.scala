@@ -101,12 +101,14 @@ object CopyrightTransferInternalDao {
           CopyrightTransferRequest(
             Option(transfer.id), Copyright(
               transfer.ojsarticleid, transfer.title, CorrespondingAuthor(
-                transfer.correspondingname, transfer.correspondingaffiliation, transfer.correspondingemail
+                // TODO Get first and middle name in DB
+                "", None, transfer.correspondingname, transfer.correspondingaffiliation, transfer.correspondingemail
               ),
               slick.internal.Tables.Authorscontribution.filter(_.copyrighttransferid === transfer.id).list.map(contribution => Contribution(
-                contribution.authorname, contribution.affiliation, contribution.contribution, contribution.percent
+                // TODO Get first and middle name in DB
+                "", None, contribution.authorname, contribution.affiliation, contribution.contribution, contribution.percent
               )),
-              "TODO" // TODO change database model (store financial disclosure in DB)
+              transfer.financialdisclosure
             ),
             new DateTime(transfer.dateformfilled.getTime), transfer.filleripaddress, if (transfer.linkconfirmed) CopyrightTransferStatus.CONFIRMED else CopyrightTransferStatus.UNCONFIRMED
           )
