@@ -98,46 +98,6 @@
 }(jQuery));
 
 $(document).ready(function () {
-    $('#data-table').each(function () {
-        var currentPage = 0;
-        var numPerPage = 10;
-
-        var $table = $(this);
-
-        $table.bind('show-all', function () {
-            $table.find('tbody tr').show();
-        });
-
-        $table.bind('repaginate', function () {
-            // show all;
-            $table.find('tbody tr').show();
-
-            // hide before
-            $table.find('tbody').find('tr:lt(' + (currentPage * numPerPage) + ')').hide();
-
-            // hide after
-            $table.find('tbody').find('tr:gt(' + ((currentPage + 1) * numPerPage - 1) + ')').hide();
-        });
-
-        var numRows = $table.find('tbody tr').length;
-        var numPages = Math.ceil(numRows / numPerPage);
-
-        var $pager = $('<ul class="pagination"></ul>');
-        for (var page = 0; page < numPages; page++) {
-            $('<li class="page-number"><a href="#">' + (page + 1) + '</a></li>')
-                .bind('click', {'newPage': page}, function (event) {
-                    currentPage = event.data['newPage'];
-                    $table.trigger('repaginate');
-                    $(this).addClass('active').siblings().removeClass('active');
-                })
-                .appendTo($pager).addClass('clickable');
-        }
-        $pager.find('span.page-number:first').addClass('active');
-        $('#pagination-container').append($pager);
-        //$pager.insertAfter($table);
-        $table.trigger('repaginate');
-    });
-
     $('#select-all-authors').click(function() {
         if (!$(this).prop('checked')) {
             $('#data-table tbody tr input').prop('checked', false);
@@ -175,15 +135,5 @@ $(document).ready(function () {
                 
             }
         });
-    });
-
-    $('#show-all').click(function() {
-        if (!$(this).prop('checked')) {
-            $("#data-table").trigger('repaginate');
-            $("ul.pagination").show();
-        } else {
-            $("#data-table").trigger('show-all');
-            $("ul.pagination").hide();
-        }
     });
 });
