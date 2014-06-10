@@ -37,8 +37,8 @@ object ReportGenerator extends Controller with Secured {
           val percentOfForeignAuthors = RankingDataExtractorOjsDao.getPercentOfForeignAuthors(ojsJournalId, year)
           val percentOfForeignReviewers = RankingDataExtractorOjsDao.getPercentOfForeignReviewers(ojsJournalId, year)
           val numberOfPublishedArticles = RankingDataExtractorOjsDao.getNumberOfPublishedArticles(ojsJournalId, year)
-          val listOfUnknownAuthors = RankingDataExtractorOjsDao.getListOfUnknownAuthors(ojsJournalId, year)
-          val listOfUnknownReviewers = RankingDataExtractorOjsDao.getListOfUnknownReviewers(ojsJournalId, year)
+          val listOfUnknownAuthors = RankingDataExtractorOjsDao.getListOfAuthorsWithUnknownCountry(ojsJournalId, year)
+          val listOfUnknownReviewers= RankingDataExtractorOjsDao.getListOfReviewersWithUnknownCountry(ojsJournalId, year)
 
           Ok(html.rankings.report(form.fill(ranking), percentOfForeignAuthors, percentOfForeignReviewers, numberOfPublishedArticles, listOfUnknownAuthors, listOfUnknownReviewers))
         }
