@@ -100,7 +100,7 @@
 $(document).ready(function () {
     $('#data-table').each(function () {
         var currentPage = 0;
-        var numPerPage = 10;
+        var numPerPage = 2;
 
         var $table = $(this);
 
@@ -133,7 +133,7 @@ $(document).ready(function () {
                 .appendTo($pager).addClass('clickable');
         }
         $pager.find('span.page-number:first').addClass('active');
-        $('#bottomrow').append($pager);
+        $('#pagination-container').append($pager);
         //$pager.insertAfter($table);
         $table.trigger('repaginate');
     });
@@ -180,8 +180,10 @@ $(document).ready(function () {
     $('#show-all').click(function() {
         if (!$(this).prop('checked')) {
             $("#data-table").trigger('repaginate');
+            $("ul.pagination").show();
         } else {
             $("#data-table").trigger('show-all');
+            $("ul.pagination").hide();
         }
     });
 });
