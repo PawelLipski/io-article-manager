@@ -100,7 +100,7 @@
 $(document).ready(function () {
     $('#data-table').each(function () {
         var currentPage = 0;
-        var numPerPage = 2;
+        var numPerPage = 10;
 
         var $table = $(this);
 
