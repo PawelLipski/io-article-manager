@@ -15,7 +15,7 @@ object JournalUtilProvider {
 
   def getLogoAssetsPath(journalID: Long): String = {
     val path = "/assets/resources/" + journalID + "/logo.png"
-    if (!new File(path).exists()) {
+    if (!new File("public/resources/" + journalID + "/logo.png").exists()) {
       throw new FileNotFoundException("Logo for journal id "+journalID+" is missing.");
     }
     path
@@ -23,20 +23,18 @@ object JournalUtilProvider {
 
   def getLogoImage(journalID: Long): Image = {
     val path = "public/resources/" + journalID + "/logo.png"
-    if (new File(path).exists()) {
-      Image.getInstance(Play.resource(path).get)
-    } else {
+    if (!new File(path).exists()) {
       throw new FileNotFoundException("Logo for journal id "+journalID+" is missing.");
     }
+    Image.getInstance(Play.resource(path).get)
   }
 
   def getConsentToPublishText(journalID: Long): List[String] = {
     val path = "public/resources/" + journalID + "/ctp.txt"
-    if (new File(path).exists()) {
-      Source.fromInputStream(Play.resourceAsStream(path).get).getLines().toList
-    } else {
+    if (!new File(path).exists()) {
       throw new FileNotFoundException("Consent text for journal id "+journalID+" is missing.");
     }
+    Source.fromInputStream(Play.resourceAsStream(path).get).getLines().toList
   }
 
 }
