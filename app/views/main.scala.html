@@ -65,6 +65,21 @@
             <b> <h3> @title.toUpperCase </h3> </b>
             <hr />
             @content
+
+            <footer class="footer">
+                <small>
+                    <b>Posh Wolf</b>, a flow shop solver by <%= link_to "Paweł Lipski & Team", "/about" %>
+                </small>
+                <nav>
+                    <ul>
+                        <li><%= link_to "About", '/about' %></li>
+                        <li><%= link_to "Contact", '/contact' %></li>
+                        <li><%= link_to "Front-end", '/webapp-src' %></li>
+                        <li><%= link_to "Web tests", '/webtests-src' %></li>
+                        <li><%= link_to "Back-end", '/ws-src' %></li>
+                    </ul>
+                </nav>
+            </footer>
         </div>
     </body>
 </html>
