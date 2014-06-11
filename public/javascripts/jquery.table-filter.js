@@ -59,10 +59,13 @@
                         }
                     });
 
+                    var checkbox = $(this).find("input[class='selected-author']");
                     if (state) {
                         $(this).hide();
+                        checkbox.prop("disabled", true);
                     } else {
                         $(this).show();
+                        checkbox.prop("disabled", false);
                     }
                 });
             }, 300);
