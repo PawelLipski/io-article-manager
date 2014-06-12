@@ -98,6 +98,19 @@
 }(jQuery));
 
 $(document).ready(function () {
+    $('#show-only-confirmed').click(function() {
+        if($(this).prop('checked')) {
+            $('.glyphicon-remove', '#data-table').each(function() {
+                $(this).parents().eq(1).hide();
+            });
+        } else {
+            $('.glyphicon-remove', '#data-table').each( function() {
+                $(this).parents().eq(1).show();
+            });
+            $('#data-table').trigger('repaginate');
+        }
+    });
+
     $('#select-all-authors').click(function() {
         if (!$(this).prop('checked')) {
             $('#data-table tbody tr input').prop('checked', false);
