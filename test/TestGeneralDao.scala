@@ -24,7 +24,6 @@ import play.api.test.Helpers._
 
 
 @RunWith(classOf[JUnitRunner])
-
 class TestGeneralDao extends Specification{
   "Application" should {
 

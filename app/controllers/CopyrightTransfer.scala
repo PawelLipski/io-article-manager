@@ -95,7 +95,7 @@ object CopyrightTransfer extends Controller {
       val toEmail = copyrightTransferRequest.copyrightData.correspondingAuthor.email
 
       val pdfFile = java.io.File.createTempFile("CopyrightTransferForm", ".pdf")
-      PdfGenerator.generate(copyrightTransferRequest, pdfFile, CopyrightTransferOjsDao.getJournalIDForArticle(id))
+      PdfGenerator.generate(List(copyrightTransferRequest), pdfFile, CopyrightTransferOjsDao.getJournalIDForArticle(id))
         send a new Mail(
           from = ("test@slonka.udl.pl", "Journal Manager"),
           to = List(toEmail),

@@ -22,6 +22,7 @@ POST        /consent_to_publish/confirmation        controllers.CopyrightTransfe
 GET         /confirm/:token                         controllers.CopyrightTransfer.verify(token : String)
 #authors
 GET         /authors/:id/:year/:volume_id           controllers.Authors.list(id: Int, year: Int, volume_id: Int)
+POST        /authors/generate                       controllers.Authors.generateReport
 
 #ranking
 GET         /ranking                                controllers.ReportGenerator.index

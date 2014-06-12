@@ -19,25 +19,34 @@ import java.nio.charset.Charset;
  */
 public class PdfGenerator {
 
-    public static void generate(CopyrightTransferRequest request, File file, long journalId) throws DocumentException, IOException {
+    public static void generate(List<CopyrightTransferRequest> requests, File file, long journalId) throws DocumentException, IOException {
         FileOutputStream outputStream = new FileOutputStream(file);
-        generate(request, outputStream, journalId);
+        generate(requests, outputStream, journalId);
+        outputStream.close();
     }
 
-    public static byte[] generate(CopyrightTransferRequest request, long journalId) throws DocumentException, IOException {
+    public static byte[] generate(List<CopyrightTransferRequest> requests, long journalId) throws DocumentException, IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        generate(request, outputStream, journalId);
+        generate(requests, outputStream, journalId);
+        outputStream.close();
         return outputStream.toByteArray();
     }
 
-    private static void generate(CopyrightTransferRequest request, OutputStream outputStream, long journalID) throws DocumentException, IOException {
-
-        java.util.List<String> list = getConsentToPublishText(journalID);
+    private static void generate(List<CopyrightTransferRequest> requests, OutputStream outputStream, long journalID) throws DocumentException, IOException {
         Document document = new Document();
         PdfWriter.getInstance(document, outputStream);
         document.open();
+        for (Iterator<CopyrightTransferRequest> requestIterator = requests.iterator(); requestIterator.hasNext();) {
+            addRequestToDocument(requestIterator.next(), document, journalID);
+        }
+        document.close();
+    }
+
+    private static void addRequestToDocument(CopyrightTransferRequest request, Document document, long journalID) throws DocumentException, IOException {
+        document.newPage();
         document.add(getJournalLogo(document, journalID));
         document.add(new Paragraph("Consent to Publish\n"));
+        java.util.List<String> list = getConsentToPublishText(journalID);
         for (int i = 0; i < list.size(); i++) {
             String line = list.get(i);
             Paragraph consentParagraph = new Paragraph((i+1)+":\t\t" + line);
@@ -56,8 +65,6 @@ public class PdfGenerator {
         document.add(createParagraph("\nContribution of authors", ""));
         document.add(createContributionTable(request.copyrightData().contribution()));
         document.add(createParagraph("\nFinancial disclosure", request.copyrightData().financialDisclosure()));
-        document.close();
-        outputStream.close();
     }
 
     private static Image getJournalLogo(Document document, long journalID) throws BadElementException, IOException {
@@ -74,7 +81,7 @@ public class PdfGenerator {
         return scala.collection.JavaConversions.asJavaList(consentToPublishText);
     }
 
-    private static PdfPTable createContributionTable(scala.collection.immutable.List<Contribution> contributionList) {
+    private static PdfPTable createContributionTable(List<Contribution> contributionList) {
         PdfPTable table = new PdfPTable(4);
         table.setWidthPercentage(100);
         table.addCell("Author name");
