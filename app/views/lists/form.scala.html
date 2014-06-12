@@ -1,4 +1,4 @@
-@(authorListForm: Form[models.rankings.AuthorList], target: Call)(implicit request: Request[AnyContent])
+@(authorListForm: Form[models.rankings.AuthorListFilter], target: Call)(implicit request: Request[AnyContent])
 
 @import models.rankings.ArticleStatus
 
@@ -20,9 +20,7 @@
         authorListForm("year"),
         '_label -> "Year",
         'class -> "form-control",
-        'type -> "number",
-        'min -> "2013",
-        'max -> "2048"
+        'type -> "number"
     )
     @select(
         authorListForm("article status"),

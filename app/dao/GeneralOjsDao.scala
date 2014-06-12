@@ -2,6 +2,7 @@ package dao
 
 import scala.slick.driver.MySQLDriver.simple._
 import utils.DatabaseSessionWrapper._
+import scala.slick.lifted
 
 object GeneralOjsDao {
 
@@ -30,6 +31,20 @@ object GeneralOjsDao {
     withOjsDatabaseTransaction {
       implicit session =>
         slick.ojs.Tables.Journals.list.map(a => models.rankings.Journal(a.journalId.asInstanceOf[Int], a.path))
+    }
+  }
+  def getYearsOjsActiveFrom: Option[Int] = {
+    withOjsDatabaseTransaction {
+      implicit session => {
+        slick.ojs.Tables.Articles.map(x => yearFn(Seq(x.dateSubmitted))).min.run
+      }
+    }
+  }
+  def getYearsOjsActiveTo: Option[Int] = {
+    withOjsDatabaseTransaction {
+      implicit session => {
+        slick.ojs.Tables.Articles.map(x => yearFn(Seq(x.dateSubmitted))).max.run
+      }
     }
   }
 }

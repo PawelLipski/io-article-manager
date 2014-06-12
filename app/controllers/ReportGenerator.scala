@@ -15,7 +15,7 @@ object ReportGenerator extends Controller with Secured {
       "journal" -> mapping(
         "id" -> number
       )((id) => Journal(id, null))((journal) => Some(journal.id)),
-      "year" -> number(min = 2013, max = 2020)
+      "year" -> number
     )(Report.apply)(Report.unapply)
   )
 
