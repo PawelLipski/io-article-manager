@@ -1,4 +1,4 @@
-@(transferForm: Form[models.copyright.Copyright], transferFormData: models.copyright.Copyright, consentText: List[String])(implicit request: Request[AnyContent])
+@(transferForm: Form[models.copyright.Copyright], journalId: Long)(implicit request: Request[AnyContent])
 
 @import helper._
 
@@ -12,47 +12,74 @@
         #author-template {
             display: none;
         }
+        .percent-error-display {
+            display: none;
+            color: red;
+        }
+        #consentForm-form-send {
+            float : left;
+        }
+
     </style>
 
     @* this is hidden *@
     <div id="author-template">
-        <h4>Author <span class="author-nr">@transferFormData.contribution.length</span>:</h4>
+        <h4>Author <span class="author-nr">@transferForm.apply("contribution").indexes.length</span>:</h4>
         @inputText(
-            transferForm("authorName"),
-            '_label -> "Author name",
+            transferForm("firstName"),
+            '_label -> "First name",
+            'size -> 30,
+            'class -> "form-control",
+            'required -> "required"
+        )
+
+        @inputText(
+            transferForm("middleName"),
+            '_label -> "Middle name",
             'size -> 30,
             'class -> "form-control"
+        )
+
+        @inputText(
+            transferForm("lastName"),
+            '_label -> "Last name",
+            'size -> 30,
+            'class -> "form-control",
+            'required -> "required"
         )
 
         @inputText(
             transferForm("affiliation"),
             '_label -> "Affiliation",
             'size -> 30,
-            'class -> "form-control"
+            'class -> "form-control",
+            'required -> "required"
         )
 
         @textarea(
             transferForm("contribution"),
             '_label -> "Contribution",
             'size -> 30,
-            'class -> "form-control"
+            'class -> "form-control",
+            'required -> "required"
         )
 
         @inputText(
             transferForm("percent"),
             '_label -> "Percent",
             'size -> 30,
-            'class -> "form-control percent"
+            'class -> "form-control percent",
+            'required -> "required"
         )
     </div>
 
     <div>
-        <img src="@routes.Assets.at("images/Computer_Science_logo.png")">
+        <img src="@utils.JournalUtilProvider.getLogoAssetsPath(journalId)">
     </div>
 
     <h3>Consent to Publish</h3>
     <ol>
-        @consentText.map { line => <li>@line</li> }
+        @utils.JournalUtilProvider.getConsentToPublishText(journalId).map { line => <li>@line</li> }
     </ol>
 
     @helper.form(action = routes.CopyrightTransfer.submit(), 'class -> "form-horizontal", 'id -> "consentForm-form") {
@@ -78,8 +105,23 @@
 
             <h4>Corresponding author</h4><br>
             @inputText(
-                transferForm("correspondingAuthor.name"),
-                '_label -> "Name",
+                transferForm("correspondingAuthor.firstName"),
+                '_label -> "First name",
+                'size -> 30,
+                'class -> "form-control",
+                'required -> "required"
+            )
+
+            @inputText(
+                transferForm("correspondingAuthor.middleName"),
+                '_label -> "Middle name",
+                'size -> 30,
+                'class -> "form-control"
+            )
+
+            @inputText(
+                transferForm("correspondingAuthor.lastName"),
+                '_label -> "Last name",
                 'size -> 30,
                 'class -> "form-control",
                 'required -> "required"
@@ -98,20 +140,37 @@
                 '_label -> "E-mail",
                 'size -> 30,
                 'class -> "form-control",
+                'readonly -> "readonly",
                 'required -> "required"
             )
         </fieldset>
 
         <fieldset>
-            <legend class="error-display-place">Contribution to paper</legend>
+            <legend id="contribution-legend">Contribution to paper</legend>
+            <p class="percent-error-display">Percent of contribution must sum up to 100%.</p>
             @*create default authors forms based on information from database*@
-            @for((item, index) <- transferFormData.contribution.zipWithIndex) {
+            @for((item, index) <- transferForm.apply("contribution").indexes.zipWithIndex) {
 
                 <h4>Author <span class="author-nr">@(index+1)</span>:</h4>
 
                 @inputText(
-                    transferForm("contribution[" + index + "].authorName"),
-                    '_label -> "Author name",
+                    transferForm("contribution[" + index + "].firstName"),
+                    '_label -> "First name",
+                    'size -> 30,
+                    'class -> "form-control",
+                    'required -> "required"
+                )
+
+                @inputText(
+                    transferForm("contribution[" + index + "].middleName"),
+                    '_label -> "Middle name",
+                    'size -> 30,
+                    'class -> "form-control"
+                )
+
+                @inputText(
+                    transferForm("contribution[" + index + "].lastName"),
+                    '_label -> "Last name",
                     'size -> 30,
                     'class -> "form-control",
                     'required -> "required"
@@ -220,8 +279,12 @@
 
                         if (sum != 100) {
                             // display information about invalid values
-                            $("<p style='color:red'>Percent of contribution must sum up to 100%. Current value is "+sum+".</p>" ).insertAfter(".error-display-place" )
+                            $('.percent-error-display' ).css('display', 'block')
                             list.parent( ).parent( ).addClass("has-error")
+                            $('html, body').scrollTop( $("#contribution-legend").offset().top )
+                        } else {
+                            $('.percent-error-display' ).css('display', 'none')
+                            list.parent( ).parent( ).removeClass("has-error")
                         }
 
                         return sum == 100
@@ -250,7 +313,9 @@
             )
 
         </fieldset>
-        <input id="consentForm-form-send" type="submit" class="btn btn-primary error-display-place" value="Send">
+        <input id="consentForm-form-send" type="submit" class="btn btn-primary" value="Send">
+        <p style="margin-left: 80px" class="percent-error-display">Percent of contribution must sum up to 100%.</p>
+
     }
 
 }

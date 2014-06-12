@@ -6,7 +6,7 @@ import play.api.data.Forms._
 import models.copyright._
 import org.joda.time.DateTime
 import views.html
-import utils.{TokenGenerator, PdfGenerator}
+import utils.{JournalUtilProvider, TokenGenerator, PdfGenerator}
 import utils.MailSender.{Mail, send}
 
 import utils.MailSender.send
@@ -32,12 +32,16 @@ object CopyrightTransfer extends Controller {
       "ojsId" -> number,
       "title" -> text,
       "correspondingAuthor" -> mapping(
-        "name" -> text,
+        "firstName" -> text,
+        "middleName" -> optional(text),
+        "lastName" -> text,
         "affiliation" -> text,
         "email" -> text
       )(CorrespondingAuthor.apply)(CorrespondingAuthor.unapply),
       "contribution" -> list(mapping(
-        "authorName" -> text,
+        "firstName" -> text,
+        "middleName" -> optional(text),
+        "lastName" -> text,
         "affiliation" -> text,
         "contribution" -> text,
         "percent" -> number
@@ -60,8 +64,8 @@ object CopyrightTransfer extends Controller {
         BadRequest(views.html.errors.badRequest("Copyright has already been transferred for the article #" + id + "!"))
       } else {
         val copyright = getPaperDataById(id)
-        val consentText = scala.io.Source.fromFile("./public/resources/Computer_Science_ctp.txt").getLines().toList
-        Ok(html.copyright.consentForm(form.fill(copyright), copyright, consentText))
+        val journalId = CopyrightTransferOjsDao.getJournalIDForArticle(id)
+        Ok(html.copyright.consentForm(form.fill(copyright), journalId))
       }
     }
   }
@@ -77,7 +81,7 @@ object CopyrightTransfer extends Controller {
         cd => {
           val copyrightTransferRequest = CopyrightTransferRequest(None, cd, DateTime.now(), request.remoteAddress, CopyrightTransferStatus.UNCONFIRMED)
           filledConsents += cd.ojsId -> copyrightTransferRequest
-          Ok(html.copyright.summary(copyrightTransferRequest))
+          Ok(html.copyright.summary(copyrightTransferRequest, form.fill(cd)))
         }
       )
   }
@@ -91,7 +95,7 @@ object CopyrightTransfer extends Controller {
       val toEmail = copyrightTransferRequest.copyrightData.correspondingAuthor.email
 
       val pdfFile = java.io.File.createTempFile("CopyrightTransferForm", ".pdf")
-      PdfGenerator.generate(copyrightTransferRequest, pdfFile)
+      PdfGenerator.generate(copyrightTransferRequest, pdfFile, CopyrightTransferOjsDao.getJournalIDForArticle(id))
         send a new Mail(
           from = ("test@slonka.udl.pl", "Journal Manager"),
           to = List(toEmail),

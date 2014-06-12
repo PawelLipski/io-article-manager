@@ -8,11 +8,6 @@ import models.reports.ArticleAuthor
 import models.reports.ArticleStatus.ArticleStatus
 import models.reports.ArticleStatus
 
-/**
- * Author: Mateusz Pszczółka <mateusz.pszczolka@gmail.com>
- * Date: 4/22/2014
- * Time: 2:13 PM
- */
 object RankingDataExtractorOjsDao {
 
   val yearFn = SimpleFunction[Int]("year")
@@ -70,12 +65,12 @@ object RankingDataExtractorOjsDao {
     }
   }
 
-  def getListOfUnknownAuthors(ojsJournalId: Int, year: Int): Iterable[Author] = {
+  def getListOfAuthorsWithUnknownCountry(ojsJournalId: Int, year: Int): Iterable[Author] = {
     Database.forDataSource(DB.getDataSource("ojs")).withSession {
       implicit session =>
         val authors = for {
-          authorSettings <- slick.ojs.Tables.AuthorSettings if authorSettings.settingName === "affiliation" && authorSettings.settingValue === ""
-          author <- slick.ojs.Tables.Authors if author.authorId === authorSettings.authorId
+          authorSettings <- slick.ojs.Tables.AuthorSettings if authorSettings.settingName === "affiliation"
+          author <- slick.ojs.Tables.Authors if author.authorId === authorSettings.authorId && author.country === ""
 
           articleSetting <- slick.ojs.Tables.ArticleSettings if articleSetting.settingName === "title"
           article <- slick.ojs.Tables.Articles if article.articleId === articleSetting.articleId &&
@@ -83,12 +78,12 @@ object RankingDataExtractorOjsDao {
           article.journalId === ojsJournalId.asInstanceOf[Long] &&
           yearFn(Seq(article.dateSubmitted)) === year
 
-        } yield (author.firstName, author.lastName, author.email, article.dateSubmitted, articleSetting.settingValue)
-        authors.list.map(a => Author(a._1, a._2, a._5.getOrElse(""), null, simpleDateFormat.format(a._4.get), a._3, null))
+        } yield (author.firstName, author.lastName, author.email, article.dateSubmitted, articleSetting.settingValue, authorSettings.settingValue)
+        authors.list.map(a => Author(a._1, a._2, a._5.getOrElse(""), null, simpleDateFormat.format(a._4.get), a._3, a._6.getOrElse("")))
     }
   }
 
-  def getListOfUnknownReviewers(ojsJournalId: Int, year: Int): Iterable[Author] = {
+  def getListOfReviewersWithUnknownCountry(ojsJournalId: Int, year: Int): Iterable[Author] = {
     Database.forDataSource(DB.getDataSource("ojs")).withSession {
       implicit session =>
         val reviewers = for {
@@ -98,13 +93,13 @@ object RankingDataExtractorOjsDao {
           yearFn(Seq(article.dateSubmitted)) === year
 
           reviewer <- slick.ojs.Tables.ReviewAssignments if article.articleId === reviewer.submissionId
-          user <- slick.ojs.Tables.Users if user.userId === reviewer.reviewerId
+          user <- slick.ojs.Tables.Users if user.userId === reviewer.reviewerId && user.country === ""
           userSettings <- slick.ojs.Tables.UserSettings if userSettings.userId === user.userId &&
-          userSettings.settingName === "affiliation" && userSettings.settingValue === ""
+          userSettings.settingName === "affiliation"
 
-        } yield (user.firstName, user.lastName, user.lastName, article.dateSubmitted, articleSetting.settingValue)
+        } yield (user.firstName, user.lastName, user.lastName, article.dateSubmitted, articleSetting.settingValue, userSettings.settingValue)
 
-        reviewers.list.map(a => Author(a._1, a._2, a._5.getOrElse(""), null, simpleDateFormat.format(a._4.get), a._3, null))
+        reviewers.list.map(a => Author(a._1, a._2, a._5.getOrElse(""), null, simpleDateFormat.format(a._4.get), a._3, a._6.getOrElse("")))
 
     }
   }
@@ -116,7 +111,7 @@ object RankingDataExtractorOjsDao {
    * @param status
    * @return
    */
-  def getListOfAllAuthors(ojsJournalId: Int, year: Int, status: ArticleStatus): Iterable[ArticleAuthor] = {
+  def getListOfAllAuthors(ojsJournalId: Option[Int], year: Option[Int], status: Option[ArticleStatus]): Iterable[ArticleAuthor] = {
     Database.forDataSource(DB.getDataSource("ojs")).withSession {
       implicit session =>
         val authors = for {
@@ -126,9 +121,9 @@ object RankingDataExtractorOjsDao {
           articleSetting <- slick.ojs.Tables.ArticleSettings if articleSetting.settingName === "title"
           article <- slick.ojs.Tables.Articles if article.articleId === articleSetting.articleId &&
           author.submissionId === article.articleId &&
-          (article.journalId === ojsJournalId.asInstanceOf[Long] || ojsJournalId == 0) &&
-          (yearFn(Seq(article.dateSubmitted)) === year || year == 0) &&
-          (article.status === ArticleStatus.toByte(status) || ArticleStatus.toByte(status) == -1)
+          (article.journalId === ojsJournalId.getOrElse(0).asInstanceOf[Long] || ojsJournalId.isEmpty) &&
+          (yearFn(Seq(article.dateSubmitted)) === year.getOrElse(0) || year.isEmpty) &&
+          (article.status === ArticleStatus.toByte(status.orNull) || status.isEmpty)
 
           journal <- slick.ojs.Tables.Journals if article.journalId === journal.journalId
         } yield (author.firstName, author.lastName, authorSettings.settingValue, author.email,
@@ -140,13 +135,13 @@ object RankingDataExtractorOjsDao {
     }
   }
 
-  def getListOfAllRewriters(ojsJournalId: Int, year: Int, status: ArticleStatus): Iterable[ArticleAuthor] = {
+  def getListOfAllRewriters(ojsJournalId: Option[Int], year: Option[Int], status: Option[ArticleStatus]): Iterable[ArticleAuthor] = {
     Database.forDataSource(DB.getDataSource("ojs")).withSession {
       implicit session =>
         val authors = for {
-          article <- slick.ojs.Tables.Articles if (article.journalId === ojsJournalId.asInstanceOf[Long] || ojsJournalId == 0) &&
-          (yearFn(Seq(article.dateSubmitted)) === year || year == 0) &&
-          (article.status === ArticleStatus.toByte(status) || ArticleStatus.toByte(status) == -1)
+          article <- slick.ojs.Tables.Articles if (article.journalId === ojsJournalId.getOrElse(0).asInstanceOf[Long] || ojsJournalId.isEmpty) &&
+          (yearFn(Seq(article.dateSubmitted)) === year.getOrElse(0) || year.isEmpty) &&
+          (article.status === ArticleStatus.toByte(status.orNull) || status.isEmpty)
           articleSetting <- slick.ojs.Tables.ArticleSettings if articleSetting.settingName === "title" &&
           article.articleId === articleSetting.articleId
 
