@@ -28,11 +28,9 @@ object CopyrightTransferManagement extends Controller with Secured {
 
   def generateReport = withAuth {
     user => implicit request =>
-      println("Received a generateReport request")
       consentReportForm.bindFromRequest.fold(
         errors => BadRequest(html.errors.badRequest("Error parsing PDF generation request. Try again.")),
         formData => {
-          println("Generating a pdf for " + formData._2)
           Ok(PdfGenerator.generate(CopyrightTransferInternalDao.listTransferRequests(formData._2), formData._1)).as("application/pdf")
         }
       )

@@ -134,6 +134,7 @@ $(document).ready(function () {
                 }
             });
         }
+        refreshCheckboxes();
     });
 
     $('#year-select, #journal-select, #issue-select').change(function () {
