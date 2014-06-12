@@ -4,7 +4,6 @@ import com.itextpdf.text.Image
 import play.api.Play
 import play.api.Play.current
 import scala.io._
-import java.nio.file.{Paths, Path, Files}
 import java.io.{File, FileNotFoundException}
 
 
