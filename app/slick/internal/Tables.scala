@@ -123,9 +123,6 @@ trait Tables {
     val datelinkconfirmed: Column[Option[java.sql.Date]] = column[Option[java.sql.Date]]("dateLinkConfirmed")
     /** Database column financialDisclosure  */
     val financialdisclosure: Column[String] = column[String]("financialDisclosure")
-    
-    /** Uniqueness Index over (ojsarticleid) (database name ojsArticleID) */
-    val index1 = index("ojsArticleID", ojsarticleid, unique=true)
   }
   /** Collection-like TableQuery object for table Copyrighttransfer */
   lazy val Copyrighttransfer = new TableQuery(tag => new Copyrighttransfer(tag))
