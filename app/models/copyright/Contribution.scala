@@ -3,7 +3,7 @@ package models.copyright
 import scala.slick.driver.MySQLDriver.simple._
 
 case class Contribution(id: Int,
-                        transferId: Option[Int],
+                        copyrightId: Option[Int],
                         firstName: String,
                         middleName: Option[String],
                         lastName: String,
