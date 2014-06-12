@@ -59,10 +59,13 @@
                         }
                     });
 
+                    var checkbox = $(this).find("input[class='selected-author']");
                     if (state) {
                         $(this).hide();
+                        checkbox.prop("disabled", true);
                     } else {
                         $(this).show();
+                        checkbox.prop("disabled", false);
                     }
                 });
             }, 300);
@@ -98,6 +101,16 @@
 }(jQuery));
 
 $(document).ready(function () {
+
+    var selectedAuthorCheckboxes = $("input[class='selected-author']");
+
+    function refreshCheckboxes() {
+        $("button[type='submit']").attr("disabled", !selectedAuthorCheckboxes.is(":checked"));
+    }
+
+    selectedAuthorCheckboxes.click(refreshCheckboxes);
+
+
     $('#show-only-confirmed').click(function() {
         if($(this).prop('checked')) {
             $('.glyphicon-remove', '#data-table').each(function() {
@@ -128,25 +141,4 @@ $(document).ready(function () {
             $('#year-select').val() + "/" + $("#issue-select").val() )
     });
 
-    $('#generate-report').click(function() {
-        var authorsIds = [];
-
-        $('#data-table tbody tr').each(function() {
-            if ($(this).css("display") != 'none') {
-                $(this).find("input").each(function() {
-                    if ($(this).prop('checked')) {
-                        authorsIds.push(parseInt($(this).attr('data-author-id')));
-                    }
-                });
-            }
-        });
-
-        $.post({
-            url: '/authors/generate',
-            data: JSON.stringify(authorsIds),
-            success: function(data) {
-                
-            }
-        });
-    });
 });

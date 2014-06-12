@@ -1,18 +1,14 @@
-# Routes
-# This file defines all application routes (Higher priority routes first)
-# ~~~~
 
 # Home page
-GET         /                                       controllers.Application.index
+GET         /                                            controllers.Application.index
 
 # Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file                           controllers.Assets.at(path="/public", file)
-
+GET         /assets/*file                                controllers.Assets.at(path="/public", file)
 
 # log in/log out
-GET         /login                                  controllers.Authentication.login
-POST        /login                                  controllers.Authentication.doLogin
-GET         /logout                                 controllers.Authentication.logout
+GET         /login                                       controllers.Authentication.login
+POST        /login                                       controllers.Authentication.doLogin
+GET         /logout                                      controllers.Authentication.logout
 
 # consent to publish
 GET         /copyright-transfer/choose                   controllers.CopyrightTransfer.index
@@ -21,18 +17,17 @@ GET         /copyright-transfer/:id                      controllers.CopyrightTr
 POST        /copyright-transfer/submit                   controllers.CopyrightTransfer.submit
 POST        /copyright-transfer/confirm                  controllers.CopyrightTransfer.confirm
 GET         /copyright-transfer/verify/:token            controllers.CopyrightTransfer.verify(token : String)
-#authors
+
+# transfer management
 GET         /manage-transfers/:id/:year/:volumeId        controllers.CopyrightTransferManagement.list(id: Int, year: Int, volumeId: Int)
+POST        /manage-transfers/generate                   controllers.CopyrightTransferManagement.generateReport
 
-#rankings
-GET         /ranking                                controllers.ReportGenerator.index
-POST        /ranking                                controllers.ReportGenerator.submit
+# rankings
+GET         /ranking                                     controllers.ReportGenerator.index
+POST        /ranking                                     controllers.ReportGenerator.submit
 
-#lists
-GET         /lists/authors                          controllers.Lists.index
-POST        /lists/authors                          controllers.Lists.indexPost
-GET         /lists/reviewers                        controllers.Lists.reviewers
-POST        /lists/reviewers                        controllers.Lists.reviewersPost
-
-# Debug
-GET         /debug/dbtest                           controllers.DbTest.index
+# lists
+GET         /lists/authors                               controllers.Lists.index
+POST        /lists/authors                               controllers.Lists.indexPost
+GET         /lists/reviewers                             controllers.Lists.reviewers
+POST        /lists/reviewers                             controllers.Lists.reviewersPost

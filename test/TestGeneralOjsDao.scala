@@ -14,7 +14,7 @@ import play.api.test._
 
 
 @RunWith(classOf[JUnitRunner])
-class TestGeneralDao extends Specification {
+class TestGeneralOjsDao extends Specification {
   "Application" should {
 
     "Get years from database" in new WithApplication {
