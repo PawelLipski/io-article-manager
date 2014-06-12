@@ -1,35 +1,35 @@
 @(reportForm: Form[models.rankings.Report], percentOfForeignAuthors: Double, percentOfForeignReviewers: Double, numberOfPublishedArticles: Int, listOfUnknownAuthors: Iterable[models.rankings.Author], listOfUnknownReviewers: Iterable[models.rankings.Author])(implicit request: Request[AnyContent])
 
-@main("Ranking") {
+    @main("Ranking") {
 
-    <div class="col-md-4">
-    @views.html.rankings.form(reportForm)
-    </div>
-    <div class="col-md-8">
+        <!-- <div class="col-md-4"> -->
+        @views.html.rankings.form(reportForm)
+        <!-- </div>
+    <div class="col-md-8"> -->
         <h1>General statistics</h1>
         <table class="table">
             <thead>
                 <tr>
-                    <td>Parameter</td>
-                    <td>Value</td>
+                    <th>Parameter</th>
+                    <th>Value</th>
                 </tr>
             </thead>
             <tbody>
 
                 <tr>
-                    <td>foreign authors</td>
+                    <td>Foreign authors</td>
                     <td>@percentOfForeignAuthors %</td>
                 </tr>
                 <tr>
-                    <td>foreign reviewers</td>
+                    <td>Foreign reviewers</td>
                     <td>@percentOfForeignReviewers %</td>
                 </tr>
                 <tr>
-                    <td>published articles</td>
+                    <td>Published articles</td>
                     <td>@numberOfPublishedArticles</td>
                 </tr>
                 <tr>
-                    <td>unknown authors</td>
+                    <td>Unknown authors</td>
                     <td>@listOfUnknownAuthors.size</td>
                 </tr>
             </tbody>
@@ -89,6 +89,6 @@
                 </tbody>
             </table>
         </div>
-    </div>
-    <div class="clearfix"/>
-}
+        <!-- </div> -->
+        <div class="clearfix"/>
+    }

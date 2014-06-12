@@ -1,25 +1,27 @@
 @(reportForm: Form[models.rankings.Report])(implicit request: Request[AnyContent])
 
-@import helper._
+    @import helper._
     @implicitFieldConstructor = @{
         FieldConstructor(twitterBootstrapInput.render(_: FieldElements, request))
     }
-@import views.html.helper.inputText
+    @import views.html.helper.inputText
 
-@helper.form(action = routes.ReportGenerator.submit(), 'class -> "form-horizontal", 'id -> "consent-form") {
-    @select(
-        reportForm("journal.id"),
-        options = dao.GeneralOjsDao.getListOfJournals.map(j => new Tuple2(j.id.toString, j.title)).seq,
-        '_label -> "Journal",
-        'class -> "form-control",
-        'inputDivClass -> "col-lg-8"
-    )
-    @inputText(
-        reportForm("year"),
-        '_label -> "Year",
-        'class -> "form-control",
-        'type -> "number"
-    )
-    <input type="submit" class="btn primary" value="Generate">
-}
+    @helper.form(action = routes.ReportGenerator.submit(), 'class -> "form-horizontal", 'id -> "consent-form") {
+        <table width="80%"> <tr>
+            <td width="40%">@select(
+                reportForm("journal.id"),
+                options = dao.GeneralOjsDao.getListOfJournals.map(j => new Tuple2(j.id.toString, j.title)).seq,
+                '_label -> "Journal",
+                'class -> "form-control",
+                'inputDivClass -> "col-lg-8"
+            )</td>
+            <td width="40%">@inputText(
+                reportForm("year"),
+                '_label -> "Year",
+                'class -> "form-control",
+                'type -> "number"
+            )</td>
+            <td width="20%" style="vertical-align: top"><input type="submit" class="btn btn-primary" value="Generate"></td>
+        </tr></table>
+    }
 
