@@ -12,6 +12,14 @@
         #author-template {
             display: none;
         }
+        .percent-error-display {
+            display: none;
+            color: red;
+        }
+        #consentForm-form-send {
+            float : left;
+        }
+
     </style>
 
     @* this is hidden *@
@@ -21,7 +29,8 @@
             transferForm("firstName"),
             '_label -> "First name",
             'size -> 30,
-            'class -> "form-control"
+            'class -> "form-control",
+            'required -> "required"
         )
 
         @inputText(
@@ -35,28 +44,32 @@
             transferForm("lastName"),
             '_label -> "Last name",
             'size -> 30,
-            'class -> "form-control"
+            'class -> "form-control",
+            'required -> "required"
         )
 
         @inputText(
             transferForm("affiliation"),
             '_label -> "Affiliation",
             'size -> 30,
-            'class -> "form-control"
+            'class -> "form-control",
+            'required -> "required"
         )
 
         @textarea(
             transferForm("contribution"),
             '_label -> "Contribution",
             'size -> 30,
-            'class -> "form-control"
+            'class -> "form-control",
+            'required -> "required"
         )
 
         @inputText(
             transferForm("percent"),
             '_label -> "Percent",
             'size -> 30,
-            'class -> "form-control percent"
+            'class -> "form-control percent",
+            'required -> "required"
         )
     </div>
 
@@ -133,7 +146,8 @@
         </fieldset>
 
         <fieldset>
-            <legend class="error-display-place">Contribution to paper</legend>
+            <legend id="contribution-legend">Contribution to paper</legend>
+            <p class="percent-error-display">Percents of contribution must sum up to 100%.</p>
             @*create default authors forms based on information from database*@
             @for((item, index) <- transferForm.apply("contribution").indexes.zipWithIndex) {
 
@@ -252,8 +266,12 @@
 
                         if (sum != 100) {
                             // display information about invalid values
-                            $("<p style='color:red'>Percent of contribution must sum up to 100%. Current value is "+sum+".</p>" ).insertAfter(".error-display-place" )
+                            $('.percent-error-display' ).css('display', 'block')
                             management.parent( ).parent( ).addClass("has-error")
+                            $('html, body').scrollTop( $("#contribution-legend").offset().top )
+                        } else {
+                            $('.percent-error-display' ).css('display', 'none')
+                            list.parent( ).parent( ).removeClass("has-error")
                         }
 
                         return sum == 100
@@ -282,7 +300,8 @@
             )
 
         </fieldset>
-        <input id="consentForm-form-send" type="submit" class="btn btn-primary btn-lg error-display-place" value="Submit">
+        <input id="consentForm-form-send" type="submit" class="btn btn-primary" value="Submit">
+        <p style="margin-left: 80px" class="percent-error-display">Percents of contribution must sum up to 100%.</p>
     }
 
 }

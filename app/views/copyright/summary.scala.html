@@ -1,62 +1,68 @@
 @(copyrightFormWrapper: models.copyright.CopyrightWrapper)(implicit request: Request[AnyContent])
 
-    @import helper._
+@import helper._
 
-    @main("Consent to publish") {
+@main("Consent to publish") {
 
-        <style>
-        p { text-indent : 50 px ; }
-        </style>
+    <style>
+    p { text-indent : 50 px ; }
+    </style>
 
-        <h4>Paper</h4>
-        <label>ID:</label>
-        <p>@copyrightFormWrapper.copyright.ojsArticleId</p>
-        <label>Title:</label>
-        <p>@copyrightFormWrapper.copyright.title</p> <br>
+    <h4>Paper</h4>
+    <label>ID:</label>
+    <p>@copyrightFormWrapper.copyright.ojsArticleId</p>
+    <label>Title:</label>
+    <p>@copyrightFormWrapper.copyright.title</p> <br>
 
-        <h4>Corresponding author</h4>
-        <label>First name:</label>
-        <p>@copyrightFormWrapper.correspondingAuthor.firstName</p>
-        <label>Middle name:</label>
-        <p>@copyrightFormWrapper.correspondingAuthor.middleName</p>
-        <label>Last name:</label>
-        <p>@copyrightFormWrapper.correspondingAuthor.lastName</p>
-        <label>Affiliation:</label>
-        <p>@copyrightFormWrapper.correspondingAuthor.affiliation</p>
-        <label>Email:</label>
-        <p>@copyrightFormWrapper.correspondingAuthor.email</p>
-        <br>
-        <h4>Authors</h4>
+    <h4>Corresponding author</h4>
+    <label>First name:</label>
+    <p>@copyrightFormWrapper.correspondingAuthor.firstName</p>
+    <label>Middle name:</label>
+    <p>@copyrightFormWrapper.correspondingAuthor.middleName</p>
+    <label>Last name:</label>
+    <p>@copyrightFormWrapper.correspondingAuthor.lastName</p>
+    <label>Affiliation:</label>
+    <p>@copyrightFormWrapper.correspondingAuthor.affiliation</p>
+    <label>Email:</label>
+    <p>@copyrightFormWrapper.correspondingAuthor.email</p>
+    <br>
+    <h4>Authors</h4>
 
-        <table class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th>Name, surname</th>
-                    <th>Affiliation</th>
-                    <th>Contribution to the paper</th>
-                    <th>Estimated % of the total contribution</th>
-                </tr>
-            </thead>
-            @copyrightFormWrapper.contributionList.map { contribution =>
-                <tr>
-                    <td>@contribution.getFullAuthorName</td>
-                    <td>@contribution.affiliation</td>
-                    <td>@contribution.contribution</td>
-                    <td>@contribution.percent</td>
-                </tr>
-            }
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Name, surname</th>
+                <th>Affiliation</th>
+                <th>Contribution to the paper</th>
+                <th>Estimated % of the total contribution</th>
+            </tr>
+        </thead>
+        @copyrightFormWrapper.contributionList.map { contribution =>
+            <tr>
+                <td>@contribution.getFullAuthorName</td>
+                <td>@contribution.affiliation</td>
+                <td>@contribution.contribution</td>
+                <td>@contribution.percent</td>
+            </tr>
+        }
 
-        </table>
-        <br>
-        <h4>Financial disclosure</h4>
-        <p>@copyrightFormWrapper.copyright.financialDisclosure</p>
+    </table>
+    <br>
+    <h4>Financial disclosure</h4>
+    <p>@copyrightFormWrapper.copyright.financialDisclosure</p>
 
 
-        <center>
-            @form(action = routes.CopyrightTransfer.confirm()) {
-                <button type="submit" class="btn btn-primary btn-lg" style="margin-right: 20px">Confirm</button> <nobr/>
-            }
-            <input type="submit" value="Back" class="btn btn-primary btn-lg" onClick="history.go ( - 1 )"/>
-
-        </center>
-    }
+    <center>
+        <table> <tr>
+            <td>
+                @form(action = routes.CopyrightTransfer.confirm()) {
+                    <button type="submit" class="btn btn-primary btn-lg" style="margin-right: 20px">
+                        Confirm</button>
+                }
+            </td>
+            <td>
+                <button class="btn btn-primary btn-lg" onClick="history.go ( - 1 )">Back</button>
+            </td>
+        </tr> </table>
+    </center>
+}
