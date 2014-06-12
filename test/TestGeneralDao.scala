@@ -24,22 +24,24 @@ import play.api.test.Helpers._
 
 
 @RunWith(classOf[JUnitRunner])
-@Ignore
 class TestGeneralDao extends Specification{
   "Application" should {
 
     "Get years from database" in new WithApplication {
 
-      System.out.println(GeneralOjsDao.getYearsJournalActive(4))
+      org.junit.Assert.assertEquals(List(2014),GeneralOjsDao.getYearsJournalActive(4))
     }
 
     "Get issues" in new WithApplication {
-      System.out.println(GeneralOjsDao.getIssuesForJournal(4))
+      org.junit.Assert.assertEquals(List((2,null),(2,null),(2,0),(2,0),(2,0),(2,"Abba")), GeneralOjsDao.getIssuesForJournal(2))
     }
 
     "select listTransfer in both database" in new WithApplication {
-      org.junit.Assert.assertEquals(2014, GeneralOjsDao.getYearsJournalActive(4))
+      org.junit.Assert.assertEquals(List(2014), GeneralOjsDao.getYearsJournalActive(4))
 
+    }
+    "read journal active" in new WithApplication() {
+      org.junit.Assert.assertEquals(List(2014), GeneralOjsDao.getYearsJournalActive(3))
     }
   }
 }
