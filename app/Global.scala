@@ -36,23 +36,7 @@ object Global extends GlobalSettings {
   }
 
   override def onStart(app: Application) {
-    val slickDriver = "scala.slick.driver.MySQLDriver"
-    val outputFolder = "gen/app/"
-    val pkg = "slick.ojs"
-
-    if (!new File("gen/app").exists) {
-      val driver: JdbcProfile = currentMirror.reflectModule(
-        currentMirror.staticModule(slickDriver)
-      ).instance.asInstanceOf[JdbcProfile]
-
-      withOjsDatabaseTransaction {
-        implicit session =>
-          new SourceCodeGenerator(driver.createModel).writeToFile(slickDriver, outputFolder, pkg)
-      }
-    }
-
     ensureInternalDatabaseTablesExist
-
   }
 
   def ensureTableExists[T <: AbstractTable[_]](ddl: SchemaDescription, name: String)(implicit session: Session) {
