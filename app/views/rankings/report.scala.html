@@ -1,6 +1,6 @@
 @(reportForm: Form[models.rankings.Report], percentOfForeignAuthors: Double, percentOfForeignReviewers: Double, numberOfPublishedArticles: Int, listOfUnknownAuthors: Iterable[models.rankings.Author], listOfUnknownReviewers: Iterable[models.rankings.Author])(implicit request: Request[AnyContent])
 
-    @main("Ranking") {
+    @main("Journal rankings") {
 
         <!-- <div class="col-md-4"> -->
         @views.html.rankings.form(reportForm)

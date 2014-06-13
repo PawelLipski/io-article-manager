@@ -1,5 +1,5 @@
 @(id: Int, year: Int, volumeId: Int, transferRequests: Seq[models.copyright.CopyrightTransferRequestWrapper], journals: List[models.rankings.Journal])(implicit request: Request[AnyContent])
-@import models.copyright.CopyrightTransferStatus
+@import models.copyright.CopyrightTransferStatus._
 
 @main("Transfer management") {
 
@@ -64,7 +64,7 @@
                         <div class="input-filter-container"><input type="search" class="form-control" placeholder="Find..." size="15" id="input-filter"></div>
                     </div>
                     <div class="form-group">
-                        <div><input type="checkbox" id="show-only-confirmed"> Show only confirmed</div>
+                        <div><input type="checkbox" id="show-only-confirmed"> Show verified only</div>
                     </div>
                 </div>
             </div>
@@ -83,13 +83,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                @for((ctr, index) <- transferRequests.zipWithIndex) {
+                @for(ctr <- transferRequests.filter(wr => List(CONFIRMED, VERIFIED).contains(wr.copyrightTransferRequest.status))) {
                     <tr>
-                        <td><input class="selected-author" type="checkbox" name="author[@index]" value="@ctr.copyrightTransferRequest.id"></td>
+                        <td><input class="selected-author" type="checkbox" name="author[@ctr.copyrightTransferRequest.id]" value="@ctr.copyrightTransferRequest.id"></td>
                         <td>@ctr.copyright.title</td>
 
                         <td>
-                        @if(ctr.copyrightTransferRequest.status == CopyrightTransferStatus.VERIFIED) {
+                        @if(ctr.copyrightTransferRequest.status == VERIFIED) {
                             <i class="glyphicon glyphicon-ok green"></i>
                         } else {
                             <i class="glyphicon glyphicon-remove red"></i>
@@ -100,7 +100,7 @@
                         <td>@ctr.correspondingAuthor.affiliation</td>
                         <td>@ctr.correspondingAuthor.email</td>
                         <td>
-                        @if(ctr.copyrightTransferRequest.status == CopyrightTransferStatus.VERIFIED) {
+                        @if(ctr.copyrightTransferRequest.status == VERIFIED) {
                             @ctr.copyrightTransferRequest.dateVerified
                         }
                         </td>
