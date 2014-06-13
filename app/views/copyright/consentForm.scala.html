@@ -140,7 +140,8 @@
                 '_label -> "E-mail",
                 'size -> 30,
                 'class -> "form-control",
-                'readonly -> "readonly",
+                // 'readonly -> "readonly", // FIXME it's unlocked just for the sake of testing
+                // it must not be a field of any form if we wish to keep it secure!
                 'required -> "required"
             )
         </fieldset>
@@ -316,7 +317,7 @@
             )
 
         </fieldset>
-        <input id="consentForm-form-send" type="submit" class="btn btn-primary" value="Submit">
+        <input id="consentForm-form-send" type="submit" class="btn btn-primary btn-lg" value="Submit">
         <p style="margin-left: 80px" class="percent-error-display">Percents of contribution must sum up to 100%.</p>
     }
 
