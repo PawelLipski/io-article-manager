@@ -5,7 +5,7 @@
 
 @main("A problem occurred...") {
     <h2 align="center">We are sorry, a problem occurred...</h2>
-    <h4 align="center">Please contact the administrator.</h4>
+    <h4 align="center">Please <a href="@routes.Application.contact()"> contact the administrator</a>.</h4>
     @if(Play.isDev(Play.current)) {
         <p>@throwable.getMessage</p>
     }
