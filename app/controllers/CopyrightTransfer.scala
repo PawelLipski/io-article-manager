@@ -55,7 +55,7 @@ object CopyrightTransfer extends Controller {
       BadRequest(views.html.errors.badRequest("Copyright has already been transferred for the article #" + ojsArticleId + "!"))
 
     } else {
-      val copyrightFormWrapper = CopyrightTransferOjsDao.getCopyrightFormWrapperForArticle(ojsArticleId)
+      val copyrightFormWrapper = CopyrightTransferOjsDao.getCopyrightWrapperForArticle(ojsArticleId)
       val journalId = CopyrightTransferOjsDao.getJournalIDForArticle(ojsArticleId)
       Ok(html.copyright.consentForm(form.fill(copyrightFormWrapper), journalId))
     }

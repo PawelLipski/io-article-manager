@@ -9,7 +9,7 @@ import views.html
 import models.RankingDataExtractorOjsDao
 import utils.ErrorWrapper
 
-object ReportGenerator extends Controller with Secured {
+object Rankings extends Controller with Secured {
   val form: Form[Report] = Form(
     mapping(
       "journal" -> mapping(

@@ -23,8 +23,8 @@ GET         /manage-transfers/:id/:year/:volumeId        controllers.CopyrightTr
 POST        /manage-transfers/generate                   controllers.CopyrightTransferManagement.generateReport
 
 # rankings
-GET         /ranking                                     controllers.ReportGenerator.index
-POST        /ranking                                     controllers.ReportGenerator.submit
+GET         /ranking                                     controllers.Rankings.index
+POST        /ranking                                     controllers.Rankings.submit
 
 # lists
 GET         /lists/authors                               controllers.Lists.index

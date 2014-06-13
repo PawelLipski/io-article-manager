@@ -37,7 +37,7 @@ object CopyrightTransferInternalDao {
     }
   }
 
-  def fetchAllTransferRequests(transferIds: Seq[Int]): Seq[CopyrightTransferRequestWrapper] = {
+  def fetchAllTransferRequestsByTransferIds(transferIds: Seq[Int]): Seq[CopyrightTransferRequestWrapper] = {
     withInternalDatabaseTransaction {
       implicit session =>
 
@@ -48,6 +48,41 @@ object CopyrightTransferInternalDao {
 
         val copyrightsHere: Seq[Copyright] =
           copyrights.filter(_.id inSetBind copyrightIdsHere).run
+
+        val correspondingAuthorsHere: Seq[CorrespondingAuthor] =
+          correspondingAuthors.filter(_.copyrightId inSetBind copyrightIdsHere).run
+
+        val allContributionsHere: Seq[Contribution] =
+          contributions.filter(_.copyrightId inSetBind copyrightIdsHere).run
+
+        transferRequestsHere map { transferRequest =>
+          val copyright: Copyright =
+            copyrightsHere.filter(_.requestId.get == transferRequest.id)(0)
+          val correspondingAuthor: CorrespondingAuthor =
+            correspondingAuthorsHere.filter(_.copyrightId.get == copyright.id)(0)
+          val contributionList: List[Contribution] =
+            allContributionsHere.filter(_.copyrightId.get == copyright.id).toList
+          CopyrightTransferRequestWrapper(transferRequest, copyright, correspondingAuthor, contributionList)
+        }
+
+    }
+  }
+
+  def fetchAllTransferRequestsByArticleIds(ojsArticleIds: Seq[Int]): Seq[CopyrightTransferRequestWrapper] = {
+    withInternalDatabaseTransaction {
+      implicit session =>
+
+        val copyrightsHere: Seq[Copyright] =
+          copyrights.filter(_.ojsArticleId inSetBind ojsArticleIds).run
+
+        val copyrightIdsHere: Seq[Int] =
+          copyrightsHere.map(_.id)
+
+        val transferRequestIdsHere: Seq[Int] =
+          copyrightsHere.map(_.requestId).flatten
+
+        val transferRequestsHere: Seq[CopyrightTransferRequest] =
+          copyrightTransferRequests.filter(_.id inSetBind transferRequestIdsHere).run
 
         val correspondingAuthorsHere: Seq[CorrespondingAuthor] =
           correspondingAuthors.filter(_.copyrightId inSetBind copyrightIdsHere).run
@@ -167,24 +202,9 @@ object CopyrightTransferInternalDao {
     }
   }
 
-  val yearFn = SimpleFunction[Int]("year")
-
-  /*def listTransferRequests(requestIds: Seq[Int]): Seq[CopyrightTransferRequestWrapper] = {
-    requestIds map fetchTransferRequest
-  }*/
-
   def listTransferRequestsByJournalAndVolume(ojsJournalId: Long, year: Int, volumeId: Int): Seq[CopyrightTransferRequestWrapper] = {
 
-    val articleIds: Seq[Long] =
-      withOjsDatabaseTransaction {
-        implicit session =>
-          (for {
-            article <- ojs.Tables.Articles if
-          article.journalId === ojsJournalId &&
-            yearFn(Seq(article.lastModified)) === year
-          } yield article.articleId).run
-      }
-
-    fetchAllTransferRequests(articleIds.map(_.toInt))
+    val articleIds = CopyrightTransferOjsDao.listArticlesByJournalAndVolume(ojsJournalId, year, volumeId)
+    fetchAllTransferRequestsByArticleIds(articleIds)
   }
 }

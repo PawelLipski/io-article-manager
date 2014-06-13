@@ -1,9 +1,10 @@
 package dao
 
-import models.copyright.{CopyrightWrapper, Contribution, CorrespondingAuthor, Copyright}
+import models.copyright._
 import scala.slick.driver.MySQLDriver.simple._
 import utils.DatabaseSessionWrapper._
 import slick.ojs.Tables._
+import slick.ojs
 
 
 object CopyrightTransferOjsDao {
@@ -21,7 +22,21 @@ object CopyrightTransferOjsDao {
     }
   }
 
-  def getCopyrightFormWrapperForArticle(ojsArticleId: Int): CopyrightWrapper = {
+  def listArticlesByJournalAndVolume(ojsJournalId: Long, year: Int, volumeId: Int): Seq[Int] = {
+
+      val yearFn = SimpleFunction[Int]("year")
+
+      withOjsDatabaseTransaction {
+        implicit session =>
+          (for {
+            article <- ojs.Tables.Articles if
+          article.journalId === ojsJournalId &&
+            yearFn(Seq(article.lastModified)) === year
+          } yield article.articleId).run.map(_.asInstanceOf[Int])
+      }
+  }
+
+  def getCopyrightWrapperForArticle(ojsArticleId: Int): CopyrightWrapper = {
 
     withOjsDatabaseTransaction {
 

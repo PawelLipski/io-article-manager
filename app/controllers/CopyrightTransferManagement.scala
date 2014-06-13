@@ -31,7 +31,8 @@ object CopyrightTransferManagement extends Controller with Secured {
       consentReportForm.bindFromRequest.fold(
         errors => BadRequest(html.errors.badRequest("Error parsing PDF generation request. Try again.")),
         formData => {
-          Ok(PdfGenerator.generate(CopyrightTransferInternalDao.fetchAllTransferRequests(formData._2), formData._1)).as("application/pdf")
+          val transferIds = CopyrightTransferInternalDao.fetchAllTransferRequestsByTransferIds(formData._2)
+          Ok(PdfGenerator.generate(transferIds, formData._1)).as("application/pdf")
         }
       )
   }

@@ -6,7 +6,7 @@
     }
     @import views.html.helper.inputText
 
-    @helper.form(action = routes.ReportGenerator.submit(), 'class -> "form-horizontal", 'id -> "consent-form") {
+    @helper.form(action = routes.Rankings.submit(), 'class -> "form-horizontal", 'id -> "consent-form") {
         <table width="80%"> <tr>
             <td width="40%">@select(
                 reportForm("journal.id"),
