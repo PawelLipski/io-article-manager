@@ -31,3 +31,6 @@ GET         /lists/authors                               controllers.Lists.index
 POST        /lists/authors                               controllers.Lists.indexPost
 GET         /lists/reviewers                             controllers.Lists.reviewers
 POST        /lists/reviewers                             controllers.Lists.reviewersPost
+
+# about
+GET         /contact                                     controllers.Application.contact
