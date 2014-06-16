@@ -83,6 +83,7 @@
                         <th>Email address</th>
                         <th>Verification date</th>
                         <th>IP address</th>
+                        <th>Remove</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -108,6 +109,8 @@
                         }
                         </td>
                         <td>@ctr.copyrightTransferRequest.ipAddress</td>
+
+                        <td><a href="@routes.CopyrightTransferManagement.removeTransfer( ctr.copyrightTransferRequest.id )">Remove Transfer</a></td>
                     </tr>
                 }
                 </tbody>
