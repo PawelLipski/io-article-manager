@@ -4,7 +4,7 @@
 
     <div class="container-fluid">
 
-        <h3>The features implemented up to now are listed below.</h3>
+        <h3>The features of the system are listed below.</h3>
 
         <b>To see any of them (apart from the copyright transfer, which is publicly available),
             please <a href="@routes.Authentication.login()">log in</a></b>.<br>
@@ -16,13 +16,12 @@
                 Follow the link to confirm the transfer.<br>
             </li>
 
-            <li><a href="@routes.Authors.list("default", "default", "default")">Copyright transfer admin panel</a><br></li>
+            <li><a href="@routes.Authors.list("default", "default", "default")">Manage transfers</a><br>
+                Select a couple of journals and press Generate report for the selected.<br>
+            </li>
 
-            <li><a href="@routes.ReportGenerator.index()">Ranking data extractor</a><br>
-                Type 2013 in the Year field and press Generate.<br>
-                There are still a few bugs in the DAO responsible for this module.
-                They are due to be fixed not later than on May 26.
-                Currently, only mock data is displayed.<br>
+            <li><a href="@routes.Rankings.index()">Ranking data extractor</a><br>
+                Choose e. g. test2 and year 2014, then press Generate.<br>
             </li>
 
             <li><a href="@routes.Lists.index()">List of authors</a><br></li>

@@ -1,57 +1,41 @@
-import models.copyright._
-import models.copyright.Copyright
-import models.copyright.CopyrightTransferRequest
-import models.copyright.CorrespondingAuthor
-import org.joda.time.DateTime
-import org.junit.Ignore
-import org.junit.runner.RunWith
-import org.specs2.runner.JUnitRunner
-import play.api.db.DB
-import play.api.test.WithApplication
-import scala.slick.driver.MySQLDriver.simple._
-import scala.slick.driver.MySQLDriver
-import models.dao.CopyrightTransferInternalDao
+import dao.CopyrightTransferInternalDao
 
+import models.copyright.{Copyright, CorrespondingAuthor, CopyrightTransferStatus, Contribution}
 import org.specs2.mutable._
 import org.specs2.runner._
+import org.junit.Ignore
+import org.junit.Assert._
 import org.junit.runner._
 
 import play.api.test._
-import play.api.test.Helpers._
+import utils.TokenGenerator
 
-
-/**
- * Created by slonka on 19.05.14.
- */
 @RunWith(classOf[JUnitRunner])
-@Ignore
-class TestCopyrightTransferInternalDao extends Specification{
+class TestCopyrightTransferInternalDao extends Specification {
   "Application" should {
 
-    "insert row into CopyrightTransfer table" in new WithApplication {
+    "handle a transfer request" in new WithApplication {
 
-      CopyrightTransferInternalDao.saveTransfer(CopyrightTransferRequest(
-        null,
-        Copyright(1,
-          "Text title",
-          CorrespondingAuthor("Adam", Option("Jan"), "Nowak", "AGH", "test@gmail.com"),
-          List(Contribution("Adam", Option("Jan"), "Nowak", "AGH", "Pelna", 100)),
-          "I grant you full rights"),
-        DateTime.now(),
-        "9.9.9.9",
-        CopyrightTransferStatus.UNCONFIRMED))
-    }
+      val contributionList = List(
+        Contribution.assemble("Pawel", Some("P."), "Lipski", "AGH", "Lorem", 75),
+        Contribution.assemble("Jan", Some("K."), "Kowalski", "AGH", "ipsum", 25)
+      )
+      val correspondingAuthor =
+        CorrespondingAuthor.assemble("Pawel", Some("P."), "Lipski", "AGH", "pawel@lipski.com")
+      val copyright =
+        Copyright.assemble(1, "Hello world", "Hereby I etc. etc.")
 
-    "update row in CopyrightTransfer table" in new WithApplication {
-      CopyrightTransferInternalDao.markTransferAsConfirmed("294785218e9a4034b6c773d02f86fc50")
-    }
+      val ipAddress = "9.9.9.9"
+      val transferId: Int = CopyrightTransferInternalDao.submitTransferRequestAndReturnId(
+        contributionList, correspondingAuthor, copyright, ipAddress)
 
-    "delte row in CopyrightTransger table" in new WithApplication {
-      CopyrightTransferInternalDao.removeTransfer(21)
-    }
-    "select listTransfer in both database" in new WithApplication {
-      org.junit.Assert.assertEquals(2, CopyrightTransferInternalDao.listTransfer(3, 2014, 0).length)
+      val token: String = CopyrightTransferInternalDao.confirmTransferRequestAndReturnToken(transferId)
 
+      val result = CopyrightTransferInternalDao.verifyTransferRequest(TokenGenerator.toSha(token))
+      assertTrue(result != 0)
+
+      val transferRequest = CopyrightTransferInternalDao.fetchTransferRequest(transferId)
+      assertEquals(transferRequest.copyrightTransferRequest.status, CopyrightTransferStatus.VERIFIED)
     }
   }
 }

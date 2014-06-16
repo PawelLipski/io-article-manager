@@ -1,0 +1,13 @@
+@(reportForm: Form[models.rankings.Report])(implicit request: Request[AnyContent])
+
+@import helper._
+    @implicitFieldConstructor = @{
+        FieldConstructor(twitterBootstrapInput.render(_: FieldElements, request))
+    }
+
+@main("Journal rankings") {
+
+    @views.html.rankings.form(reportForm)
+
+    <div class="clearfix"/>
+}

@@ -4,8 +4,9 @@ import scala.slick.driver.MySQLDriver.simple._
 import play.api.db.DB
 import play.api.Play.current
 import java.text.SimpleDateFormat
-import models.reports.{Journal, ArticleAuthor, ArticleStatus}
-import models.reports.ArticleStatus.ArticleStatus
+import models.rankings.{Author, ArticleAuthor, ArticleStatus}
+import models.rankings.ArticleStatus.ArticleStatus
+import utils.DatabaseSessionWrapper._
 
 object RankingDataExtractorOjsDao {
 
@@ -13,7 +14,7 @@ object RankingDataExtractorOjsDao {
   val simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy");
 
   def getPercentOfForeignAuthors(ojsJournalId: Int, year: Int): Double = {
-    Database.forDataSource(DB.getDataSource("ojs")).withSession {
+    withOjsDatabaseTransaction {
       implicit session =>
         val authors = for {
           author <- slick.ojs.Tables.Authors
@@ -32,7 +33,7 @@ object RankingDataExtractorOjsDao {
 
 
   def getNumberOfPublishedArticles(ojsJournalId: Int, year: Int): Int = {
-    Database.forDataSource(DB.getDataSource("ojs")).withSession {
+    withOjsDatabaseTransaction {
       implicit session =>
         val articles = for {
           article <- slick.ojs.Tables.Articles if article.journalId === ojsJournalId.asInstanceOf[Long] &&
@@ -44,7 +45,7 @@ object RankingDataExtractorOjsDao {
   }
 
   def getPercentOfForeignReviewers(ojsJournalId: Int, year: Int): Double = {
-    Database.forDataSource(DB.getDataSource("ojs")).withSession {
+    withOjsDatabaseTransaction {
       implicit session =>
         val reviewers = for {
           reviewer <- slick.ojs.Tables.ReviewAssignments
@@ -65,7 +66,7 @@ object RankingDataExtractorOjsDao {
   }
 
   def getListOfAuthorsWithUnknownCountry(ojsJournalId: Int, year: Int): Iterable[Author] = {
-    Database.forDataSource(DB.getDataSource("ojs")).withSession {
+    withOjsDatabaseTransaction {
       implicit session =>
         val authors = for {
           authorSettings <- slick.ojs.Tables.AuthorSettings if authorSettings.settingName === "affiliation"
@@ -83,7 +84,7 @@ object RankingDataExtractorOjsDao {
   }
 
   def getListOfReviewersWithUnknownCountry(ojsJournalId: Int, year: Int): Iterable[Author] = {
-    Database.forDataSource(DB.getDataSource("ojs")).withSession {
+    withOjsDatabaseTransaction {
       implicit session =>
         val reviewers = for {
           articleSetting <- slick.ojs.Tables.ArticleSettings if articleSetting.settingName === "title"
@@ -111,7 +112,7 @@ object RankingDataExtractorOjsDao {
    * @return
    */
   def getListOfAllAuthors(ojsJournalId: Option[Int], year: Option[Int], status: Option[ArticleStatus]): Iterable[ArticleAuthor] = {
-    Database.forDataSource(DB.getDataSource("ojs")).withSession {
+    withOjsDatabaseTransaction {
       implicit session =>
         val authors = for {
           authorSettings <- slick.ojs.Tables.AuthorSettings if authorSettings.settingName === "affiliation"
@@ -128,14 +129,14 @@ object RankingDataExtractorOjsDao {
         } yield (author.firstName, author.lastName, authorSettings.settingValue, author.email,
             article.articleId, article.dateSubmitted, articleSetting.settingValue, article.status, journal.journalId, journal.path)
 
-        authors.list.map(a => new ArticleAuthor(a._1, a._2, models.reports.Journal(a._9.asInstanceOf[Int], a._10),
-          models.reports.Article(a._5.asInstanceOf[Int], a._7.getOrElse(""),
+        authors.list.map(a => new ArticleAuthor(a._1, a._2, models.rankings.Journal(a._9.asInstanceOf[Int], a._10),
+          models.rankings.Article(a._5.asInstanceOf[Int], a._7.getOrElse(""),
             null, null, ArticleStatus.fromByte(a._8), null, null), a._3.getOrElse(""), a._4))
     }
   }
 
   def getListOfAllRewriters(ojsJournalId: Option[Int], year: Option[Int], status: Option[ArticleStatus]): Iterable[ArticleAuthor] = {
-    Database.forDataSource(DB.getDataSource("ojs")).withSession {
+    withOjsDatabaseTransaction {
       implicit session =>
         val authors = for {
           article <- slick.ojs.Tables.Articles if (article.journalId === ojsJournalId.getOrElse(0).asInstanceOf[Long] || ojsJournalId.isEmpty) &&
@@ -153,16 +154,9 @@ object RankingDataExtractorOjsDao {
         } yield (user.firstName, user.lastName, userSettings.settingValue, user.email,
             article.articleId, article.dateSubmitted, articleSetting.settingValue, article.status, journal.journalId, journal.path)
 
-        authors.list.map(a => new ArticleAuthor(a._1, a._2, models.reports.Journal(a._9.asInstanceOf[Int], a._10),
-          models.reports.Article(a._5.asInstanceOf[Int], a._7.getOrElse(""),
+        authors.list.map(a => new ArticleAuthor(a._1, a._2, models.rankings.Journal(a._9.asInstanceOf[Int], a._10),
+          models.rankings.Article(a._5.asInstanceOf[Int], a._7.getOrElse(""),
             null, null, ArticleStatus.fromByte(a._8), null, null), a._3.getOrElse(""), a._4))
-    }
-  }
-
-  def getListOfJournals : List[Journal] = {
-    Database.forDataSource(DB.getDataSource("ojs")).withSession {
-      implicit session =>
-        slick.ojs.Tables.Journals.list.map(a => models.reports.Journal(a.journalId.asInstanceOf[Int], a.path))
     }
   }
 

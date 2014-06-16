@@ -1,38 +1,36 @@
-# Routes
-# This file defines all application routes (Higher priority routes first)
-# ~~~~
 
 # Home page
-GET         /                                       controllers.Application.index
+GET         /                                            controllers.Application.index
 
 # Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file                           controllers.Assets.at(path="/public", file)
-
+GET         /assets/*file                                controllers.Assets.at(path="/public", file)
 
 # log in/log out
-GET         /login                                  controllers.Authentication.login
-POST        /login                                  controllers.Authentication.doLogin
-GET         /logout                                 controllers.Authentication.logout
+GET         /login                                       controllers.Authentication.login
+POST        /login                                       controllers.Authentication.doLogin
+GET         /logout                                      controllers.Authentication.logout
 
 # consent to publish
-GET         /consent_to_publish/index               controllers.CopyrightTransfer.index
-POST        /consent_to_publish                     controllers.CopyrightTransfer.consent
-POST        /consent_to_publish/submit              controllers.CopyrightTransfer.submit
-POST        /consent_to_publish/confirmation        controllers.CopyrightTransfer.confirm(id : Int)
-GET         /confirm/:token                         controllers.CopyrightTransfer.verify(token : String)
-#authors
-GET         /authors/:id/:year/:volume_id           controllers.Authors.list(id: String, year: String, volume_id: String)
-POST        /authors/generate                       controllers.Authors.generateReport
+GET         /copyright-transfer/choose                   controllers.CopyrightTransfer.index
+GET         /copyright-transfer                          controllers.CopyrightTransfer.consentWithIdInQueryString
+GET         /copyright-transfer/:id                      controllers.CopyrightTransfer.consentWithIdInUrl(id : Int)
+POST        /copyright-transfer/submit                   controllers.CopyrightTransfer.submit
+POST        /copyright-transfer/confirm                  controllers.CopyrightTransfer.confirm
+GET         /copyright-transfer/verify/:token            controllers.CopyrightTransfer.verify(token : String)
 
-#ranking
-GET         /ranking                                controllers.ReportGenerator.index
-POST        /ranking                                controllers.ReportGenerator.submit
+# transfer management
+GET         /manage-transfers/:id/:year/:volumeId        controllers.CopyrightTransferManagement.list(id: String, year: String, volumeId: String)
+POST        /manage-transfers/generate                   controllers.CopyrightTransferManagement.generateReport
 
-#lists
-GET         /lists/authors                          controllers.Lists.index
-POST        /lists/authors                          controllers.Lists.indexPost
-GET         /lists/reviewers                        controllers.Lists.reviewers
-POST        /lists/reviewers                        controllers.Lists.reviewersPost
+# rankings
+GET         /ranking                                     controllers.Rankings.index
+POST        /ranking                                     controllers.Rankings.submit
 
-# Debug
-GET         /debug/dbtest                           controllers.DbTest.index
+# lists
+GET         /lists/authors                               controllers.Lists.index
+POST        /lists/authors                               controllers.Lists.indexPost
+GET         /lists/reviewers                             controllers.Lists.reviewers
+POST        /lists/reviewers                             controllers.Lists.reviewersPost
+
+# about
+GET         /contact                                     controllers.Application.contact

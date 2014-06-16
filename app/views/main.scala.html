@@ -21,7 +21,7 @@
 
 
     <body>
-        <nav class="navbar navbar-default" role="navigation">
+        <header class="navbar navbar-fixed-top navbar-inverse">
             <div class="container-fluid">
                     <!-- Brand and toggle get grouped for better mobile display -->
                 <div class="navbar-header">
@@ -31,32 +31,50 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="@routes.Application.index()">Journal Manager</a>
+                    <a class="navbar-brand" style="color : white" href="@routes.Application.index()">
+                        Journal Manager
+                    </a>
                 </div>
 
                     <!-- Collect the nav links, forms, and other content for toggling -->
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav">
-                        <li><a href="@routes.CopyrightTransfer.index()">Consent to publish</a></li>
+                        <li><a href="@routes.CopyrightTransfer.index()">Copyright transfer</a></li>
                         @if(request.session.get("user")) {
-                            <li><a href="@routes.Authors.list("default", "default", "default")">Manage consents</a></li>
-                            <li><a href="@routes.ReportGenerator.index()">Journal rankings</a></li>
+                            <li><a href="@routes.CopyrightTransferManagement.list("default", "default", "default")">Manage consents</a></li>
+                            <li><a href="@routes.Rankings.index()">Journal rankings</a></li>
                             <li><a href="@routes.Lists.index()">List of authors</a></li>
                             <li><a href="@routes.Lists.reviewers()">List of reviewers</a></li>
                         }
                     </ul>
                     <ul class="nav navbar-nav pull-right">
+                        <li>
                         @if(request.session.get("user")) {
-                            <li><a href="@routes.Authentication.logout">Log out (@request.session.get("user"))</a></li>
+                            <a href="@routes.Authentication.logout" style="color : white">
+                                Log out (@request.session.get("user")) </a>
                         } else {
-                            <li><a href="@routes.Authentication.login">Log in</a></li>
+                            <a href="@routes.Authentication.login" style="color : white">
+                                Log in </a>
                         }
+                        </li>
                     </ul>
                 </div> <!-- /.navbar-collapse -->
             </div> <!-- /.container-fluid -->
-        </nav>
-        <div class="containter well">
-        @content
+        </header>
+        <div class="container">
+            <b> <h3> @title.toUpperCase </h3> </b>
+            <hr />
+            @content
         </div>
+        <footer class="footer">
+            <small>
+                <b>Journal Manager</b>, a system that facilitates copyright transfers and journal rankings
+            </small>
+            <nav>
+                <ul>
+                    <li><a href="@routes.Application.contact()">Contact</a></li>
+                </ul>
+            </nav>
+        </footer>
     </body>
 </html>

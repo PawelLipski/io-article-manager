@@ -8,7 +8,7 @@ import java.sql.Date
  * Time: 6:50 PM
  */
 object SqlUtils {
-  def getCurrnetSqlDate(): java.sql.Date = {
+  def getCurrentSqlDate(): java.sql.Date = {
     var cal = java.util.Calendar.getInstance()
     var utilDate = cal.getTime
     var sqlDate = new Date(utilDate.getTime())

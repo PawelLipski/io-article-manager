@@ -110,6 +110,7 @@ $(document).ready(function () {
 
     selectedAuthorCheckboxes.click(refreshCheckboxes);
 
+
     $('#show-only-confirmed').click(function() {
         if($(this).prop('checked')) {
             $('.glyphicon-remove', '#data-table').each(function() {
@@ -137,7 +138,8 @@ $(document).ready(function () {
     });
 
     $('#year-select, #journal-select, #issue-select').change(function () {
-        window.location.replace("/authors/" + $("#journal-select").val() + "/" +
+        window.location.replace("/manage-transfers/" + $("#journal-select").val() + "/" +
             $('#year-select').val() + "/" + $("#issue-select").val() )
     });
+
 });
