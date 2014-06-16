@@ -18,7 +18,14 @@ object Authors extends Controller with Secured {
     )
   )
 
-  def list(id: Int, year: Int, volume_id: Int) = withAuth {
+  def list(id: String, year: String, volume_id: String) = withAuth {
+    var i_id = 0;
+
+    if(id == "default") {
+
+
+    }
+
     var authorsSlick = CopyrightTransferInternalDao.listTransfer(id, year, volume_id)
     var journals = RankingDataExtractorOjsDao.getListOfJournals
 
