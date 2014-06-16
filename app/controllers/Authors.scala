@@ -38,7 +38,7 @@ object Authors extends Controller with Secured {
     var authorsSlick = CopyrightTransferInternalDao.listTransfer(v_id, v_year, v_volume_id)
     var journals = RankingDataExtractorOjsDao.getListOfJournals
     var yearsActive = GeneralOjsDao.getYearsJournalActive(v_id)
-    var issues = GeneralOjsDao.getIssuesForJournal(v_volume_id)
+    var issues = GeneralOjsDao.getIssuesForJournal(v_id)
 
     user => implicit request =>
       Ok(views.html.authors.list(v_id, v_year, v_volume_id, authorsSlick, journals, yearsActive, issues))
