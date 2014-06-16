@@ -21,6 +21,7 @@ GET         /copyright-transfer/verify/:token            controllers.CopyrightTr
 # transfer management
 GET         /manage-transfers/:id/:year/:volumeId        controllers.CopyrightTransferManagement.list(id: String, year: String, volumeId: String)
 POST        /manage-transfers/generate                   controllers.CopyrightTransferManagement.generateReport
+POST        /manage-transfers/remove/:id                 controllers.CopyrightTransferManagement.removeTransfer(id: Int)
 
 # rankings
 GET         /ranking                                     controllers.Rankings.index
