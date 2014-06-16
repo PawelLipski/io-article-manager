@@ -76,11 +76,22 @@ object CopyrightTransferInternalDao {
 
   def listTransfer(ojsJournalId:Long, year:Int, volumeId: Int):Seq[slick.internal.Tables.CopyrighttransferRow] = {
     var articleIds:Seq[Long] = Seq(0, 1)
-    Database.forDataSource(DB.getDataSource("ojs")).withSession {
-      implicit session =>
-        articleIds = (for {
-          article <- ojs.Tables.Articles if article.journalId === ojsJournalId && yearFn(Seq(article.lastModified)) === year
-        } yield article.articleId).run
+
+    if(volumeId != -1) {
+      Database.forDataSource(DB.getDataSource("ojs")).withSession {
+        implicit session =>
+          articleIds = (for {
+            article <- ojs.Tables.Articles if article.journalId === ojsJournalId && yearFn(Seq(article.lastModified)) === year
+            issue <- ojs.Tables.PublishedArticles if issue.issueId === volumeId.toLong && article.journalId === ojsJournalId
+          } yield issue.articleId).run
+      }
+    } else {
+      Database.forDataSource(DB.getDataSource("ojs")).withSession {
+        implicit session =>
+          articleIds = (for {
+            article <- ojs.Tables.Articles if article.journalId === ojsJournalId && yearFn(Seq(article.lastModified)) === year
+          } yield article.articleId).run
+      }
     }
 
     Database.forDataSource(DB.getDataSource("internal")).withSession {
