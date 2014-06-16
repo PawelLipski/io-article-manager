@@ -53,7 +53,7 @@
                     <div class="form-group">
                         <span>Volume</span>
                         <select id="issue-select" class="form-control gap-sides">
-                            <option>0</option>
+                            <option value="all">all</option>
                             @for(i <- 0 until issues.size) {
                                 <option @if(volumeId == issues(i)._1) { selected="selected" } value="@issues(i)._1">
                                 @issues(i)._2

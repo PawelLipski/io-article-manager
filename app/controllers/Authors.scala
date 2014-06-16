@@ -6,8 +6,8 @@ import play.api.data.Forms._
 import play.api.data.validation._
 import models.{RankingDataExtractorOjsDao, Author}
 import scala.collection.mutable.HashMap
-import models.dao.CopyrightTransferInternalDao
-import utils.PdfGenerator
+import models.dao.{GeneralOjsDao, CopyrightTransferInternalDao}
+import utils.{JournalUtilProvider, PdfGenerator}
 
 object Authors extends Controller with Secured {
 
@@ -31,12 +31,14 @@ object Authors extends Controller with Secured {
     }
     if(volume_id == "default") {
       v_volume_id = CopyrightTransferInternalDao.getDefaultVolumeId
+    } else if(volume_id == "all") {
+      v_volume_id = -1;
     }
 
     var authorsSlick = CopyrightTransferInternalDao.listTransfer(v_id, v_year, v_volume_id)
     var journals = RankingDataExtractorOjsDao.getListOfJournals
-    var yearsActive = GeneralOjsDao.getYearsJournalActive(id)
-    var issues = GeneralOjsDao.getIssuesForJournal(volume_id)
+    var yearsActive = GeneralOjsDao.getYearsJournalActive(v_id)
+    var issues = GeneralOjsDao.getIssuesForJournal(v_volume_id)
 
     user => implicit request =>
       Ok(views.html.authors.list(v_id, v_year, v_volume_id, authorsSlick, journals, yearsActive, issues))
