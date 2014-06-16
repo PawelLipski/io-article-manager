@@ -50,8 +50,7 @@ function refreshSubmitButton() {
                 });
             }
 
-            // Bind filtering function
-            $("#" + id).delayBind("keyup", function (e) {
+            var filteringFunction = function (e) {
                 var showOnlyConfirmed = $('#show-only-confirmed').prop('checked');
                 var words = $(this).val().toLowerCase().split(" ");
                 $("#" + tgt + " tbody tr").each(function () {
@@ -75,7 +74,11 @@ function refreshSubmitButton() {
                     }
                 });
                 refreshSubmitButton();
-            }, 300);
+            };
+
+            // Bind filtering function
+            $("#" + id).delayBind("keyup", filteringFunction, 300);
+            $("#" + id).bind("refreshFilter", filteringFunction);
         }
 
         return this;
@@ -111,7 +114,7 @@ $(document).ready(function () {
     $("input[class='selected-author']").click(refreshSubmitButton);
 
     $('#show-only-confirmed').click(function() {
-        $('#input-filter').trigger('keyup');
+        $('#input-filter').trigger('refreshFilter');
     });
 
     $('#select-all-authors').click(function() {
