@@ -27,51 +27,48 @@
 
     @helper.form(action = routes.Authors.generateReport(), 'id -> "authors-form") {
         <div>
-            <div>
-                <div class="form-inline">
-                    <div class="form-group">
-                        <span>Journal</span>
-                        <select id="journal-select" class="form-control gap-sides" name="journalId">
-                            @for(i <- 0 until journals.size) {
-                                <option value="@journals(i).id" @if(i+1 == id) { selected="selected" } >
-                                    @journals(i).title
-                                </option>
-                            }
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <span>Year</span>
-                        <select id="year-select" class="form-control gap-sides">
-                            <!-- FIXME: needs dao -->
-                            <option @if(year == 2014) { selected="selected" }>2014</option>
-                            <option @if(year == 2013) { selected="selected" }>2013</option>
-                            <option @if(year == 2012) { selected="selected" }>2012</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <span>Volume</span>
-                        <select id="issue-select" class="form-control gap-sides">
-                            <!-- FIXME: needs dao -->
-                            <option @if(volumeId == 3) { selected="selected" } value="3">Vol 13, No 1</option>
-                            <option @if(volumeId == 2) { selected="selected" } value="2">Vol 13, No 2</option>
-                            <option @if(volumeId == 1) { selected="selected" } value="1">Vol 13, No 3</option>
-                            <option @if(volumeId == 0) { selected="selected" } value="0">Vol 13, No 4</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <div class="input-filter-container"><input type="search" class="form-control" placeholder="Find..." size="15" id="input-filter"></div>
-                    </div>
+            <div class="form-inline">
+                <div class="form-group">
+                    <span>Journal</span>
+                    <select id="journal-select" class="form-control gap-sides" name="journalId">
+                        @for(i <- 0 until journals.size) {
+                            <option value="@journals(i).id" @if(i+1 == id) { selected="selected" } >
+                                @journals(i).title
+                            </option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <span>Year</span>
+                    <select id="year-select" class="form-control gap-sides">
+                        <!-- FIXME: needs dao -->
+                        <option @if(year == 2014) { selected="selected" }>2014</option>
+                        <option @if(year == 2013) { selected="selected" }>2013</option>
+                        <option @if(year == 2012) { selected="selected" }>2012</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <span>Volume</span>
+                    <select id="issue-select" class="form-control gap-sides">
+                        <!-- FIXME: needs dao -->
+                        <option @if(volumeId == 3) { selected="selected" } value="3">Vol 13, No 1</option>
+                        <option @if(volumeId == 2) { selected="selected" } value="2">Vol 13, No 2</option>
+                        <option @if(volumeId == 1) { selected="selected" } value="1">Vol 13, No 3</option>
+                        <option @if(volumeId == 0) { selected="selected" } value="0">Vol 13, No 4</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <div class="input-filter-container"><input type="search" class="form-control" placeholder="Find..." size="15" id="input-filter"></div>
                 </div>
                 <div class="form-group">
                     <div><input type="checkbox" id="show-only-confirmed"> Show only confirmed</div>
                 </div>
-            </form>
-        </div>
+            </div>
 
             <table id="data-table" class="table table-striped">
                 <thead>
                     <tr>
-                        <th><input class="selected-author" type="checkbox" data-author-id="id_from_db" name="people[]"></th>
+                        <th><input id="select-all-authors" type="checkbox"></th>
                         <th>Paper title</th>
                         <th>Confirmed</th>
                         <th>Corresp. author</th>
@@ -90,7 +87,7 @@
                             @if(author.linkconfirmed) {
                                 <td><i class="glyphicon glyphicon-ok green"></i></td>
                             } else {
-                                <td><i class="glyphicon glyphicon-ok red"></i></td>
+                                <td><i class="glyphicon glyphicon-remove red"></i></td>
                             }
 
                             <td>@author.correspondingname</td>

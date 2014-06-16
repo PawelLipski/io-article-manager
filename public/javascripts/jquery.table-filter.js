@@ -7,6 +7,10 @@
 /*jslint indent: 2, browser: true, regexp: true */
 /*global jQuery, $ */
 
+function refreshSubmitButton() {
+    $("button[type='submit']").attr("disabled", !$("input[class='selected-author']").is(":enabled:checked"));
+}
+
 (function ($) {
     "use strict";
 
@@ -48,6 +52,7 @@
 
             // Bind filtering function
             $("#" + id).delayBind("keyup", function (e) {
+                var showOnlyConfirmed = $('#show-only-confirmed').prop('checked');
                 var words = $(this).val().toLowerCase().split(" ");
                 $("#" + tgt + " tbody tr").each(function () {
                     var s = $(this).html().toLowerCase().replace(/<.+?>/g, "").replace(/\s+/g, " "),
@@ -59,15 +64,17 @@
                         }
                     });
 
+                    var isUnconfirmed = $(this).find('.glyphicon-remove').length > 0;
                     var checkbox = $(this).find("input[class='selected-author']");
-                    if (state) {
-                        $(this).hide();
+                    if (state || (showOnlyConfirmed && isUnconfirmed)) {
+                        //$(this).hide();
                         checkbox.prop("disabled", true);
                     } else {
-                        $(this).show();
+                        //$(this).show();
                         checkbox.prop("disabled", false);
                     }
                 });
+                refreshSubmitButton();
             }, 300);
         }
 
@@ -101,26 +108,10 @@
 }(jQuery));
 
 $(document).ready(function () {
-
-    var selectedAuthorCheckboxes = $("input[class='selected-author']");
-
-    function refreshCheckboxes() {
-        $("button[type='submit']").attr("disabled", !selectedAuthorCheckboxes.is(":checked"));
-    }
-
-    selectedAuthorCheckboxes.click(refreshCheckboxes);
+    $("input[class='selected-author']").click(refreshSubmitButton);
 
     $('#show-only-confirmed').click(function() {
-        if($(this).prop('checked')) {
-            $('.glyphicon-remove', '#data-table').each(function() {
-                $(this).parents().eq(1).hide();
-            });
-        } else {
-            $('.glyphicon-remove', '#data-table').each( function() {
-                $(this).parents().eq(1).show();
-            });
-            $('#data-table').trigger('repaginate');
-        }
+        $('#input-filter').trigger('keyup');
     });
 
     $('#select-all-authors').click(function() {
@@ -133,7 +124,7 @@ $(document).ready(function () {
                 }
             });
         }
-        refreshCheckboxes();
+        refreshSubmitButton();
     });
 
     $('#year-select, #journal-select, #issue-select').change(function () {
