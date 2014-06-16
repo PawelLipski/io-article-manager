@@ -66,10 +66,10 @@ function refreshSubmitButton() {
                     var isNotVerified = $(this).find('.glyphicon-remove').length > 0;
                     var checkbox = $(this).find("input[class='selected-author']");
                     if (state || (showOnlyVerified && isNotVerified)) {
-                        //$(this).hide();
+                        $(this).hide();
                         checkbox.prop("disabled", true);
                     } else {
-                        //$(this).show();
+                        $(this).show();
                         checkbox.prop("disabled", false);
                     }
                 });
