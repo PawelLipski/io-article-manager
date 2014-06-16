@@ -30,11 +30,9 @@ object CopyrightTransferOjsDao {
         withOjsDatabaseTransaction {
           implicit session =>
             (for {
-              article <- ojs.Tables.Articles if
-              article.journalId === ojsJournalId &&
-              yearFn(Seq(article.lastModified)) === year
+              article <- ojs.Tables.Articles if article.journalId === ojsJournalId && yearFn(Seq(article.lastModified)) === year
               issue <- ojs.Tables.PublishedArticles if issue.issueId === volumeId.toLong && article.journalId === ojsJournalId
-            } yield article.articleId).run.map(_.asInstanceOf[Int])
+            } yield issue.articleId).run.map(_.asInstanceOf[Int])
         }
       } else {
         withOjsDatabaseTransaction {
