@@ -51,7 +51,7 @@ function refreshSubmitButton() {
             }
 
             var filteringFunction = function (e) {
-                var showOnlyConfirmed = $('#show-only-confirmed').prop('checked');
+                var showOnlyVerified = $('#show-only-verified').prop('checked');
                 var words = $(this).val().toLowerCase().split(" ");
                 $("#" + tgt + " tbody tr").each(function () {
                     var s = $(this).html().toLowerCase().replace(/<.+?>/g, "").replace(/\s+/g, " "),
@@ -63,9 +63,9 @@ function refreshSubmitButton() {
                         }
                     });
 
-                    var isUnconfirmed = $(this).find('.glyphicon-remove').length > 0;
+                    var isNotVerified = $(this).find('.glyphicon-remove').length > 0;
                     var checkbox = $(this).find("input[class='selected-author']");
-                    if (state || (showOnlyConfirmed && isUnconfirmed)) {
+                    if (state || (showOnlyVerified && isNotVerified)) {
                         //$(this).hide();
                         checkbox.prop("disabled", true);
                     } else {
@@ -113,7 +113,7 @@ function refreshSubmitButton() {
 $(document).ready(function () {
     $("input[class='selected-author']").click(refreshSubmitButton);
 
-    $('#show-only-confirmed').click(function() {
+    $('#show-only-verified').click(function() {
         $('#input-filter').trigger('refreshFilter');
     });
 
