@@ -7,7 +7,7 @@ object Application extends Controller {
 
   def index = Action {
     implicit request =>
-      Ok(views.html.index(CopyrightTransferInternalDao.getDefaultJournalId, CopyrightTransferInternalDao.getDefaultYear, CopyrightTransferInternalDao.getDefaultVolumeId))
+      Ok(views.html.index())
   }
 
 }

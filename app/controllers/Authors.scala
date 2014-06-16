@@ -8,6 +8,7 @@ import models.{RankingDataExtractorOjsDao, Author}
 import scala.collection.mutable.HashMap
 import models.dao.CopyrightTransferInternalDao
 import utils.PdfGenerator
+import utils.JournalUtilProvider
 
 object Authors extends Controller with Secured {
 
@@ -23,17 +24,17 @@ object Authors extends Controller with Secured {
     var v_year = JournalUtilProvider.toInt(year);
     var v_volume_id = JournalUtilProvider.toInt(volume_id);
 
-    if(v_id == "default") {
+    if(id == "default") {
       v_id = CopyrightTransferInternalDao.getDefaultJournalId
     }
-    if(v_year == "default") {
+    if(year == "default") {
       v_year = CopyrightTransferInternalDao.getDefaultYear
     }
-    if(v_volume_id == "default") {
+    if(volume_id == "default") {
       v_volume_id = CopyrightTransferInternalDao.getDefaultVolumeId
     }
 
-    var authorsSlick = CopyrightTransferInternalDao.listTransfer(id, year, volume_id)
+    var authorsSlick = CopyrightTransferInternalDao.listTransfer(v_id, v_year, v_volume_id)
     var journals = RankingDataExtractorOjsDao.getListOfJournals
 
     user => implicit request =>
