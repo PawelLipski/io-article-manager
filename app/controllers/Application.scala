@@ -1,6 +1,7 @@
 package controllers
 
 import play.api.mvc._
+import models.dao.CopyrightTransferInternalDao
 
 object Application extends Controller {
 

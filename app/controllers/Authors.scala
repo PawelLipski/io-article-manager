@@ -8,6 +8,7 @@ import models.{RankingDataExtractorOjsDao, Author}
 import scala.collection.mutable.HashMap
 import models.dao.CopyrightTransferInternalDao
 import utils.PdfGenerator
+import utils.JournalUtilProvider
 
 object Authors extends Controller with Secured {
 
@@ -18,12 +19,26 @@ object Authors extends Controller with Secured {
     )
   )
 
-  def list(id: Int, year: Int, volume_id: Int) = withAuth {
-    var authorsSlick = CopyrightTransferInternalDao.listTransfer(id, year, volume_id)
+  def list(id: String, year: String, volume_id: String) = withAuth {
+    var v_id = JournalUtilProvider.toInt(id);
+    var v_year = JournalUtilProvider.toInt(year);
+    var v_volume_id = JournalUtilProvider.toInt(volume_id);
+
+    if(id == "default") {
+      v_id = CopyrightTransferInternalDao.getDefaultJournalId
+    }
+    if(year == "default") {
+      v_year = CopyrightTransferInternalDao.getDefaultYear
+    }
+    if(volume_id == "default") {
+      v_volume_id = CopyrightTransferInternalDao.getDefaultVolumeId
+    }
+
+    var authorsSlick = CopyrightTransferInternalDao.listTransfer(v_id, v_year, v_volume_id)
     var journals = RankingDataExtractorOjsDao.getListOfJournals
 
     user => implicit request =>
-      Ok(views.html.authors.list(id, year, volume_id, authorsSlick, journals))
+      Ok(views.html.authors.list(v_id, v_year, v_volume_id, authorsSlick, journals))
   }
 
   def generateReport = withAuth {
