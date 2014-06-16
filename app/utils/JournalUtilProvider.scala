@@ -36,4 +36,11 @@ object JournalUtilProvider {
     Source.fromInputStream(Play.resourceAsStream(path).get).getLines().toList
   }
 
+  def toInt(s: String):Int = {
+    try {
+      s.toInt
+    } catch {
+      case e:Exception => 0
+    }
+  }
 }

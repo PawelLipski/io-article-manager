@@ -1,4 +1,4 @@
-@(defaultId : Int, defaultYear : Int, defaultVolumeId : Int)(implicit request: Request[AnyContent])
+@()(implicit request: Request[AnyContent])
 
 @main("Journal Manager") {
 
@@ -16,7 +16,7 @@
                 Follow the link to confirm the transfer.<br>
             </li>
 
-            <li><a href="@routes.Authors.list(defaultId, defaultYear, defaultVolumeId)">Copyright transfer admin panel</a><br></li>
+            <li><a href="@routes.Authors.list("default", "default", "default")">Copyright transfer admin panel</a><br></li>
 
             <li><a href="@routes.ReportGenerator.index()">Ranking data extractor</a><br>
                 Type 2013 in the Year field and press Generate.<br>
