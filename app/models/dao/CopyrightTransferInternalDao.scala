@@ -126,10 +126,11 @@ object CopyrightTransferInternalDao {
   }
 
   def getDefaultYear() : Int = {
-    GeneralOjsDao.getYearsJournalActive(getDefaultJournalId())
+    GeneralOjsDao.getYearsJournalActive(getDefaultJournalId()).head
   }
 
   def getDefaultVolumeId() : Int = {
-    GeneralOjsDao.getIssuesForJournal(getDefaultJournalId()).first.issue
+    GeneralOjsDao.getIssuesForJournal(getDefaultJournalId()).head._1.toInt
+
   }
 }
