@@ -117,4 +117,21 @@ object CopyrightTransferInternalDao {
     }
   }
 
+  def getDefaultJournalId() : Int = {
+    Database.forDataSource(DB.getDataSource("internal")).withSession {
+      implicit session =>
+        (for {
+          transfer <- slick.internal.Tables.Copyrighttransfer
+        } yield transfer.ojsarticleid ).first
+    }
+  }
+
+  def getDefaultYear() : Int = {
+    GeneralOjsDao.getYearsJournalActive(getDefaultJournalId()).head
+  }
+
+  def getDefaultVolumeId() : Int = {
+    GeneralOjsDao.getIssuesForJournal(getDefaultJournalId()).head._1.toInt
+
+  }
 }
