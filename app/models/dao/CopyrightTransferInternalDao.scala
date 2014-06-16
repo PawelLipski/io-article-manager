@@ -23,6 +23,7 @@ import models.copyright.CopyrightTransferRequest
 import models.copyright.CorrespondingAuthor
 
 
+
 object CopyrightTransferInternalDao {
 
   def saveTransfer(filledForm: CopyrightTransferRequest) {
