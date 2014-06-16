@@ -1,4 +1,4 @@
-@(transferForm: Form[models.copyright.Copyright], journalId: Long)(implicit request: Request[AnyContent])
+@(transferForm: Form[models.copyright.CopyrightWrapper], journalId: Long)(implicit request: Request[AnyContent])
 
 @import helper._
 
@@ -140,14 +140,15 @@
                 '_label -> "E-mail",
                 'size -> 30,
                 'class -> "form-control",
-                'readonly -> "readonly",
+                // 'readonly -> "readonly", // FIXME it's unlocked just for the sake of testing
+                // it must not be a field of any form if we wish to keep it secure!
                 'required -> "required"
             )
         </fieldset>
 
         <fieldset>
             <legend id="contribution-legend">Contribution to paper</legend>
-            <p class="percent-error-display">Percent of contribution must sum up to 100%.</p>
+            <p class="percent-error-display">Percents of contribution must sum up to 100%.</p>
             @*create default authors forms based on information from database*@
             @for((item, index) <- transferForm.apply("contribution").indexes.zipWithIndex) {
 
@@ -316,9 +317,8 @@
             )
 
         </fieldset>
-        <input id="consentForm-form-send" type="submit" class="btn btn-primary" value="Send">
-        <p style="margin-left: 80px" class="percent-error-display">Percent of contribution must sum up to 100%.</p>
-
+        <input id="consentForm-form-send" type="submit" class="btn btn-primary btn-lg" value="Submit">
+        <p style="margin-left: 80px" class="percent-error-display">Percents of contribution must sum up to 100%.</p>
     }
 
 }

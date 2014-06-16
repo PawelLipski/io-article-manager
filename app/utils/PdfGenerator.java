@@ -1,14 +1,11 @@
 package utils;
 
-import com.google.common.io.Files;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
-import models.copyright.Contribution;
-import models.copyright.CopyrightTransferRequest;
-import play.api.Play;
+import models.copyright.*;
 import scala.collection.Iterator;
-import scala.collection.immutable.*;
+import scala.collection.Seq;
 import scala.collection.immutable.List;
 
 import java.io.*;
@@ -19,30 +16,34 @@ import java.nio.charset.Charset;
  */
 public class PdfGenerator {
 
-    public static void generate(List<CopyrightTransferRequest> requests, File file, long journalId) throws DocumentException, IOException {
+    public static void generate(Seq<CopyrightTransferRequestWrapper> requests, File file, long journalId)
+            throws DocumentException, IOException {
         FileOutputStream outputStream = new FileOutputStream(file);
         generate(requests, outputStream, journalId);
         outputStream.close();
     }
 
-    public static byte[] generate(List<CopyrightTransferRequest> requests, long journalId) throws DocumentException, IOException {
+    public static byte[] generate(Seq<CopyrightTransferRequestWrapper> requests, long journalId)
+            throws DocumentException, IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         generate(requests, outputStream, journalId);
         outputStream.close();
         return outputStream.toByteArray();
     }
 
-    private static void generate(List<CopyrightTransferRequest> requests, OutputStream outputStream, long journalID) throws DocumentException, IOException {
+    private static void generate(Seq<CopyrightTransferRequestWrapper> requests, OutputStream outputStream, long journalID)
+            throws DocumentException, IOException {
+
         Document document = new Document();
         PdfWriter.getInstance(document, outputStream);
         document.open();
-        for (Iterator<CopyrightTransferRequest> requestIterator = requests.iterator(); requestIterator.hasNext();) {
+        for (Iterator<CopyrightTransferRequestWrapper> requestIterator = requests.iterator(); requestIterator.hasNext();)
             addRequestToDocument(requestIterator.next(), document, journalID);
-        }
         document.close();
     }
 
-    private static void addRequestToDocument(CopyrightTransferRequest request, Document document, long journalID) throws DocumentException, IOException {
+    private static void addRequestToDocument(CopyrightTransferRequestWrapper wrapper, Document document, long journalID)
+            throws DocumentException, IOException {
         document.newPage();
         document.add(getJournalLogo(document, journalID));
         document.add(new Paragraph("Consent to Publish\n"));
@@ -53,18 +54,23 @@ public class PdfGenerator {
             consentParagraph.setAlignment(Paragraph.ALIGN_JUSTIFIED);
             document.add(consentParagraph);
         }
+        CopyrightTransferRequest request = wrapper.copyrightTransferRequest();
+        Copyright copyright = wrapper.copyright();
+        CorrespondingAuthor correspondingAuthor = wrapper.correspondingAuthor();
+        List<Contribution> contributionList = wrapper.contributionList();
+
         document.add(new Paragraph("\nCopyright transfer form\n\n"));
-        document.add(createParagraph("Date filled", request.dateFilled()));
+        document.add(createParagraph("Date confirmed", request.dateConfirmed()));
         document.add(createParagraph("IP address", request.ipAddress()));
-        document.add(createParagraph("\nPaper ID", request.copyrightData().ojsId()));
-        document.add(createParagraph("Paper title", request.copyrightData().title()));
+        document.add(createParagraph("\nPaper ID", copyright.ojsArticleId()));
+        document.add(createParagraph("Paper title", copyright.title()));
         document.add(createParagraph("\nCorresponding author",
-                "Name: " + request.copyrightData().correspondingAuthor().getFullName() +
-                        "\n\t\t\t\tAffiliation: " + request.copyrightData().correspondingAuthor().affiliation() +
-                        "\n\t\t\t\tE-mail: " + request.copyrightData().correspondingAuthor().email()));
+                "Name: " + correspondingAuthor.getFullName() +
+                        "\n\t\t\t\tAffiliation: " + correspondingAuthor.affiliation() +
+                        "\n\t\t\t\tE-mail: " + correspondingAuthor.email()));
         document.add(createParagraph("\nContribution of authors", ""));
-        document.add(createContributionTable(request.copyrightData().contribution()));
-        document.add(createParagraph("\nFinancial disclosure", request.copyrightData().financialDisclosure()));
+        document.add(createContributionTable(contributionList));
+        document.add(createParagraph("\nFinancial disclosure", copyright.financialDisclosure()));
     }
 
     private static Image getJournalLogo(Document document, long journalID) throws BadElementException, IOException {

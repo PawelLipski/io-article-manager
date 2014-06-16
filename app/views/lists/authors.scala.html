@@ -1,7 +1,6 @@
-@(authors: Iterable[models.reports.ArticleAuthor], authorListForm: Form[models.reports.AuthorListFilter], topic: String, target: Call)(implicit request: Request[AnyContent])
+@(authors: Iterable[models.rankings.ArticleAuthor], authorListForm: Form[models.rankings.AuthorListFilter], topic: String, target: Call)(implicit request: Request[AnyContent])
 
 @main(topic) {
-    <h1>@topic</h1>
 
     <div class="col-md-4">
     @lists.form(authorListForm, target)
@@ -11,12 +10,12 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th>Name, Surname</th>
-                    <th>Article</th>
-                    <th>Article status</th>
+                    <th>Author</th>
+                    <th>Title</th>
+                    <th>Status</th>
                     <th>Journal</th>
                     <th>Affiliation</th>
-                    <th>E-mail addres</th>
+                    <th>Email address</th>
                 </tr>
             </thead>
             <tbody>
