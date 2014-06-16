@@ -7,6 +7,10 @@
 /*jslint indent: 2, browser: true, regexp: true */
 /*global jQuery, $ */
 
+function refreshSubmitButton() {
+    $("button[type='submit']").attr("disabled", !$("input[class='selected-author']").is(":enabled:checked"));
+}
+
 (function ($) {
     "use strict";
 
@@ -46,8 +50,8 @@
                 });
             }
 
-            // Bind filtering function
-            $("#" + id).delayBind("keyup", function (e) {
+            var filteringFunction = function (e) {
+                var showOnlyVerified = $('#show-only-verified').prop('checked');
                 var words = $(this).val().toLowerCase().split(" ");
                 $("#" + tgt + " tbody tr").each(function () {
                     var s = $(this).html().toLowerCase().replace(/<.+?>/g, "").replace(/\s+/g, " "),
@@ -59,8 +63,9 @@
                         }
                     });
 
+                    var isNotVerified = $(this).find('.glyphicon-remove').length > 0;
                     var checkbox = $(this).find("input[class='selected-author']");
-                    if (state) {
+                    if (state || (showOnlyVerified && isNotVerified)) {
                         $(this).hide();
                         checkbox.prop("disabled", true);
                     } else {
@@ -68,7 +73,12 @@
                         checkbox.prop("disabled", false);
                     }
                 });
-            }, 300);
+                refreshSubmitButton();
+            };
+
+            // Bind filtering function
+            $("#" + id).delayBind("keyup", filteringFunction, 300);
+            $("#" + id).bind("refreshFilter", filteringFunction);
         }
 
         return this;
@@ -101,27 +111,10 @@
 }(jQuery));
 
 $(document).ready(function () {
+    $("input[class='selected-author']").click(refreshSubmitButton);
 
-    var selectedAuthorCheckboxes = $("input[class='selected-author']");
-
-    function refreshCheckboxes() {
-        $("button[type='submit']").attr("disabled", !selectedAuthorCheckboxes.is(":checked"));
-    }
-
-    selectedAuthorCheckboxes.click(refreshCheckboxes);
-
-
-    $('#show-only-confirmed').click(function() {
-        if($(this).prop('checked')) {
-            $('.glyphicon-remove', '#data-table').each(function() {
-                $(this).parents().eq(1).hide();
-            });
-        } else {
-            $('.glyphicon-remove', '#data-table').each( function() {
-                $(this).parents().eq(1).show();
-            });
-            $('#data-table').trigger('repaginate');
-        }
+    $('#show-only-verified').click(function() {
+        $('#input-filter').trigger('refreshFilter');
     });
 
     $('#select-all-authors').click(function() {
@@ -134,7 +127,7 @@ $(document).ready(function () {
                 }
             });
         }
-        refreshCheckboxes();
+        refreshSubmitButton();
     });
 
     $('#year-select, #journal-select, #issue-select').change(function () {
