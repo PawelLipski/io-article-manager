@@ -26,13 +26,23 @@ object CopyrightTransferOjsDao {
 
       val yearFn = SimpleFunction[Int]("year")
 
-      withOjsDatabaseTransaction {
-        implicit session =>
-          (for {
-            article <- ojs.Tables.Articles if
-          article.journalId === ojsJournalId &&
-            yearFn(Seq(article.lastModified)) === year
-          } yield article.articleId).run.map(_.asInstanceOf[Int])
+      if(volumeId != -1) {
+        withOjsDatabaseTransaction {
+          implicit session =>
+            (for {
+              article <- ojs.Tables.Articles if article.journalId === ojsJournalId && yearFn(Seq(article.lastModified)) === year
+              issue <- ojs.Tables.PublishedArticles if issue.issueId === volumeId.toLong && article.journalId === ojsJournalId
+            } yield issue.articleId).run.map(_.asInstanceOf[Int])
+        }
+      } else {
+        withOjsDatabaseTransaction {
+          implicit session =>
+            (for {
+              article <- ojs.Tables.Articles if
+              article.journalId === ojsJournalId &&
+              yearFn(Seq(article.lastModified)) === year
+            } yield article.articleId).run.map(_.asInstanceOf[Int])
+        }
       }
   }
 
