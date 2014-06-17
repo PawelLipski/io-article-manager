@@ -35,20 +35,20 @@ object CopyrightTransferManagement extends Controller with Secured {
       v_volume_id = -1;
     }
 
-    var authorsSlick = CopyrightTransferInternalDao.listTransferRequestsByJournalAndVolume(v_id, v_year, v_volume_id)
+    var transfers = CopyrightTransferInternalDao.listTransferRequestsByJournalAndVolume(v_id, v_year, v_volume_id)
     var journals = GeneralOjsDao.getListOfJournals
     var yearsActive = GeneralOjsDao.getYearsJournalActive(v_id)
     var issues = GeneralOjsDao.getIssuesForJournal(v_id)
 
     user => implicit request =>
-      Ok(views.html.copyright.management(v_id, v_year, v_volume_id, authorsSlick, journals, yearsActive, issues))
+      Ok(views.html.copyright.management(v_id, v_year, v_volume_id, transfers, journals, yearsActive, issues))
   }
 
-  def removeTransfer(id: Int) = withAuth {
-    CopyrightTransferInternalDao.removeTransferRequest(id);
+  def removeTransfer(id: Int, v_id: String, v_year: String, v_volume_id: String) = withAuth {
+    CopyrightTransferInternalDao.removeTransferRequest(id)
 
     user => implicit request =>
-      Ok(views.html.copyright.transferRemoved())
+      Redirect(routes.CopyrightTransferManagement.list(v_id, v_year, v_volume_id))
   }
 
   def generateReport = withAuth {
