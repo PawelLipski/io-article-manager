@@ -203,8 +203,34 @@ object CopyrightTransferInternalDao {
   }
 
   def listTransferRequestsByJournalAndVolume(ojsJournalId: Long, year: Int, volumeId: Int): Seq[CopyrightTransferRequestWrapper] = {
-
     val articleIds = CopyrightTransferOjsDao.listArticlesByJournalAndVolume(ojsJournalId, year, volumeId)
     fetchAllTransferRequestsByArticleIds(articleIds)
+  }
+
+  def getDefaultJournalId() : Int = {
+      val listOfJournals = GeneralOjsDao.getListOfJournals
+      if(!listOfJournals.isEmpty ) {
+        listOfJournals.head.id
+      } else {
+        0
+      }
+  }
+
+  def getDefaultYear() : Int = {
+    val yearsActive = GeneralOjsDao.getYearsJournalActive(getDefaultJournalId())
+    if(!yearsActive.isEmpty ) {
+      yearsActive.head
+    } else {
+      0
+    }
+  }
+
+  def getDefaultVolumeId() : Int = {
+    val issues = GeneralOjsDao.getIssuesForJournal(getDefaultJournalId())
+    if(!issues.isEmpty) {
+      issues.head._1.toInt
+    } else {
+      0
+    }
   }
 }

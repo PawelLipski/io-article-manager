@@ -10,13 +10,13 @@
             please <a href="@routes.Authentication.login()">log in</a></b>.<br>
 
         <ul>
-            <li><a href="@routes.CopyrightTransfer.index()">Transfer copyright</a><br>
+            <li><a href="@routes.CopyrightTransfer.index()">Copyright transfer</a><br>
                 Please fill in the form.
                 A message with an attached PDF and confirmation link will be sent to the specified email.
                 Follow the link to confirm the transfer.<br>
             </li>
 
-            <li><a href="@routes.CopyrightTransferManagement.list(3, 2014, 0)">Manage transfers</a><br>
+            <li><a href="@routes.CopyrightTransferManagement.list("default", "default", "default")">Manage transfers</a><br>
                 Select a couple of journals and press Generate report for the selected.<br>
             </li>
 

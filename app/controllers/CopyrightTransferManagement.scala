@@ -5,8 +5,9 @@ import play.api.data._
 import play.api.data.Forms._
 import play.api.mvc._
 import dao.{GeneralOjsDao, CopyrightTransferInternalDao}
-import utils.PdfGenerator
+import utils.{JournalUtilProvider, PdfGenerator}
 import views.html
+import models.RankingDataExtractorOjsDao
 
 object CopyrightTransferManagement extends Controller with Secured {
 
@@ -17,13 +18,37 @@ object CopyrightTransferManagement extends Controller with Secured {
     )
   )
 
-  def list(id: Int, year: Int, volumeId: Int) = withAuth {
+  def list(id: String, year: String, volume_id: String) = withAuth {
+    var v_id = JournalUtilProvider.toInt(id);
+    var v_year = JournalUtilProvider.toInt(year);
+    var v_volume_id = JournalUtilProvider.toInt(volume_id);
+
+    if(id == "default") {
+      v_id = CopyrightTransferInternalDao.getDefaultJournalId
+    }
+    if(year == "default") {
+      v_year = CopyrightTransferInternalDao.getDefaultYear
+    }
+    if(volume_id == "default") {
+      v_volume_id = CopyrightTransferInternalDao.getDefaultVolumeId
+    } else if(volume_id == "all") {
+      v_volume_id = -1;
+    }
+
+    var transfers = CopyrightTransferInternalDao.listTransferRequestsByJournalAndVolume(v_id, v_year, v_volume_id)
+    var journals = GeneralOjsDao.getListOfJournals
+    var yearsActive = GeneralOjsDao.getYearsJournalActive(v_id)
+    var issues = GeneralOjsDao.getIssuesForJournal(v_id)
+
     user => implicit request =>
+      Ok(views.html.copyright.management(v_id, v_year, v_volume_id, transfers, journals, yearsActive, issues))
+  }
 
-      val transferRequests = CopyrightTransferInternalDao.listTransferRequestsByJournalAndVolume(id, year, volumeId)
-      val journals = GeneralOjsDao.getListOfJournals
+  def removeTransfer(id: Int, v_id: String, v_year: String, v_volume_id: String) = withAuth {
+    CopyrightTransferInternalDao.removeTransferRequest(id)
 
-      Ok(views.html.copyright.management(id, year, volumeId, transferRequests, journals))
+    user => implicit request =>
+      Redirect(routes.CopyrightTransferManagement.list(v_id, v_year, v_volume_id))
   }
 
   def generateReport = withAuth {
