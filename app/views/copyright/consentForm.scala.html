@@ -273,7 +273,7 @@
                     $('.percent' ).change(function() {
                         if ($(this ).val() < 0 || $(this ).val() > 100 ) {
                             if(!this.error){
-                                this.error = $('<div>bla</div>');
+                                this.error = $('<div>Please type value between 0 and 100.</div>');
                                 $(this ).after(this.error);
                                 $(this ).parent( ).parent( ).addClass("has-error")
                             }
@@ -315,36 +315,19 @@
                     });
 
                 });
+                jQuery(function(){
+                    $ ( "#consentForm-form :input" ).tooltip ( {
+                    // place tooltip on the right edge
+                    position : "center right",
+                    // a little tweaking of the position
+                    offset :[ - 2, 10 ],
+                    // use the built-in fadeIn/fadeOut effect
+                    effect : "fade",
+                    // custom opacity setting
+                    opacity : 0.7
+                    } ) ;
+                })
             </script>
-            <script src="http://cdn.jquerytools.org/1.2.7/full/jquery.tools.min.js"></script>
-            <script>
-            $ ( "#consentForm-form :input" ).tooltip ( {
-                // place tooltip on the right edge
-                position : "center right",
-                // a little tweaking of the position
-                offset :[ - 2, 10 ],
-                // use the built-in fadeIn/fadeOut effect
-                effect : "fade",
-                // custom opacity setting
-                opacity : 0.7
-            } ) ;
-            </script>
-            <style>
-                .tooltip {
-                    background-color : #000 ;
-                    border : 1px solid #fff ;
-                    padding : 10px 15px ;
-                    width : 200px ;
-                    display : none ;
-                    color : #fff ;
-                    text-align : left ;
-                    font-size : 12px ;
-
-                    /* outline radius for mozilla/firefox only */
-                    -moz-box-shadow : 0 0 10px #000 ;
-                    -webkit-box-shadow : 0 0 10px #000 ;
-                }
-            </style>
             <br><br>
 
             <legend>Financial disclosure</legend>
