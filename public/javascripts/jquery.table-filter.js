@@ -7,9 +7,13 @@
 /*jslint indent: 2, browser: true, regexp: true */
 /*global jQuery, $ */
 
+function refreshFilter() {
+    $('#input-filter').trigger('refreshFilter');
+};
+
 function refreshSubmitButton() {
     $("button[type='submit']").attr("disabled", !$("input[class='selected-author']").is(":enabled:checked"));
-}
+};
 
 (function ($) {
     "use strict";
@@ -111,10 +115,12 @@ function refreshSubmitButton() {
 }(jQuery));
 
 $(document).ready(function () {
+    refreshFilter();
+
     $("input[class='selected-author']").click(refreshSubmitButton);
 
     $('#show-only-verified').click(function() {
-        $('#input-filter').trigger('refreshFilter');
+        refreshFilter();
     });
 
     $('#select-all-authors').click(function() {
