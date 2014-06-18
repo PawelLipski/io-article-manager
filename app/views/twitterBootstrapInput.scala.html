@@ -1,8 +1,8 @@
 @(elements: helper.FieldElements)(implicit request: Request[AnyContent])
 
 <div class="form-group @if(elements.hasErrors) {error}">
-    <label class="control-label col-lg-2" for="@elements.id">@elements.label</label>
-    <div class="@elements.args.toMap.get('inputDivClass).getOrElse("col-lg-4")">
+    <label class="control-label col-md-2" for="@elements.id">@elements.label</label>
+    <div class="@elements.args.toMap.get('inputDivClass).getOrElse("col-md-4")">
         @elements.input
         <p class="help-inline">@elements.errors.mkString(", ")</p>
         <p class="help-inline muted">@elements.args.get('help).getOrElse("")</p>

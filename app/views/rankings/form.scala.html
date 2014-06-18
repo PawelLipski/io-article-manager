@@ -13,7 +13,7 @@
                 options = dao.GeneralOjsDao.getListOfJournals.map(j => new Tuple2(j.id.toString, j.title)).seq,
                 '_label -> "Journal",
                 'class -> "form-control",
-                'inputDivClass -> "col-lg-8"
+                'inputDivClass -> "col-md-8"
             )</td>
             <td width="40%">@inputText(
                 reportForm("year"),
