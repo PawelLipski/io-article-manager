@@ -13,7 +13,7 @@
                 options = dao.GeneralOjsDao.getListOfJournals.map(j => new Tuple2(j.id.toString, j.title)).seq,
                 '_label -> "Journal",
                 'class -> "form-control",
-                'inputDivClass -> "col-md-8"
+                'inputDivClass -> "col-lg-8"
             )</td>
             <td width="40%">@inputText(
                 reportForm("year"),
@@ -22,7 +22,16 @@
 				'type -> "number",
 				'required -> "required"
             )</td>
-            <td width="20%" style="vertical-align: top"><input type="submit" class="btn btn-primary" value="Generate"></td>
+            <td width="20%">
+                <div class="form-group">
+                    <label class="control-label col-lg-2" style="visibility: hidden;">Generate</label>
+                    <div class="col-lg-2">
+                        <input type="submit" class="btn btn-primary" value="Generate">
+                        <p class="help-inline"></p>
+                        <p class="help-inline muted"></p>
+                    </div>
+                </div>
+            </td>
         </tr></table>
     }
 
