@@ -16,11 +16,12 @@
         'class -> "form-control",
         'inputDivClass -> "col-lg-8"
     )
-    @inputText(
+    @select(
         authorListForm("year"),
+        options = List(new Tuple2(null, null)).++(dao.GeneralOjsDao.getAllYears.map(h => new Tuple2(h.toString, h.toString))).seq,
         '_label -> "Year",
         'class -> "form-control",
-        'type -> "number"
+        'inputDivClass -> "col-lg-8"
     )
     @select(
         authorListForm("article status"),

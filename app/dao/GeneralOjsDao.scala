@@ -51,7 +51,7 @@ object GeneralOjsDao {
     var journals = GeneralOjsDao.getListOfJournals
     var yearsActive = List[Int]()
     for (jour <- journals) {
-      yearsActive :+  GeneralOjsDao.getYearsJournalActive(jour.id)
+      yearsActive = yearsActive ++ (GeneralOjsDao.getYearsJournalActive(jour.id))
     }
     var returned = yearsActive.toSet
     returned
