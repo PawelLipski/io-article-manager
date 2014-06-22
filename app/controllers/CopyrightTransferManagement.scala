@@ -38,7 +38,7 @@ object CopyrightTransferManagement extends Controller with Secured {
     var transfers = CopyrightTransferInternalDao.listTransferRequestsByJournalAndVolume(v_id, v_year, v_volume_id)
     var journals = GeneralOjsDao.getListOfJournals
     var yearsActive = GeneralOjsDao.getYearsJournalActive(v_id)
-    var issues = GeneralOjsDao.getIssuesForJournal(v_id)
+    var issues = GeneralOjsDao.getIssuesForJournal(v_id, v_year)
 
     user => implicit request =>
       Ok(views.html.copyright.management(v_id, v_year, v_volume_id, transfers, journals, yearsActive, issues))
