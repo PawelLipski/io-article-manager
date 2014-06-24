@@ -226,7 +226,7 @@ object CopyrightTransferInternalDao {
   }
 
   def getDefaultVolumeId() : Int = {
-    val issues = GeneralOjsDao.getIssuesForJournal(getDefaultJournalId())
+    val issues = GeneralOjsDao.getIssuesForJournal(getDefaultJournalId(), getDefaultYear())
     if(!issues.isEmpty) {
       issues.head._1.toInt
     } else {

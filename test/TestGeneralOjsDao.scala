@@ -23,7 +23,7 @@ class TestGeneralOjsDao extends Specification {
     }
 
     "Get issues" in new WithApplication {
-      org.junit.Assert.assertEquals(List((2,null),(2,null),(2,0),(2,0),(2,0),(2,"Abba")), GeneralOjsDao.getIssuesForJournal(2))
+      org.junit.Assert.assertEquals(List((2,null),(2,null),(2,0),(2,0),(2,0),(2,"Abba")), GeneralOjsDao.getIssuesForJournal(2, 2014))
     }
 
     "select listTransfer in both database" in new WithApplication {
