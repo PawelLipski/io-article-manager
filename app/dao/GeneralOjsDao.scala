@@ -47,4 +47,13 @@ object GeneralOjsDao {
       }
     }
   }
+  def getAllYears: Set[Int] = {
+    var journals = GeneralOjsDao.getListOfJournals
+    var yearsActive = List[Int]()
+    for (jour <- journals) {
+      yearsActive = yearsActive ++ (GeneralOjsDao.getYearsJournalActive(jour.id))
+    }
+    var returned = yearsActive.toSet
+    returned
+  }
 }

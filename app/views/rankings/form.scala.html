@@ -15,12 +15,14 @@
                 'class -> "form-control",
                 'inputDivClass -> "col-lg-8"
             )</td>
-            <td width="40%">@inputText(
+            <td width="40%">@select(
                 reportForm("year"),
+                options = dao.GeneralOjsDao.getAllYears.map(h => new Tuple2(h.toString, h.toString)).toSeq.seq,
                 '_label -> "Year",
                 'class -> "form-control",
-				'type -> "number",
-				'required -> "required"
+				//'type -> "number",
+				//'required -> "required",
+                'inputDivClass -> "col-lg-8"
             )</td>
             <td width="20%">
                 <div class="form-group">
