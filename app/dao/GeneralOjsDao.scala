@@ -16,11 +16,11 @@ object GeneralOjsDao {
     }
   }
 
-  def getIssuesForJournal(journalId: Int): List[(Long, String)] = {
+  def getIssuesForJournal(journalId: Int, year: Int): List[(Long, String)] = {
     withOjsDatabaseTransaction {
       implicit session => {
         (for {
-          issue <- slick.ojs.Tables.Issues if issue.journalId === journalId.asInstanceOf[Long]
+          issue <- slick.ojs.Tables.Issues if issue.journalId === journalId.asInstanceOf[Long] && issue.year === year.toShort
           issueSetting <- slick.ojs.Tables.IssueSettings if issueSetting.settingName === "title" && issue.issueId === issueSetting.issueId
         } yield issueSetting).list.filter(_.settingValue.isDefined).map(issueTitleSetting => (issueTitleSetting.issueId, issueTitleSetting.settingValue.get))
       }
