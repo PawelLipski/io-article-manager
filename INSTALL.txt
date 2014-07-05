@@ -1,11 +1,21 @@
 
-To successfully run the app, set up the following environment variables:
+To run the app itself, first unpack the provided stand-alone zipball.
+The only requirement is Java installed (no dependency on Scala nor Play framework).
+System has been tested for JRE 1.7, but should work with 1.6 as well.
+
+Then set up the following environment variables:
 
 * OJS_DB_URL, OJS_DB_USER, OJS_DB_PASSWD - URL, user and password for the OJS database
 
 * INTERNAL_DB_URL, INTERNAL_DB_USER, INTERNAL_DB_PASSWD - URL, user and password for the internal MySQL database
 
-* SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWD - proper config for the SMTP server
+* SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWD - config for the SMTP server
 
-Sample config (excluding, however, *_PASSWD variables, which still need to be set manually) is stored in env-setup/dev.sh
+Sample config (excluding, however, *_PASSWD variables, which still need to be set manually) is stored in env-setup/dev.sh.
+The proper way to run this is script is via Bash `source' command:
+$ . conf/dev.sh
+from the unzipped app folder.
+
+To run the app, simply launch:
+$ ./bin/ioarticlemanager
 
